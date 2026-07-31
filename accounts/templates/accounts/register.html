@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load static %}
+{% block main_css %}
+<link rel="stylesheet" href="{% static "css/style.css" %}">
+<link rel="stylesheet" href="{% static 'css/color-2.css' %}" id='add_class' >
+{% endblock %}
+
+
+
+
+{% block content %}
+
+    <!-- Mobile menu -->
+    <div class="cr-sidebar-overlay"></div>
+    <div id="cr_mobile_menu" class="cr-side-cart cr-mobile-menu">
+        <div class="cr-menu-title">
+            <span class="menu-title">منو</span>
+            <button type="button" class="cr-close">×</button>
+        </div>
+        <div class="cr-menu-inner">
+            <div class="cr-menu-content">
+                <ul>
+                    <li class="dropdown drop-list">
+                        <a href="index.html">خانه</a>
+                    </li>
+                    <li class="dropdown drop-list">
+                        <span class="menu-toggle"></span>
+                        <a href="javascript:void(0)" class="dropdown-list">دسته بندی</a>
+                        <ul class="sub-menu">
+                            <li><a href="shop-right-sidebar.html">فروشگاه سایدبار چپ</a></li>
+                            <li><a href="shop-left-sidebar.html">فروشگاه سایدبار راست</a></li>
+                            <li><a href="shop-full-width.html">تمام عرض</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown drop-list">
+                        <span class="menu-toggle"></span>
+                        <a href="javascript:void(0)" class="dropdown-list">محصول</a>
+                        <ul class="sub-menu">
+                            <li><a href="product-right-sidebar.html">محصول سایدبار چپ</a></li>
+                            <li><a href="product-left-sidebar.html">محصول سایدبار راست</a></li>
+                            <li><a href="product-full-width.html">محصول تمام عرض</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown drop-list">
+                        <span class="menu-toggle"></span>
+                        <a href="javascript:void(0)" class="dropdown-list">صفحات</a>
+                        <ul class="sub-menu">
+                            <li><a href="about.html">درباره ما</a></li>
+                            <li><a href="contact-us.html">تماس با ما</a></li>
+                            <li><a href="cart.html">سبد خرید</a></li>
+                            <li><a href="checkout.html">ادامه خرید</a></li>
+                            <li><a href="track-order.html">پیگیری سفارش</a></li>
+                            <li><a href="wishlist.html">علاقه مندی </a></li>
+                            <li><a href="faq.html">سوالات متداول</a></li>
+                            <li><a href="login.html">ورود</a></li>
+                            <li><a href="register.html">ثبت نام</a></li>
+                            <li><a href="policy.html">سیاست</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown drop-list">
+                        <span class="menu-toggle"></span>
+                        <a href="javascript:void(0)" class="dropdown-list">بلاگ</a>
+                        <ul class="sub-menu">
+                            <li><a href="blog-right-sidebar.html">سایدبار چپ</a></li>
+                            <li><a href="blog-left-sidebar.html">سایدبار راست</a></li>
+                            <li><a href="blog-full-width.html">تمام عرض</a></li>
+                            <li><a href="blog-detail-right-sidebar.html">جزییات سایدبار چپ</a></li>
+                            <li><a href="blog-detail-left-sidebar.html">جزییات سایدبار راست</a></li>
+                            <li><a href="blog-detail-full-width.html">جزییات تمام عرض</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown drop-list">
+                        <span class="menu-toggle"></span>
+                        <a href="javascript:void(0)">عناصر</a>
+                        <ul class="sub-menu">
+                            <li><a href="elements-products.html">محصولات</a></li>
+                            <li><a href="elements-typography.html">تایپوگرافی</a></li>
+                            <li><a href="elements-buttons.html">دکمه ها</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <section class="section-breadcrumb">
+        <div class="cr-breadcrumb-image">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="cr-breadcrumb-title">
+                            <h2>ثبت نام</h2>
+                            <span> <a href="index.html">خانه</a> - Register</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Register -->
+    <section class="section-register padding-tb-100">
+        <div class="container">
+            <div class="row d-none">
+                <div class="col-lg-12">
+                    <div class="mb-30" data-aos="fade-up" data-aos-duration="2000" data-aos-delay="400">
+                        <div class="cr-banner">
+                            <h2>ثبت نام</h2>
+                        </div>
+                        <div class="cr-banner-sub-title">
+                            <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک
+                                است.  و سطرآنچنان که لازم است</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="cr-register" data-aos="fade-up" data-aos-duration="2000" data-aos-delay="400">
+                        <div class="form-logo">
+                            <img src="{% static "img/logo/logo.png" %}" alt="logo">
+                        </div>
+                        <form method="post" class="cr-content-form">
+    {% csrf_token %}
+    
+    <!-- نمایش خطاهای کلی فرم در صورت وجود -->
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {% for error in form.non_field_errors %}
+                <p class="mb-0">{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-12 col-sm-6">
+            <div class="form-group">
+                <label> نام*</label>
+                {{ form.first_name }}
+                {{ form.first_name.errors }}
+            </div>
+        </div>
+        <div class="col-12 col-sm-6">
+            <div class="form-group">
+                <label>نام خانوادگی*</label>
+                {{ form.last_name }}
+                {{ form.last_name.errors }}
+            </div>
+        </div>
+        <div class="col-12 col-sm-6">
+            <div class="form-group">
+                <label>پست الکترونیک</label>
+                {{ form.email }}
+                {{ form.email.errors }}
+            </div>
+        </div>
+        <div class="col-12 col-sm-6">
+            <div class="form-group">
+                <label>شماره تلفن*</label>
+                {{ form.phone_number }}
+                {{ form.phone_number.errors }}
+            </div>
+        </div>
+        
+        <div class="col-12 col-sm-6">
+            <div class="form-group">
+                <label>استان*</label>
+                {{ address_form.province }}
+                {{ address_form.province.errors }}
+            </div>
+        </div>
+        <div class="col-12 col-sm-6">
+            <div class="form-group">
+                <label>شهر*</label>
+                {{ address_form.city }}
+                {{ address_form.city.errors }}
+            </div>
+        </div> 
+        <div class="col-12">
+            <div class="form-group">
+                <label>نشانی*</label>
+                {{ address_form.address }}
+                {{ address_form.address.errors }}
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-group">
+                <label>کد پستی</label>
+                {{ address_form.postal_code }}
+                {{ address_form.postal_code.errors }}
+            </div>
+        </div>
+        
+        <div class="cr-register-buttons">
+            <button type="submit" class="cr-button">ثبت نام</button>
+            <a href="/" class="link">
+                اکانت دارید؟
+            </a>
+        </div>
+    </div>
+</form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    
+
+    
+
+    <!-- Cart -->
+    <div class="cr-cart-overlay"></div>
+    <div class="cr-cart-view">
+        <div class="cr-cart-inner">
+            <div class="cr-cart-top">
+                <div class="cr-cart-title">
+                    <h6>سبد خرید من</h6>
+                    <button type="button" class="close-cart">×</button>
+                </div>
+                <ul class="crcart-pro-items">
+                    <li>
+                        <a href="product-left-sidebar.html" class="crside_pro_img"><img src="{% static "img/product/4.jpg" %}"
+                                alt="product-1"></a>
+                        <div class="cr-pro-content">
+                            <a href="product-left-sidebar.html" class="cart_pro_title"> انار تازه </a>
+                            <span class="cart-price"><span> 56 تومان</span> 1 کیلوگرم</span>
+                            <div class="cr-cart-qty">
+                                <div class="cart-qty-plus-minus">
+                                    <button type="button" class="plus">+</button>
+                                    <input type="text" placeholder="." value="1" minlength="1" maxlength="20"
+                                        class="quantity">
+                                    <button type="button" class="minus">-</button>
+                                </div>
+                            </div>
+                            <a href="javascript:void(0)" class="remove">×</a>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="product-left-sidebar.html" class="crside_pro_img"><img src="assets/img/product/2.jpg"
+                                alt="product-2"></a>
+                        <div class="cr-pro-content">
+                            <a href="product-left-sidebar.html" class="cart_pro_title"> سیب سبز </a>
+                            <span class="cart-price"><span> 76 تومان</span> 1 کیلوگرم</span>
+                            <div class="cr-cart-qty">
+                                <div class="cart-qty-plus-minus">
+                                    <button type="button" class="plus">+</button>
+                                    <input type="text" placeholder="." value="1" minlength="1" maxlength="20"
+                                        class="quantity">
+                                    <button type="button" class="minus">-</button>
+                                </div>
+                            </div>
+                            <a href="javascript:void(0)" class="remove">×</a>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="product-left-sidebar.html" class="crside_pro_img"><img src="assets/img/product/3.jpg"
+                                alt="product-3"></a>
+                        <div class="cr-pro-content">
+                            <a href="product-left-sidebar.html" class="cart_pro_title"> هندوانه - کوچک </a>
+                            <span class="cart-price"><span>46 تومان</span> 5 کیلوگرم</span>
+                            <div class="cr-cart-qty">
+                                <div class="cart-qty-plus-minus">
+                                    <button type="button" class="plus">+</button>
+                                    <input type="text" placeholder="." value="1" minlength="1" maxlength="20"
+                                        class="quantity">
+                                    <button type="button" class="minus">-</button>
+                                </div>
+                            </div>
+                            <a href="javascript:void(0)" class="remove">×</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="cr-cart-bottom">
+                <div class="cart-sub-total">
+                    <table class="table cart-table">
+                        <tbody>
+                            <tr>
+                                <td class="text-left">ریز هزینه :</td>
+                                <td class="text-right">300 تومان</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">مالیات (20%) :</td>
+                                <td class="text-right">60 تومان</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">جمع کل:</td>
+                                <td class="text-right primary-color">360 تومان</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="cart_btn">
+                    <a href="cart.html" class="cr-button">مشاهده سبد خرید</a>
+                    <a href="checkout.html" class="cr-btn-secondary">ادامه خرید</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <script>
+document.getElementById("province")?.addEventListener("change", function () {
+    let provinceId = this.value;
+    fetch(`/accounts/load-cities/?province=${provinceId}`)
+    .then(response => response.json())
+    .then(data => {
+        let citySelect = document.getElementById("city");
+        citySelect.innerHTML = '<option value="">انتخاب شهر</option>';
+        data.forEach(city => {
+            citySelect.innerHTML += `<option value="${city.id}">${city.name}</option>`;
+        });
+    });
+});
+</script>
+    {% endblock  %}

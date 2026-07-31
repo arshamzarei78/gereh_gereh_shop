@@ -1,6 +1,7 @@
 from django import forms
 from .models import User , Address
 from iranian_cities.models import City
+from django.core.validators import RegexValidator
 
 class RegisterForm(forms.ModelForm):
     class Meta:
@@ -109,4 +110,15 @@ class VerifyOTPForm(forms.Form):
                 "placeholder": "کد تایید"
             }
         )
+    )
+
+class SendOTPForm(forms.Form):
+    phone_number = forms.CharField(
+        max_length=11,
+        validators=[
+            RegexValidator(
+                regex=r"^09\d{9}$",
+                message="شماره موبایل معتبر نیست."
+            )
+        ]
     )

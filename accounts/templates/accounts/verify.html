@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+{% extends "base.html" %}
+{% load static %}
+{% block main_css %}
+<link rel="stylesheet" href="{% static "css/style.css" %}">
+<link rel="stylesheet" href="{% static 'css/color-2.css' %}" id='add_class' >
+{% endblock %}
+
+    
+    {% block content %}
+        
+    
+        
+    <!-- Mobile menu -->
+    <div class="cr-sidebar-overlay"></div>
+    <div id="cr_mobile_menu" class="cr-side-cart cr-mobile-menu">
+        <div class="cr-menu-title">
+            <span class="menu-title">منو</span>
+            <button type="button" class="cr-close">×</button>
+        </div>
+        <div class="cr-menu-inner">
+            <div class="cr-menu-content">
+                <ul>
+                    <li class="dropdown drop-list">
+                        <a href="{% url "home:home" %}">خانه</a>
+                    </li>
+                    <li class="dropdown drop-list">
+                        <span class="menu-toggle"></span>
+                        <a href="javascript:void(0)" class="dropdown-list">دسته بندی</a>
+                        <ul class="sub-menu">
+                            <li><a href="shop-right-sidebar.html">فروشگاه سایدبار چپ</a></li>
+                            <li><a href="shop-left-sidebar.html">فروشگاه سایدبار راست</a></li>
+                            <li><a href="shop-full-width.html">تمام عرض</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown drop-list">
+                        <span class="menu-toggle"></span>
+                        <a href="javascript:void(0)" class="dropdown-list">محصول</a>
+                        <ul class="sub-menu">
+                            <li><a href="product-right-sidebar.html">محصول سایدبار چپ</a></li>
+                            <li><a href="product-left-sidebar.html">محصول سایدبار راست</a></li>
+                            <li><a href="product-full-width.html">محصول تمام عرض</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown drop-list">
+                        <span class="menu-toggle"></span>
+                        <a href="javascript:void(0)" class="dropdown-list">صفحات</a>
+                        <ul class="sub-menu">
+                            <li><a href="about.html">درباره ما</a></li>
+                            <li><a href="contact-us.html">تماس با ما</a></li>
+                            <li><a href="cart.html">سبد خرید</a></li>
+                            <li><a href="checkout.html">ادامه خرید</a></li>
+                            <li><a href="track-order.html">پیگیری سفارش</a></li>
+                            <li><a href="wishlist.html">علاقه مندی </a></li>
+                            <li><a href="faq.html">سوالات متداول</a></li>
+                            <li><a href="{% url 'accounts:verify_otp' %}">ورود</a></li>
+                            <li><a href="policy.html">سیاست</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown drop-list">
+                        <span class="menu-toggle"></span>
+                        <a href="javascript:void(0)" class="dropdown-list">بلاگ</a>
+                        <ul class="sub-menu">
+                            <li><a href="blog-right-sidebar.html">سایدبار چپ</a></li>
+                            <li><a href="blog-left-sidebar.html">سایدبار راست</a></li>
+                            <li><a href="blog-full-width.html">تمام عرض</a></li>
+                            <li><a href="blog-detail-right-sidebar.html">جزییات سایدبار چپ</a></li>
+                            <li><a href="blog-detail-left-sidebar.html">جزییات سایدبار راست</a></li>
+                            <li><a href="blog-detail-full-width.html">جزییات تمام عرض</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown drop-list">
+                        <span class="menu-toggle"></span>
+                        <a href="javascript:void(0)">عناصر</a>
+                        <ul class="sub-menu">
+                            <li><a href="elements-products.html">محصولات</a></li>
+                            <li><a href="elements-typography.html">تایپوگرافی</a></li>
+                            <li><a href="elements-buttons.html">دکمه ها</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <section class="section-breadcrumb">
+        <div class="cr-breadcrumb-image">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="cr-breadcrumb-title">
+                            <h2>ورود با رمز یک بار مصرف</h2>
+                            <span> <a href="{% url "home:home" %}">خانه</a> - ورود با رمز یک بار مصرف</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Forgot page -->
+    <section class="section-login padding-tb-100">
+        <div class="container">
+            <div class="row d-none">
+                <div class="col-lg-12">
+                    <div class="mb-30" data-aos="fade-up" data-aos-duration="2000" data-aos-delay="400">
+                        <div class="cr-banner">
+                            <h2>رمز یک بار مصرف ارسال شد</h2>
+                        </div>
+                        <div class="cr-banner-sub-title">
+                            <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک
+                                است.  و سطرآنچنان که لازم است</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="cr-login" data-aos="fade-up" data-aos-duration="2000" data-aos-delay="400">
+                        <div class="form-logo">
+                            <img src="{% static '/img/logo/logo.png' %}" alt="logo">
+                        </div>
+                          <form method="post" action="{% url 'accounts:verify_otp' %}" id="otpForm">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <!-- مرحله ۱: شماره همراه -->
+    <div class="mb-3" id="phoneGroup">
+        <label for="id_phone" class="form-label">شماره همراه</label>
+        <input type="tel" 
+               class="form-control cr-form-control" 
+               id="id_phone" 
+               placeholder="example : 09123456789" 
+               value="{{ phone_number }}" 
+               required>
+    </div>
+
+    <!-- دکمه ارسال کد اولیه -->
+    <button type="button" class="btn btn-primary w-100" id="sendCodeBtn">ارسال کد تأیید</button>
+
+    <!-- مرحله ۲: ورود کد OTP (در ابتدا پنهان) -->
+    <div class="mb-3 d-none" id="otpGroup">
+        <label for="id_code" class="form-label">کد تأیید</label>
+        
+        <input type="text" 
+               class="form-control cr-form-control {% if form.code.errors %}is-invalid{% endif %}" 
+               id="id_code" 
+               name="code" 
+               maxlength="6" 
+               placeholder="کد تایید">
+
+        {% if form.code.errors %}
+            <div class="invalid-feedback d-block">
+                {{ form.code.errors.0 }}
+            </div>
+        {% endif %}
+
+        <!-- بخش تایمر -->
+        <div class="mt-2 text-center">
+            <small id="timerText" class="text-muted">
+                امکان ارسال مجدد تا <span id="timer" class="fw-bold text-danger">01:00</span> دیگر
+            </small>
+            <button type="button" class="btn btn-link btn-sm p-0 d-none" id="resendBtn">ارسال مجدد کد</button>
+        </div>
+    </div>
+
+    <!-- دکمه ثبت نهایی فرم -->
+    <button type="submit" class="btn btn-success w-100 mt-3 d-none" id="verifyBtn">تأیید و ورود</button>
+</form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+
+   
+    <!-- Cart -->
+    <div class="cr-cart-overlay"></div>
+    <div class="cr-cart-view">
+        <div class="cr-cart-inner">
+            <div class="cr-cart-top">
+                <div class="cr-cart-title">
+                    <h6>سبد خرید من</h6>
+                    <button type="button" class="close-cart">×</button>
+                </div>
+                <ul class="crcart-pro-items">
+                    <li>
+                        <a href="product-left-sidebar.html" class="crside_pro_img"><img src="assets/img/product/4.jpg"
+                                alt="product-1"></a>
+                        <div class="cr-pro-content">
+                            <a href="product-left-sidebar.html" class="cart_pro_title"> انار تازه </a>
+                            <span class="cart-price"><span> 56 تومان</span> 1 کیلوگرم</span>
+                            <div class="cr-cart-qty">
+                                <div class="cart-qty-plus-minus">
+                                    <button type="button" class="plus">+</button>
+                                    <input type="text" placeholder="." value="1" minlength="1" maxlength="20"
+                                        class="quantity">
+                                    <button type="button" class="minus">-</button>
+                                </div>
+                            </div>
+                            <a href="javascript:void(0)" class="remove">×</a>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="product-left-sidebar.html" class="crside_pro_img"><img src="assets/img/product/2.jpg"
+                                alt="product-2"></a>
+                        <div class="cr-pro-content">
+                            <a href="product-left-sidebar.html" class="cart_pro_title"> سیب سبز </a>
+                            <span class="cart-price"><span> 76 تومان</span> 1 کیلوگرم</span>
+                            <div class="cr-cart-qty">
+                                <div class="cart-qty-plus-minus">
+                                    <button type="button" class="plus">+</button>
+                                    <input type="text" placeholder="." value="1" minlength="1" maxlength="20"
+                                        class="quantity">
+                                    <button type="button" class="minus">-</button>
+                                </div>
+                            </div>
+                            <a href="javascript:void(0)" class="remove">×</a>
+                        </div>
+                    </li>
+                    <li>
+                        <a href="product-left-sidebar.html" class="crside_pro_img"><img src="assets/img/product/3.jpg"
+                                alt="product-3"></a>
+                        <div class="cr-pro-content">
+                            <a href="product-left-sidebar.html" class="cart_pro_title"> هندوانه - کوچک </a>
+                            <span class="cart-price"><span>46 تومان</span> 5 کیلوگرم</span>
+                            <div class="cr-cart-qty">
+                                <div class="cart-qty-plus-minus">
+                                    <button type="button" class="plus">+</button>
+                                    <input type="text" placeholder="." value="1" minlength="1" maxlength="20"
+                                        class="quantity">
+                                    <button type="button" class="minus">-</button>
+                                </div>
+                            </div>
+                            <a href="javascript:void(0)" class="remove">×</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="cr-cart-bottom">
+                <div class="cart-sub-total">
+                    <table class="table cart-table">
+                        <tbody>
+                            <tr>
+                                <td class="text-left">ریز هزینه :</td>
+                                <td class="text-right">300 تومان</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">مالیات (20%) :</td>
+                                <td class="text-right">60 تومان</td>
+                            </tr>
+                            <tr>
+                                <td class="text-left">جمع کل:</td>
+                                <td class="text-right primary-color">360 تومان</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="cart_btn">
+                    <a href="cart.html" class="cr-button">مشاهده سبد خرید</a>
+                    <a href="checkout.html" class="cr-btn-secondary">ادامه خرید</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+   <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const phoneInput = document.getElementById('id_phone');
+    const sendCodeBtn = document.getElementById('sendCodeBtn');
+    const resendBtn = document.getElementById('resendBtn');
+    const otpGroup = document.getElementById('otpGroup');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const timerDisplay = document.getElementById('timer');
+    const timerText = document.getElementById('timerText');
+
+    let countdown;
+    const TIMER_DURATION = 60; // ۲ دقیقه به ثانیه
+
+    function startTimer(duration = TIMER_DURATION) {
+        let timeLeft = duration;
+        
+        // قفل کردن شماره در طول زمان تایمر
+        phoneInput.readOnly = true;
+
+        timerText.classList.remove('d-none');
+        resendBtn.classList.add('d-none');
+
+        if (countdown) clearInterval(countdown);
+
+        countdown = setInterval(() => {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            timerDisplay.textContent = `${minutes}:${seconds}`;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timerText.classList.add('d-none');
+                resendBtn.classList.remove('d-none');
+                
+                // شماره باقی می‌ماند و فقط قابل ویرایش می‌شود
+                phoneInput.readOnly = false;
+                localStorage.removeItem('otp_timer_start');
+            }
+            timeLeft--;
+        }, 1000);
+    }
+
+    function checkExistingTimer() {
+        const timerStart = localStorage.getItem('otp_timer_start');
+        if (!timerStart) return 0;
+
+        const now = Math.floor(Date.now() / 1000);
+        const elapsedTime = now - parseInt(timerStart, 10);
+        const remainingTime = TIMER_DURATION - elapsedTime;
+
+        return remainingTime > 0 ? remainingTime : 0;
+    }
+
+    async function sendOtpRequest(phoneValue) {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+        try {
+            const response = await fetch("{% url 'accounts:send_otp' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': csrfToken
+                },
+                body: new URLSearchParams({
+                    'phone_number': phoneValue
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.status === 'success') {
+                localStorage.setItem('otp_timer_start', Math.floor(Date.now() / 1000).toString());
+                return true;
+            } else {
+                alert(data.message || 'خطایی در ارسال کد رخ داد.');
+                return false;
+            }
+        } catch (error) {
+            console.error('Fetch Error:', error);
+            alert('ارتباط با سرور برقرار نشد.');
+            return false;
+        }
+    }
+
+    // کلیک روی ارسال کد اولیه
+    sendCodeBtn.addEventListener('click', async () => {
+        const phoneNumber = phoneInput.value.trim();
+
+        if (!phoneNumber) {
+            phoneInput.reportValidity();
+            return;
+        }
+
+        sendCodeBtn.disabled = true;
+        sendCodeBtn.textContent = 'در حال ارسال...';
+
+        const isSuccess = await sendOtpRequest(phoneNumber);
+
+        if (isSuccess) {
+            sendCodeBtn.classList.add('d-none');
+            otpGroup.classList.remove('d-none');
+            verifyBtn.classList.remove('d-none');
+
+            document.getElementById('id_code')?.focus();
+            startTimer(TIMER_DURATION);
+        } else {
+            sendCodeBtn.disabled = false;
+            sendCodeBtn.textContent = 'ارسال کد تأیید';
+        }
+    });
+
+    // مدیریت خطای کد اشتباه یا ریفرش صفحه
+    const hasError = document.querySelector('#id_code.is-invalid');
+    const remainingTime = checkExistingTimer();
+
+    if (hasError || remainingTime > 0) {
+        sendCodeBtn.classList.add('d-none');
+        otpGroup.classList.remove('d-none');
+        verifyBtn.classList.remove('d-none');
+
+        if (remainingTime > 0) {
+            startTimer(remainingTime);
+        } else {
+            // پس از تمام شدن ۲ دقیقه شماره باقی مانده اما قابل ویرایش است
+            phoneInput.readOnly = false;
+            timerText.classList.add('d-none');
+            resendBtn.classList.remove('d-none');
+        }
+    }
+
+    // کلیک روی ارسال مجدد کد
+    resendBtn.addEventListener('click', async () => {
+        const phoneNumber = phoneInput.value.trim();
+        
+        if (!phoneNumber) {
+            phoneInput.reportValidity();
+            return;
+        }
+
+        resendBtn.classList.add('d-none');
+        timerText.classList.remove('d-none');
+        timerDisplay.textContent = '01:00';
+
+        const isSuccess = await sendOtpRequest(phoneNumber);
+
+        if (isSuccess) {
+            startTimer(TIMER_DURATION);
+        } else {
+            resendBtn.classList.remove('d-none');
+            timerText.classList.add('d-none');
+            phoneInput.readOnly = false;
+        }
+    });
+});
+</script>
+{% endblock content %}
