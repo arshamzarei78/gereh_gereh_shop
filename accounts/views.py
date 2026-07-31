@@ -111,7 +111,7 @@ class SendOTPView(View):
             return JsonResponse(
                 {
                     "status": "error",
-                    "errors": form.errors,
+                    "message": "شماره موبایل معتبر نیست.",
                 },
                 status=400,
             )

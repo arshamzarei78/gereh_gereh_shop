@@ -138,6 +138,7 @@
                value="{{ phone_number }}" 
                required>
     </div>
+    <div id="phoneError" class="invalid-feedback"></div>
 
     <!-- دکمه ارسال کد اولیه -->
     <button type="button" class="btn btn-primary w-100" id="sendCodeBtn">ارسال کد تأیید</button>
@@ -271,29 +272,51 @@
     </div>
 
     
-   <script>
+<script>
 document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('otpForm');
+
     const phoneInput = document.getElementById('id_phone');
     const sendCodeBtn = document.getElementById('sendCodeBtn');
     const resendBtn = document.getElementById('resendBtn');
+
     const otpGroup = document.getElementById('otpGroup');
     const verifyBtn = document.getElementById('verifyBtn');
+
     const timerDisplay = document.getElementById('timer');
     const timerText = document.getElementById('timerText');
 
+    const phoneError = document.getElementById('phoneError');
+
     let countdown;
-    const TIMER_DURATION = 60; // ۲ دقیقه به ثانیه
+    const TIMER_DURATION = 60;
+
+    function clearPhoneError() {
+    phoneInput.classList.remove('is-invalid');
+    phoneError.textContent = '';
+    phoneError.style.display = 'none';
+}
+
+    function showPhoneError(message) {
+
+    phoneInput.classList.add('is-invalid');
+
+    phoneError.textContent = message;
+
+    phoneError.style.display = 'block';
+}
 
     function startTimer(duration = TIMER_DURATION) {
         let timeLeft = duration;
-        
-        // قفل کردن شماره در طول زمان تایمر
+
         phoneInput.readOnly = true;
 
         timerText.classList.remove('d-none');
         resendBtn.classList.add('d-none');
 
-        if (countdown) clearInterval(countdown);
+        if (countdown) {
+            clearInterval(countdown);
+        }
 
         countdown = setInterval(() => {
             let minutes = Math.floor(timeLeft / 60);
@@ -306,128 +329,233 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (timeLeft <= 0) {
                 clearInterval(countdown);
+
                 timerText.classList.add('d-none');
                 resendBtn.classList.remove('d-none');
-                
-                // شماره باقی می‌ماند و فقط قابل ویرایش می‌شود
+
                 phoneInput.readOnly = false;
+
                 localStorage.removeItem('otp_timer_start');
             }
+
             timeLeft--;
         }, 1000);
     }
 
     function checkExistingTimer() {
         const timerStart = localStorage.getItem('otp_timer_start');
-        if (!timerStart) return 0;
+
+        if (!timerStart) {
+            return 0;
+        }
 
         const now = Math.floor(Date.now() / 1000);
-        const elapsedTime = now - parseInt(timerStart, 10);
-        const remainingTime = TIMER_DURATION - elapsedTime;
+        const elapsed = now - parseInt(timerStart, 10);
 
-        return remainingTime > 0 ? remainingTime : 0;
+        const remaining = TIMER_DURATION - elapsed;
+
+        return remaining > 0 ? remaining : 0;
     }
 
     async function sendOtpRequest(phoneValue) {
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+        clearPhoneError();
+
+        const csrfToken = document.querySelector(
+            '[name=csrfmiddlewaretoken]'
+        )?.value;
 
         try {
-            const response = await fetch("{% url 'accounts:send_otp' %}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'X-CSRFToken': csrfToken
-                },
-                body: new URLSearchParams({
-                    'phone_number': phoneValue
-                })
-            });
+            const response = await fetch(
+                "{% url 'accounts:send_otp' %}",
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type':
+                            'application/x-www-form-urlencoded',
+                        'X-CSRFToken': csrfToken
+                    },
+                    body: new URLSearchParams({
+                        phone_number: phoneValue
+                    })
+                }
+            );
 
             const data = await response.json();
 
             if (response.ok && data.status === 'success') {
-                localStorage.setItem('otp_timer_start', Math.floor(Date.now() / 1000).toString());
+                localStorage.setItem(
+                    'otp_timer_start',
+                    Math.floor(Date.now() / 1000).toString()
+                );
+
                 return true;
-            } else {
-                alert(data.message || 'خطایی در ارسال کد رخ داد.');
-                return false;
             }
+
+            showPhoneError(
+                data.message ||
+                'شماره موبایل معتبر نیست.'
+            );
+
+            return false;
+
         } catch (error) {
-            console.error('Fetch Error:', error);
-            alert('ارتباط با سرور برقرار نشد.');
+
+            console.error(error);
+
+            showPhoneError(
+                'ارتباط با سرور برقرار نشد.'
+            );
+
             return false;
         }
     }
 
-    // کلیک روی ارسال کد اولیه
-    sendCodeBtn.addEventListener('click', async () => {
-        const phoneNumber = phoneInput.value.trim();
+    phoneInput.addEventListener('input', clearPhoneError);
 
-        if (!phoneNumber) {
-            phoneInput.reportValidity();
-            return;
-        }
+    phoneInput.addEventListener('keydown', function (e) {
 
-        sendCodeBtn.disabled = true;
-        sendCodeBtn.textContent = 'در حال ارسال...';
+        if (e.key === 'Enter') {
 
-        const isSuccess = await sendOtpRequest(phoneNumber);
+            e.preventDefault();
 
-        if (isSuccess) {
-            sendCodeBtn.classList.add('d-none');
-            otpGroup.classList.remove('d-none');
-            verifyBtn.classList.remove('d-none');
-
-            document.getElementById('id_code')?.focus();
-            startTimer(TIMER_DURATION);
-        } else {
-            sendCodeBtn.disabled = false;
-            sendCodeBtn.textContent = 'ارسال کد تأیید';
+            if (
+                otpGroup.classList.contains('d-none')
+            ) {
+                sendCodeBtn.click();
+            }
         }
     });
 
-    // مدیریت خطای کد اشتباه یا ریفرش صفحه
-    const hasError = document.querySelector('#id_code.is-invalid');
-    const remainingTime = checkExistingTimer();
+    form.addEventListener('submit', function (e) {
+
+        const otpVisible =
+            !otpGroup.classList.contains('d-none');
+
+        if (!otpVisible) {
+            e.preventDefault();
+            sendCodeBtn.click();
+        }
+    });
+
+    sendCodeBtn.addEventListener(
+        'click',
+        async () => {
+
+            clearPhoneError();
+
+            const phoneNumber =
+                phoneInput.value.trim();
+
+            if (!phoneNumber) {
+
+                showPhoneError(
+                    'شماره موبایل الزامی است.'
+                );
+
+                return;
+            }
+
+            sendCodeBtn.disabled = true;
+            sendCodeBtn.textContent =
+                'در حال ارسال...';
+
+            const success =
+                await sendOtpRequest(phoneNumber);
+
+            if (success) {
+
+                sendCodeBtn.classList.add('d-none');
+
+                otpGroup.classList.remove('d-none');
+
+                verifyBtn.classList.remove('d-none');
+
+                document
+                    .getElementById('id_code')
+                    ?.focus();
+
+                startTimer(TIMER_DURATION);
+
+            } else {
+
+                sendCodeBtn.disabled = false;
+
+                sendCodeBtn.textContent =
+                    'ارسال کد تأیید';
+            }
+        }
+    );
+
+    resendBtn.addEventListener(
+        'click',
+        async () => {
+
+            clearPhoneError();
+
+            const phoneNumber =
+                phoneInput.value.trim();
+
+            if (!phoneNumber) {
+
+                showPhoneError(
+                    'شماره موبایل الزامی است.'
+                );
+
+                return;
+            }
+
+            resendBtn.classList.add('d-none');
+
+            timerText.classList.remove('d-none');
+
+            timerDisplay.textContent =
+                '01:00';
+
+            const success =
+                await sendOtpRequest(phoneNumber);
+
+            if (success) {
+
+                startTimer(TIMER_DURATION);
+
+            } else {
+
+                resendBtn.classList.remove('d-none');
+
+                timerText.classList.add('d-none');
+
+                phoneInput.readOnly = false;
+            }
+        }
+    );
+
+    const hasError =
+        document.querySelector('#id_code.is-invalid');
+
+    const remainingTime =
+        checkExistingTimer();
 
     if (hasError || remainingTime > 0) {
+
         sendCodeBtn.classList.add('d-none');
+
         otpGroup.classList.remove('d-none');
+
         verifyBtn.classList.remove('d-none');
 
         if (remainingTime > 0) {
+
             startTimer(remainingTime);
+
         } else {
-            // پس از تمام شدن ۲ دقیقه شماره باقی مانده اما قابل ویرایش است
+
             phoneInput.readOnly = false;
+
             timerText.classList.add('d-none');
+
             resendBtn.classList.remove('d-none');
         }
     }
-
-    // کلیک روی ارسال مجدد کد
-    resendBtn.addEventListener('click', async () => {
-        const phoneNumber = phoneInput.value.trim();
-        
-        if (!phoneNumber) {
-            phoneInput.reportValidity();
-            return;
-        }
-
-        resendBtn.classList.add('d-none');
-        timerText.classList.remove('d-none');
-        timerDisplay.textContent = '01:00';
-
-        const isSuccess = await sendOtpRequest(phoneNumber);
-
-        if (isSuccess) {
-            startTimer(TIMER_DURATION);
-        } else {
-            resendBtn.classList.remove('d-none');
-            timerText.classList.add('d-none');
-            phoneInput.readOnly = false;
-        }
-    });
 });
 </script>
 {% endblock content %}
