@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'home',
     'iranian_cities',
     'accounts',
+    'products'
 ]
 
 MIDDLEWARE = [
