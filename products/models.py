@@ -10,13 +10,15 @@ class Category(models.Model):
     class Meta:
         verbose_name = "دسته بندی"
         verbose_name_plural = "دسته بندی ها"
+    def __str__(self):
+            return self.titel
 
 
 
 class Product(models.Model):
     category = models.ManyToManyField(Category,related_name='product')
     name = models.CharField("نام محصول", max_length=200)
-    slug = models.SlugField("اسلاگ", max_length=220)
+    slug = models.SlugField("اسلاگ", max_length=220,blank=True)
 
     description = models.TextField("توضیحات", blank=True)
 
@@ -54,6 +56,11 @@ class Product(models.Model):
     def main_image(self):
         return self.images.filter(is_main=True).first()
 
+    @property
+    def variant(self):
+        variant = self.variants.first()
+        return variant if variant else 0
+
 
 class ProductVariant(models.Model):
     product = models.ForeignKey(
@@ -64,7 +71,7 @@ class ProductVariant(models.Model):
     )
 
     color = models.CharField("رنگ", max_length=50)
-    size = models.CharField("سایز", max_length=20)
+    size = models.CharField("سایز", max_length=20,null=True,blank=True)
 
     price = models.PositiveBigIntegerField("قیمت (تومان)")
     discount = models.PositiveIntegerField("درصد تخفیف",default=0)

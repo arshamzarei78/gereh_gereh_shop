@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'home',
     'iranian_cities',
     'accounts',
-    'products'
+    'products',
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [

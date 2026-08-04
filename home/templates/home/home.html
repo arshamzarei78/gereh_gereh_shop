@@ -247,16 +247,18 @@
                 </div>
             </div>
             <div class="new-product-slider owl-carousel mb-minus-24">
+                {% for product in products %}
                 <div class="product-card-2">
                     <div class="cr-product-inner">
                         <div class="cr-pro-image-outer">
+
                             <div class="cr-pro-image">
                                 <a href="product-left-sidebar.html" class="image">
-                                    <img class="main-image" src="assets/img/product/18.jpg" alt="Product">
-                                    <img class="hover-image" src="assets/img/product/19.jpg" alt="Product">
+                                    <img class="main-image" src="{{product.main_image.image.url}}" alt="Product">
+                                    <img class="hover-image" src="{{product.images.all.0.image.url}}" alt="Product">
                                 </a>
                                 <span class="flags">
-                                    <span class="sale">50% تخفیف</span>
+                                    <span class="sale"> {{ product.variant.discount }} % تخفیف</span>
                                 </span>
                                 <div class="cr-pro-actions">
                                     <a class="model-oraganic-product" data-bs-toggle="modal" href="#quickview"
@@ -275,10 +277,11 @@
                                     </a>
                                 </div>
                             </div>
+                            
                         </div>
                         <div class="cr-pro-content">
                             <div class="cr-info">
-                                <a href="shop-left-sidebar.html">تاپزنانه</a>
+                                <a href="shop-left-sidebar.html">{{product.category.first}}</a>
                                 <div class="cr-pro-rating">
                                     <i class="ri-star-line fill"></i>
                                     <i class="ri-star-line fill"></i>
@@ -288,11 +291,11 @@
                                 </div>
                             </div>
 
-                            <h5 class="cr-pro-title"><a href="product-left-sidebar.html">تاپزنانهرنگارنگ</a>
+                            <h5 class="cr-pro-title"><a href="product-left-sidebar.html">{{product.name}}</a>
                             </h5>
                             <span class="cr-price">
-                                <span class="new-price">6 تومان</span>
-                                <span class="old-price">9 تومان</span>
+                                <span class="new-price">{{product.variant.final_price_display}} تومان</span>
+                                <span class="old-price">{{product.variant.price_display}} تومان</span>
                             </span>
                             <div class="cr-pro-option">
                                 <div class="cr-pro-color">
@@ -323,6 +326,7 @@
                         </div>
                     </div>
                 </div>
+                {% endfor %}
                 <div class="product-card-2">
                     <div class="cr-product-inner">
                         <div class="cr-pro-image-outer">
