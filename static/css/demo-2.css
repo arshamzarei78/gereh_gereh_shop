@@ -3656,14 +3656,14 @@ p.news {
 }
 
 .cr-cart-view-active {
-  right: 0 !important;
+  left: 0 !important;
 }
 
 .cr-cart-view {
   height: 100%;
   position: fixed;
   top: 0;
-  right: -350px;
+  left: -350px;
   z-index: 20;
   -webkit-transition: all 0.4s ease;
   transition: all 0.4s ease;
