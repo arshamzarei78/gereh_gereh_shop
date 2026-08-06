@@ -348,40 +348,40 @@
     });
 
     /* Slider room details */
-    $('.slider-for').slick({
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        arrows: false,
-        fade: true,
-        asNavFor: '.slider-nav'
-    });
-    $('.slider-nav').slick({
-        slidesToShow: 5,
-        slidesToScroll: 1,
-        arrows: false,
-        asNavFor: '.slider-for',
-        focusOnSelect: true,
-        responsive: [
-            {
-                breakpoint: 1200,
-                settings: {
-                    slidesToShow: 4,
-                }
-            },
-            {
-                breakpoint: 768,
-                settings: {
-                    slidesToShow: 5,
-                }
-            },
-            {
-                breakpoint: 420,
-                settings: {
-                    slidesToShow: 4,
-                }
-            }
-        ]
-    });
+    // $('.slider-for').slick({
+    //     slidesToShow: 1,
+    //     slidesToScroll: 1,
+    //     arrows: false,
+    //     fade: true,
+    //     asNavFor: '.slider-nav'
+    // });
+    // $('.slider-nav').slick({
+    //     slidesToShow: 5,
+    //     slidesToScroll: 1,
+    //     arrows: false,
+    //     asNavFor: '.slider-for',
+    //     focusOnSelect: true,
+    //     responsive: [
+    //         {
+    //             breakpoint: 1200,
+    //             settings: {
+    //                 slidesToShow: 4,
+    //             }
+    //         },
+    //         {
+    //             breakpoint: 768,
+    //             settings: {
+    //                 slidesToShow: 5,
+    //             }
+    //         },
+    //         {
+    //             breakpoint: 420,
+    //             settings: {
+    //                 slidesToShow: 4,
+    //             }
+    //         }
+    //     ]
+    // });
 
     /* cart */
     $(".Shopping-toggle").on("click", function (e) {
@@ -738,3 +738,27 @@
     });
 
 })(jQuery);
+document.addEventListener("DOMContentLoaded", function () {
+
+    const bigImages = document.querySelectorAll(".slider-banner-image");
+    const thumbs = document.querySelectorAll(".thumbnail-image");
+
+    // نمایش اولین عکس
+    bigImages[0].classList.add("active");
+    thumbs[0].classList.add("active");
+
+    thumbs.forEach((thumb, index) => {
+
+        thumb.addEventListener("click", function () {
+
+            bigImages.forEach(img => img.classList.remove("active"));
+            thumbs.forEach(t => t.classList.remove("active"));
+
+            bigImages[index].classList.add("active");
+            thumb.classList.add("active");
+
+        });
+
+    });
+
+});

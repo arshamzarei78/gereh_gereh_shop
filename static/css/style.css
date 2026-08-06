@@ -6147,8 +6147,59 @@ ul.navbar-nav .dropdown:hover .dropdown-menu {
   margin: auto;
 }
 
-.vehicle-detail-banner .banner-slider .slider-for {
-  padding-bottom: 15px;
+/* تصویر بزرگ */
+.slider-for {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.slider-banner-image {
+    display: none;
+    width: 100%;
+    height: 500px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.slider-banner-image.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slider-banner-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* تصاویر کوچک */
+.slider-nav {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+}
+
+.thumbnail-image {
+    width: 80px;
+    height: 80px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: .3s;
+}
+
+.thumbnail-image.active {
+    border-color: #198754;
+}
+
+.thumbnail-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .cr-paking-delivery {
