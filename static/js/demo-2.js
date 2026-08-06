@@ -4,7 +4,7 @@
     /*== New Product ==*/
     $('.new-product-slider').owlCarousel({
         rtl:true,
-        loop: true,
+        loop: false,
         margin: 24,
         responsiveClass: true,
         dots: false,
@@ -33,7 +33,7 @@
     /*== Category ==*/
     $('.category-slider').owlCarousel({
         rtl: true,
-        loop: true,
+        loop: false,
         margin: 24,
         responsiveClass: true,
         dots: false,
