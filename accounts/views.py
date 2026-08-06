@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from django.utils import timezone
 from django.shortcuts import render ,redirect 
 from django.views.generic import TemplateView ,FormView ,CreateView
 from django.views import View
@@ -116,6 +116,23 @@ class SendOTPView(View):
                 status=400,
             )
 
+        # جلوگیری از ارسال مجدد قبل از 60 ثانیه
+        last_sent = request.session.get("otp_last_sent")
+
+        if last_sent:
+            elapsed = timezone.now().timestamp() - last_sent
+
+            if elapsed < 60:
+                remaining = 60 - int(elapsed)
+
+                return JsonResponse(
+                    {
+                        "status": "error",
+                        "message": f"لطفاً {remaining} ثانیه دیگر دوباره تلاش کنید.",
+                    },
+                    status=429,
+                )
+
         phone_number = form.cleaned_data["phone_number"]
 
         code = str(secrets.randbelow(900000) + 100000)
@@ -126,7 +143,11 @@ class SendOTPView(View):
             "phone_number"
         ] = phone_number
 
+         # ذخیره زمان ارسال OTP
+        request.session["otp_last_sent"] = timezone.now().timestamp()
+
         print(code)
+        print(phone_number)
 
         return JsonResponse(
             {
@@ -169,6 +190,7 @@ class VerifyOTPView(FormView):
             # پاکسازی session
             self.request.session.pop("otp", None)
             self.request.session.pop("phone_number", None)
+            self.request.session.pop("otp_last_sent", None)
 
             return redirect("home:home")
 
