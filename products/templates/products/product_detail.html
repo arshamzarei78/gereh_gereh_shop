@@ -103,7 +103,7 @@
                                 </ul>
                             </div>
                         </div>
-                        <form action="{% url 'products:cart_add' product.id %}" method="post">
+                        <form id="add-to-cart-form" action="{% url 'cart:cart_add' product.id %}" method="post">
     {% csrf_token %}
 
     <!-- انتخاب تنوع محصول (رنگ/سایز) -->
@@ -123,8 +123,7 @@
 
     <div class="cr-add-card">
         <div class="cr-qty-main">
-            <!-- تغییر disabled به readonly برای ارسال صحیح مقدار -->
-            <input type="text" readonly name="quantity" value="1" minlength="1" maxlength="10" class="quantity">
+            <input type="text" readonly name="quantity" value="1" minlength="1" max="{{product.variants.stock}}" class="quantity">
             <button type="button" class="plus">+</button>
             <button type="button" class="minus">-</button>
         </div>

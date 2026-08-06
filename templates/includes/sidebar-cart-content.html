@@ -1,0 +1,62 @@
+<div class="cr-cart-top">
+    <div class="cr-cart-title">
+        <h6>سبد خرید من</h6>
+        <button type="button" class="close-cart">×</button>
+    </div>
+    
+    <ul class="crcart-pro-items">
+        {% for item in cart %}
+            <li>
+                <a href="{{ item.variant.product.get_absolute_url }}" class="crside_pro_img">
+                    {% if item.variant.product.main_image %}
+                        <img src="{{ item.variant.product.main_image.image.url }}" alt="{{ item.variant.product.name }}">
+                    {% endif %}
+                </a>
+                <div class="cr-pro-content">
+                    <a href="{{ item.variant.product.get_absolute_url }}" class="cart_pro_title">
+                        {{ item.variant.product.name }}
+                    </a>
+                    
+                    <span class="cart-price">
+                        <span>{{ item.price }} تومان</span> 
+                        ({{ item.variant.color }}{% if item.variant.size %} - {{ item.variant.size }}{% endif %})
+                    </span>
+                    
+                    <div class="cr-cart-qty">
+                        <div class="cart-qty-plus-minus">
+                            <button type="button" class="plus">+</button>
+                            <input type="text" readonly value="{{ item.quantity }}" class="quantity" max="{{ item.variant.stock }}">
+                            <button type="button" class="minus">-</button>
+                        </div>
+                    </div>
+                    
+                    <form action="{% url 'cart:cart_remove' item.variant.id %}" method="post" style="display: inline;">
+    {% csrf_token %}
+    <button type="submit" class="remove" style="background: none; border: none; cursor: pointer;">×</button>
+</form>
+                </div>
+            </li>
+        {% empty %}
+            <li class="text-center p-3">سبد خرید شما خالی است.</li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% if cart %}
+    <div class="cr-cart-bottom">
+        <div class="cart-sub-total">
+            <table class="table cart-table">
+                <tbody>
+                    <tr>
+                        <td class="text-left">جمع کل:</td>
+                        <td class="text-right primary-color">{{ cart.get_total_price }} تومان</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="cart_btn">
+            <a href="{% url 'cart:cart_detail' %}" class="cr-button">مشاهده سبد خرید</a>
+            <a href="#" class="cr-btn-secondary">ادامه خرید (تسویه حساب)</a>
+        </div>
+    </div>
+{% endif %}
