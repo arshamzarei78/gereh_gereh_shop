@@ -6,6 +6,35 @@
     });
 
     $(document).ready(function () {
+        
+        
+        // وقتی کاربر گزینه‌ای را از لیست انتخاب می‌کند
+    $('#variant-select').on('change', function() {
+        // گرفتن گزینه‌ی انتخاب شده
+        var selectedOption = $(this).find('option:selected');
+        
+        // خواندن موجودی و قیمت از data-attributes
+        var newStock = selectedOption.attr('data-stock');
+        var newPrice = selectedOption.attr('data-price');
+        
+        // ۱. به‌روزرسانی متن موجودی در لیست
+        $('#dynamic-stock').text(newStock);
+        
+        // ۲. به‌روزرسانی متن قیمت
+        $('#dynamic-price').text(newPrice + ' تومان');
+        
+        // ۳. به‌روزرسانی سقف انتخاب تعداد (max) برای دکمه‌های + و -
+        var $qtyInput = $('#qty-input');
+        $qtyInput.attr('max', newStock);
+        
+        // ۴. اگر تعدادی که کاربر قبلا انتخاب کرده بود، بیشتر از موجودی تنوع جدید بود، تعداد را روی 1 تنظیم کن
+        var currentQty = parseInt($qtyInput.val());
+        if (currentQty > newStock) {
+            $qtyInput.val(newStock > 0 ? 1 : 0);
+        }
+    });
+
+
 
         /* -----------------------------------------------------------
          * ۱. مدیریت Ajax افزودن به سبد خرید و نمایش سایدبار
@@ -18,32 +47,37 @@
             const formData = form.serialize();
             const csrftoken = form.find('input[name="csrfmiddlewaretoken"]').val();
 
-            $.ajax({
-                url: actionUrl,
-                type: 'POST',
-                data: formData,
-                headers: { 
-                    'X-CSRFToken': csrftoken,
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                success: function (response) {
-                    if (response.status === 'success') {
-                        // جایگزینی محتوای سایدبار
-                        $('#cart-sidebar-inner').html(response.sidebar_html);
+        $.ajax({
+            url: actionUrl,
+            type: 'POST',
+            data: formData,
+            headers: { 
+                'X-CSRFToken': csrftoken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function (response) {
+                if (response.status === 'success') {
+                    // ۱. جایگزینی محتوای سایدبار
+                    $('#cart-sidebar-inner').html(response.sidebar_html);
 
-                        // به‌روزرسانی تعداد در هدر
-                        $('.cart-badge, .header-cart-count').text(response.total_items);
+                    // ۲. به‌روزرسانی تعداد در هدر
+                    $('.cart-badge, .header-cart-count').text(response.total_items);
 
-                        // باز کردن سایدبار
-                        $(".cr-cart-view").addClass("cr-cart-view-active");
-                        $(".cr-cart-overlay").fadeIn();
-                    }
-                },
-                error: function (xhr) {
-                    const res = xhr.responseJSON;
-                    alert(res && res.message ? res.message : 'خطایی رخ داد.');
+                    // ۳. نمایش مستقیم نوتیفیکیشن موفقیت (بدون نیاز به رویداد کلیک مجدد)
+                    $('.cr-wish-notify, .cr-compare-notify, .cr-cart-notify').remove();
+                    $('footer').after('<div class="cr-cart-notify"><p class="compare-note">اضافه کردن محصول به <a href="cart.html">سبد خرید</a> موفقیت آمیز بود!</p></div>');
+                    setTimeout(function () { $('.cr-cart-notify').fadeOut(); }, 2000);
+
+                    // ۴. باز کردن سایدبار
+                    $(".cr-cart-view").addClass("cr-cart-view-active");
+                    $(".cr-cart-overlay").fadeIn();
                 }
-            });
+            },
+            error: function (xhr) {
+                const res = xhr.responseJSON;
+                alert(res && res.message ? res.message : 'خطایی رخ داد.');
+            }
+        });
         });
 
         /* مدیریت باز و بستن سایدبار سبد خرید */
@@ -311,19 +345,6 @@ $(document).on("click", ".plus", function (e) {
                 $('footer').after('<div class="cr-wish-notify"><p class="wish-note">اضافه کردن محصول به <a href="wishlist.html">لیست علاقه مندی</a> موفقیت آمیز بود!</p></div>');
             }
             setTimeout(function () { $('.cr-wish-notify').fadeOut(); }, 2000);
-        });
-
-        $(document).on("click", '.cr-shopping-bag', function () {
-            $('.cr-wish-notify, .cr-compare-notify, .cr-cart-notify').remove();
-            var isAddtocart = $(this).hasClass("active");
-            if (isAddtocart) {
-                $(this).removeClass("active");
-                $('footer').after('<div class="cr-cart-notify"><p class="compare-note">حذف محصول از <a href="cart.html">سبد خرید</a> موفقیت آمیز بود!</p></div>');
-            } else {
-                $(this).addClass("active");
-                $('footer').after('<div class="cr-cart-notify"><p class="compare-note">اضافه کردن محصول به <a href="cart.html">سبد خرید</a> موفقیت آمیز بود!</p></div>');
-            }
-            setTimeout(function () { $('.cr-cart-notify').fadeOut(); }, 2000);
         });
 
         /* Product Image Zoom & Range Slider */

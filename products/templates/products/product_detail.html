@@ -64,17 +64,16 @@
                         <h2 class="heading">{{product.name}}</h2>
                         <p>{{product.description}}</p>
                     </div>
+                    
                     <div class="cr-size-and-weight">
                         <div class="cr-review-star">
                             <div class="cr-star">
-                                <i class="ri-star-fill"></i>
-                                <i class="ri-star-fill"></i>
-                                <i class="ri-star-fill"></i>
-                                <i class="ri-star-fill"></i>
-                                <i class="ri-star-fill"></i>
+                                <i class="ri-star-fill"></i><i class="ri-star-fill"></i>
+                                <i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i>
                             </div>
                             <p>( 75 مرور )</p>
                         </div>
+                        
                         <div class="list">
                             <ul>
                                 <li><label>دسته بندی<span>:</span></label>{{product.category.first}}</li>
@@ -83,55 +82,57 @@
                                 <li><label>وزن<span>:</span></label>200 گرم</li>
                                 <li><label>تخصصی<span>:</span></label>بدون گلوتن ، بدون شکر</li>
                                 <li><label>اطلاعات<span>:</span></label>بدون تخم مرغ ، بدون آلرژن</li>
-                                <li><label>موجودی<span>:</span></label>{{product.variants.stock}}</li>
+                                <!-- آی‌دی dynamic-stock اضافه شد و از first استفاده کردیم -->
+                                <li><label>موجودی<span>:</span></label><span id="dynamic-stock"> {{ product.variants.first.stock }} </span> عدد</li>
                             </ul>
                         </div>
+                        
                         <div class="cr-product-price">
-                            <span class="new-price">{{product.variants.final_price_display}}</span>
-                            {% if product.variants.discount > 0 %}
-                            <span class="old-price">{{product.variants.price_display}}</span>
+                            <!-- آی‌دی dynamic-price اضافه شد و از first استفاده کردیم -->
+                            <span class="new-price" id="dynamic-price">{{product.variants.first.final_price_display}} تومان</span>
+                            {% if product.variants.first.discount > 0 %}
+                                <span class="old-price" id="dynamic-old-price">{{product.variants.first.price_display}}</span>
                             {% endif %}
                         </div>
-                        <div class="cr-size-weight">
-                            <h5><span>اندازه</span>/<span>وزن</span> :</h5>
-                            <div class="cr-kg">
-                                <ul>
-                                    <li class="active-color">50 کیلو</li>
-                                    <li>80 کیلو</li>
-                                    <li>120 کیلو</li>
-                                    <li>200 کیلو</li>
-                                </ul>
-                            </div>
-                        </div>
+                        
+                        <!-- فرم افزودن به سبد خرید -->
                         <form id="add-to-cart-form" action="{% url 'cart:cart_add' product.id %}" method="post">
-    {% csrf_token %}
+                            {% csrf_token %}
 
-    <!-- انتخاب تنوع محصول (رنگ/سایز) -->
-    {% if product.variants.exists %}
-        <div class="mb-3">
-            <label for="variant-select">انتخاب تنوع:</label>
-            <select name="variant_id" id="variant-select" class="form-select" required>
-                {% for variant in product.variants.all %}
-                    <option value="{{ variant.id }}" {% if variant.stock == 0 %}disabled{% endif %}>
-                        {{ variant.color }} - {{ variant.size }} ({{ variant.final_price_display }} تومان)
-                        {% if variant.stock == 0 %} - (ناموجود){% endif %}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-    {% endif %}
+                            <!-- انتخاب تنوع محصول -->
+                            {% if product.variants.exists %}
+                                <div class="mb-3 mt-4">
+                                    <label for="variant-select">انتخاب تنوع:</label>
+                                    <select name="variant_id" id="variant-select" class="form-select" required>
+                                        {% for variant in product.variants.all %}
+                                            <!-- مقادیر data-stock و data-price اضافه شدند -->
+                                            <option value="{{ variant.id }}" 
+                                                    data-stock="{{ variant.stock }}" 
+                                                    data-price="{{ variant.final_price_display }}"
+                                                    {% if variant.stock == 0 %}disabled{% endif %}>
+                                                {{ variant.color }} - {{ variant.size }}
+                                                {% if variant.stock == 0 %} - (ناموجود){% endif %}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            {% endif %}
 
-    <div class="cr-add-card">
-        <div class="cr-qty-main">
-            <input type="text" readonly name="quantity" value="1" minlength="1" max="{{product.variants.stock}}" class="quantity">
-            <button type="button" class="plus">+</button>
-            <button type="button" class="minus">-</button>
-        </div>
-        
-        <div class="cr-add-button">
-            <!-- تغییر type به submit برای ارسال فرم -->
-            <button type="submit" class="cr-button cr-shopping-bag">به سبد خرید اضافه کنید</button>
-        </div>
+                            <div class="cr-add-card">
+                                <div class="cr-qty-main">
+                                    <!-- آی‌دی qty-input اضافه شد و max از first گرفته شد -->
+                                    <input type="text" readonly name="quantity" id="qty-input" value="1" minlength="1" max="{{ product.variants.first.stock }}" class="quantity">
+                                    <button type="button" class="plus">+</button>
+                                    <button type="button" class="minus">-</button>
+                                </div>
+                                
+                                <div class="cr-add-button">
+                                    <button type="submit" class="cr-button cr-shopping-bag">به سبد خرید اضافه کنید</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
         
         <div class="cr-card-icon">
             <a href="javascript:void(0)" class="wishlist">

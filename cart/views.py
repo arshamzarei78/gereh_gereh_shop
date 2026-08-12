@@ -12,6 +12,8 @@ def cart_add(request, product_id):
     variant_id = request.POST.get("variant_id")
     quantity = int(request.POST.get("quantity", 1))
 
+    variant = get_object_or_404(ProductVariant, id=variant_id)
+
     if quantity > variant.stock:
         return JsonResponse({
             'status': 'error',
@@ -20,8 +22,6 @@ def cart_add(request, product_id):
 
     if not variant_id:
         return JsonResponse({"status": "error", "message": "لطفاً تنوع محصول را انتخاب کنید."}, status=400)
-
-    variant = get_object_or_404(ProductVariant, id=variant_id)
 
     # افزودن محصول به سبد
     cart.add(variant=variant, quantity=quantity)
