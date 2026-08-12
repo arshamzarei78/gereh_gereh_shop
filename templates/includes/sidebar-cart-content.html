@@ -8,8 +8,8 @@
         {% for item in cart %}
             <li>
                 <a href="{{ item.variant.product.get_absolute_url }}" class="crside_pro_img">
-                    {% if item.variant.product.main_image %}
-                        <img src="{{ item.variant.product.main_image.image.url }}" alt="{{ item.variant.product.name }}">
+                    {% if item.variant.display_image %}
+                        <img src="{{ item.variant.display_image.image.url }}" alt="{{ item.variant.product.name }}">
                     {% endif %}
                 </a>
                 <div class="cr-pro-content">

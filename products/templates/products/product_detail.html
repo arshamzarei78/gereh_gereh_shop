@@ -102,7 +102,7 @@
                             <!-- انتخاب تنوع محصول -->
                             {% if product.variants.exists %}
                                 <div class="mb-3 mt-4">
-                                    <label for="variant-select">انتخاب تنوع:</label>
+                                    <label for="variant-select">انتخاب رنگ و ساز:</label>
                                     <select name="variant_id" id="variant-select" class="form-select" required>
                                         {% for variant in product.variants.all %}
                                             <!-- مقادیر data-stock و data-price اضافه شدند -->
@@ -110,7 +110,11 @@
                                                     data-stock="{{ variant.stock }}" 
                                                     data-price="{{ variant.final_price_display }}"
                                                     {% if variant.stock == 0 %}disabled{% endif %}>
-                                                {{ variant.color }} - {{ variant.size }}
+                                                {{ variant.color }} 
+                                                {% if variant.size %}
+                                                    - {{ variant.size }}
+                                                {% endif %}
+                                                    
                                                 {% if variant.stock == 0 %} - (ناموجود){% endif %}
                                             </option>
                                         {% endfor %}

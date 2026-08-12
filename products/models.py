@@ -69,19 +69,26 @@ class ProductVariant(models.Model):
         related_name="variants",
         verbose_name="محصول",
     )
+    
+    # فیلد جدید: اتصال تنوع به یکی از عکس‌های محصول
+    image = models.ForeignKey(
+        "ProductImage", 
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="variant_items",
+        verbose_name="تصویر اختصاصی این رنگ/تنوع"
+    )
 
     color = models.CharField("رنگ", max_length=50)
-    size = models.CharField("سایز", max_length=20,null=True,blank=True)
-
+    size = models.CharField("سایز", max_length=20, null=True, blank=True)
     price = models.PositiveBigIntegerField("قیمت (تومان)")
-    discount = models.PositiveIntegerField("درصد تخفیف",default=0)
-
+    discount = models.PositiveIntegerField("درصد تخفیف", default=0)
     stock = models.PositiveIntegerField("موجودی", default=0)
 
     class Meta:
         verbose_name = "تنوع محصول"
         verbose_name_plural = "تنوع‌ محصولات"
-
         constraints = [
             models.UniqueConstraint(
                 fields=["product", "color", "size"],
@@ -98,15 +105,22 @@ class ProductVariant(models.Model):
 
     @property
     def price_display(self):
-        """نمایش قیمت با کاما"""
         return f"{self.price:,}"
 
     @property
     def final_price_display(self):
-        """نمایش قیمت نهایی با کاما"""
         return f"{self.final_price:,}"
 
-
+    @property
+    def display_image(self):
+        """
+        یک متد هوشمند: اگر این تنوع عکس اختصاصی داشت همان را برمی‌گرداند، 
+        در غیر این صورت عکس اصلی محصول را برمی‌گرداند.
+        """
+        if self.image:
+            return self.image
+        return self.product.main_image
+    
 class ProductImage(models.Model):
     product = models.ForeignKey(
         Product,
@@ -114,11 +128,18 @@ class ProductImage(models.Model):
         related_name="images",
         verbose_name="محصول"
     )
+    
+    # فیلد جدیدی که پیشنهاد دادید
+    title = models.CharField(
+        "عنوان عکس", 
+        max_length=100, 
+        blank=True, 
+        null=True, 
+        help_text="مثلاً: نمای روبرو - رنگ قرمز (برای تشخیص راحت در پنل ادمین)"
+    )
 
-    image = models.ImageField(upload_to="products/",verbose_name="تصویر")
-
-    is_main = models.BooleanField(default=False,verbose_name="تصویر اصلی")
-
+    image = models.ImageField(upload_to="products/", verbose_name="تصویر")
+    is_main = models.BooleanField(default=False, verbose_name="تصویر اصلی")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -126,4 +147,8 @@ class ProductImage(models.Model):
         verbose_name_plural = "تصاویر محصولات"
 
     def __str__(self):
+        # اگر ادمین برای عکس اسم گذاشته بود، اسم و نام محصول را نشان بده
+        if self.title:
+            return f"{self.product.name} | {self.title}"
+        # در غیر این صورت همان حالت پیش‌فرض را نمایش بده
         return f"تصویر {self.product.name}"
