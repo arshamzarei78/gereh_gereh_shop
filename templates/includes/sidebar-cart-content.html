@@ -1,3 +1,30 @@
+<!-- استایل‌های رفع مشکل اسکرول سایدبار -->
+<style>
+    .crcart-pro-items {
+        /* ارتفاع لیست را محدود می‌کند تا از صفحه بیرون نزند (250px ارتفاع تقریبی هدر و فوتر سایدبار است) */
+        max-height: calc(100vh - 250px); 
+        overflow-y: auto; /* فعال کردن اسکرول عمودی */
+        overflow-x: hidden;
+        padding-left: 5px; /* کمی فاصله برای نوار اسکرول */
+    }
+
+    /* زیباسازی نوار اسکرول (مخصوص مرورگرهای بر پایه کروم و سافاری) */
+    .crcart-pro-items::-webkit-scrollbar {
+        width: 4px;
+    }
+    .crcart-pro-items::-webkit-scrollbar-track {
+        background: #f1f1f1; 
+        border-radius: 10px;
+    }
+    .crcart-pro-items::-webkit-scrollbar-thumb {
+        background: #c1c1c1; 
+        border-radius: 10px;
+    }
+    .crcart-pro-items::-webkit-scrollbar-thumb:hover {
+        background: #999; 
+    }
+</style>
+
 <div class="cr-cart-top">
     <div class="cr-cart-title">
         <h6>سبد خرید من</h6>
@@ -31,9 +58,9 @@
                     </div>
                     
                     <form action="{% url 'cart:cart_remove' item.variant.id %}" method="post" style="display: inline;">
-    {% csrf_token %}
-    <button type="submit" class="remove" style="background: none; border: none; cursor: pointer;">×</button>
-</form>
+                        {% csrf_token %}
+                        <button type="submit" class="remove" style="background: none; border: none; cursor: pointer;">×</button>
+                    </form>
                 </div>
             </li>
         {% empty %}
