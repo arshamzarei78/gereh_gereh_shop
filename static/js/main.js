@@ -115,21 +115,25 @@
             $(this).addClass("active-grid");
         });
 
-        /* Minus and Plus Quantity */
-        $(document).on("click", ".minus", function (e) {
+ /* Minus Quantity */
+$(document).on("click", ".minus", function (e) {
     e.preventDefault();
     var $input = $(this).parent().find('input');
     var count = parseInt($input.val()) - 1;
     count = count < 1 ? 1 : count;
-    $input.val(count).change();
+    
+    // اگر عدد تغییر کرد، رویداد change را صدا بزن
+    if ($input.val() != count) {
+        $input.val(count).change();
+    }
 });
 
+/* Plus Quantity */
 $(document).on("click", ".plus", function (e) {
     e.preventDefault();
     var $input = $(this).parent().find('input');
     var currentVal = parseInt($input.val());
     
-    // دریافت سقف موجودی از خصیصه max (در صورت عدم وجود، پیش‌فرض ۱۰ قرار می‌گیرد)
     var maxStock = parseInt($input.attr('max'));
     if (isNaN(maxStock)) {
         maxStock = 10; 
@@ -137,14 +141,49 @@ $(document).on("click", ".plus", function (e) {
 
     var count = currentVal + 1;
 
-    // چک کردن محدودیت موجودی انبار
     if (count <= maxStock) {
         $input.val(count).change();
     } else {
-        alert("تعداد درخواستی بیشتر از موجودی انبار است. ");
+        alert("تعداد درخواستی بیشتر از موجودی انبار است.");
     }
 });
 
+/* ارسال درخواست Ajax هنگام تغییر تعداد (چه با مثبت چه با منفی) */
+$(document).on("change", ".cart-quantity-input", function () {
+    var $input = $(this);
+    
+    var quantity = $input.val();
+    var variant_id = $input.attr("data-variant-id"); // دریافت آیدی از input
+    
+    // ساخت آدرس داینامیک برای ویوی آپدیت
+    var update_url = "/cart/update/" + variant_id + "/";
+
+    $.ajax({
+        url: update_url,
+        type: "POST",
+        data: {
+            "quantity": quantity,
+            // دریافت توکن CSRF از فرم دکمه حذف که در همان صفحه وجود دارد
+            "csrfmiddlewaretoken": $('input[name="csrfmiddlewaretoken"]').val() 
+        },
+        success: function (response) {
+            if (response.status === "success") {
+                // جایگذاری HTML جدید سایدبار (باید کلاس کانتینر اصلی سایدبار خود را اینجا بگذارید)
+                // مثلا اگر تگ <ul> داخل یک div با کلاس cart-sidebar-content است:
+                // $(".cart-sidebar-content").html(response.sidebar_html);
+                
+                // در غیر این صورت، برای جلوگیری از بهم ریختگی تا زمان پیاده‌سازی کامل partial html، 
+                // می‌توانید موقتا صفحه را رفرش کنید:
+                $("#cart-sidebar-inner").html(response.sidebar_html);
+            }
+        },
+        error: function (xhr) {
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                alert(xhr.responseJSON.message);
+            }
+        }
+    });
+});
         /* Onclick Remove Products */
         $(document).on("click", ".cr-remove-product", function () {
             $(this).closest(".cr-product-box").remove();

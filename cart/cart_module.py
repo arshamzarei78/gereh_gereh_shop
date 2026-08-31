@@ -64,6 +64,7 @@ class Cart:
             item = cart_copy[str(variant.id)]
             item["variant"] = variant
             item["total_price"] = item["price"] * item["quantity"]
+            item["total_price_display"] = f"{item['total_price']:,}"
             yield item
 
     def __len__(self):
@@ -73,6 +74,10 @@ class Cart:
     def get_total_price(self):
         """مجموع مبلغ کل سبد خرید (تومان)"""
         return sum(item["price"] * item["quantity"] for item in self.cart.values())
+
+    def get_total_price_display(self):
+        """نمایش مجموع مبلغ کل با جداکننده ۳ رقم"""
+        return f"{self.get_total_price():,}"
 
     def clear(self):
         """پاک کردن کامل سبد خرید از session"""

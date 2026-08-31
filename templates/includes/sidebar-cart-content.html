@@ -45,16 +45,19 @@
                     </a>
                     
                     <span class="cart-price">
-                        <span>{{ item.price }} تومان</span> 
+                        <span>{{ item.variant.final_price_display }} تومان</span> 
                         ({{ item.variant.color }}{% if item.variant.size %} - {{ item.variant.size }}{% endif %})
                     </span>
                     
                     <div class="cr-cart-qty">
                         <div class="cart-qty-plus-minus">
                             <button type="button" class="plus">+</button>
-                            <input type="text" readonly value="{{ item.quantity }}" class="quantity" max="{{ item.variant.stock }}">
+                            <input type="text" readonly value="{{ item.quantity }}" class="quantity cart-quantity-input" data-variant-id="{{ item.variant.id }}" max="{{ item.variant.stock }}">
                             <button type="button" class="minus">-</button>
                         </div>
+                        <span class="cart-price">
+                            <span>{{ item.total_price_display }} تومان</span> 
+                        </span>
                     </div>
                     
                     <form action="{% url 'cart:cart_remove' item.variant.id %}" method="post" style="display: inline;">
@@ -76,7 +79,7 @@
                 <tbody>
                     <tr>
                         <td class="text-left">جمع کل:</td>
-                        <td class="text-right primary-color">{{ cart.get_total_price }} تومان</td>
+                        <td class="text-right primary-color">{{ cart.get_total_price_display }} تومان</td>
                     </tr>
                 </tbody>
             </table>

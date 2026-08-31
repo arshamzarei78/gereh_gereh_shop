@@ -49,6 +49,38 @@ def cart_remove(request, variant_id):
     cart.remove(variant)
     return redirect("home:home")
 
+@require_POST
+def cart_update(request, variant_id):
+    cart = Cart(request)
+    
+    # دریافت تعداد جدید از درخواست
+    quantity = int(request.POST.get("quantity", 1))
+
+    # پیدا کردن تنوع محصول با آیدی دریافت شده از url
+    variant = get_object_or_404(ProductVariant, id=variant_id)
+
+    # بررسی سقف موجودی
+    if quantity > variant.stock:
+        return JsonResponse({
+            'status': 'error',
+            'message': f'حداکثر موجودی قابل سفارش {variant.stock} عدد می‌باشد.'
+        }, status=400)
+
+    # آپدیت سبد خرید (جایگزینی تعداد جدید)
+    cart.add(variant=variant, quantity=quantity, override_quantity=True)
+
+    # اگر درخواست Ajax بود
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        # دقت کنید که آدرس فایل کانتنت را دادیم
+        sidebar_html = render_to_string('includes/sidebar-cart-content.html', {'cart': cart}, request=request)
+        
+        return JsonResponse({
+            "status": "success",
+            "message": "تعداد محصول بروزرسانی شد.",
+            "total_items": len(cart),
+            "total_price": cart.get_total_price_display(), # یا فیلتر intcomma
+            "sidebar_html": sidebar_html
+        })
 
 def cart_detail(request):
     pass
