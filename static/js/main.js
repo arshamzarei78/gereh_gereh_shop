@@ -184,6 +184,46 @@ $(document).on("change", ".cart-quantity-input", function () {
         }
     });
 });
+
+/* ارسال درخواست Ajax برای حذف محصول از سبد خرید */
+$(document).on("click", ".remove-cart-item", function (e) {
+    e.preventDefault(); // جلوگیری از رفتارهای پیش‌فرض دکمه
+    
+    var $btn = $(this);
+    var variant_id = $btn.attr("data-variant-id");
+    
+    // ساخت آدرس حذف
+    var remove_url = "/cart/remove/" + variant_id + "/";
+
+    $.ajax({
+        url: remove_url,
+        type: "POST",
+        data: {
+            "csrfmiddlewaretoken": $('input[name="csrfmiddlewaretoken"]').val()
+        },
+        success: function (response) {
+            if (response.status === "success") {
+                
+                // ۱. آپدیت کردن سایدبار (اگر المنت سایدبار در صفحه وجود داشته باشد)
+                if ($("#cart-sidebar-inner").length) {
+                    $("#cart-sidebar-inner").html(response.sidebar_html);
+                }
+                
+                // ۲. مدیریت صفحه اصلی سبد خرید
+                // اگر کاربر داخل صفحه سبد خرید است، بهتر است صفحه یک بار رفرش شود 
+                // تا اگر سبد خالی شده بود، پیام "سبد خرید خالی است" به درستی نمایش داده شود
+                if ($btn.closest('.cr-table-content').length) {
+                    location.reload(); 
+                }
+                
+            }
+        },
+        error: function (xhr) {
+            alert("خطایی در حذف محصول رخ داد.");
+        }
+    });
+});
+
         /* Onclick Remove Products */
         $(document).on("click", ".cr-remove-product", function () {
             $(this).closest(".cr-product-box").remove();

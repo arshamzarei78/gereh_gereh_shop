@@ -62,7 +62,7 @@
                     
                     <form action="{% url 'cart:cart_remove' item.variant.id %}" method="post" style="display: inline;">
                         {% csrf_token %}
-                        <button type="submit" class="remove" style="background: none; border: none; cursor: pointer;">×</button>
+                        <button type="submit" class="remove" data-variant-id="{{ item.variant.id }}" style="background: none; border: none; cursor: pointer;">×</button>
                     </form>
                 </div>
             </li>

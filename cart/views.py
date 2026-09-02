@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
 from products.models import ProductVariant
 from .cart_module import Cart
+from django.views.generic import TemplateView
 
 @require_POST
 def cart_add(request, product_id):
@@ -42,12 +43,27 @@ def cart_add(request, product_id):
     # پشتیبانی از فرم معمولی بدون Ajax
     return redirect("home:home")
 
-@require_POST  # یا بدون آن برای لینک‌های مستقیم
+@require_POST
 def cart_remove(request, variant_id):
     cart = Cart(request)
     variant = get_object_or_404(ProductVariant, id=variant_id)
+    
+    # حذف از سبد خرید
     cart.remove(variant)
-    return redirect("home:home")
+    
+    # اگر درخواست Ajax بود (چه از سایدبار چه از صفحه اصلی)
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        sidebar_html = render_to_string('includes/sidebar-cart-content.html', {'cart': cart}, request=request)
+        
+        return JsonResponse({
+            "status": "success",
+            "message": "محصول از سبد خرید حذف شد.",
+            "total_items": len(cart),
+            "sidebar_html": sidebar_html
+        })
+        
+    # در صورت عدم استفاده از ای‌جکس
+    return redirect("cart:cart_detail")
 
 @require_POST
 def cart_update(request, variant_id):
@@ -82,5 +98,5 @@ def cart_update(request, variant_id):
             "sidebar_html": sidebar_html
         })
 
-def cart_detail(request):
-    pass
+class CartDetail(TemplateView):
+    template_name = 'cart/cart.html'
