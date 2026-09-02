@@ -1,0 +1,277 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+ادامه خرید
+{% endblock title %}
+{% block main_css %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/color-2.css' %}" id='add_class'>
+{% endblock %}
+
+{% block content %}
+<!-- Checkout section -->
+    <section class="cr-checkout-section padding-tb-100">
+        <div class="container">
+            <div class="row">
+                <!-- Sidebar Area Start -->
+                <div class="cr-checkout-rightside col-lg-4 col-md-12">
+                    <div class="cr-sidebar-wrap">
+                        <!-- Sidebar Summary Block -->
+                        <div class="cr-sidebar-block">
+                            <div class="cr-sb-title">
+                                <h3 class="cr-sidebar-title">خلاصه</h3>
+                            </div>
+                            <div class="cr-sb-block-content">
+                                <div class="cr-checkout-summary">
+                                    <div>
+                                        <span class="text-left">ریز هزینه</span>
+                                        <span class="text-right">80 تومان</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-left">هزینه تحویل</span>
+                                        <span class="text-right">80 تومان</span>
+                                    </div>
+                                    <div class="cr-checkout-summary-total">
+                                        <span class="text-left">مقدار کل</span>
+                                        <span class="text-right">80 تومان</span>
+                                    </div>
+                                </div>
+                                <div class="cr-checkout-pro">
+                                    <div class="col-sm-12 mb-6">
+                                        <div class="cr-product-inner">
+                                            <div class="cr-pro-image-outer">
+                                                <div class="cr-pro-image">
+                                                    <a href="product-left-sidebar.html" class="image">
+                                                        <img class="main-image" src="assets/img/product/10.jpg"
+                                                            alt="Product">
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="cr-pro-content cr-product-details">
+                                                <h5 class="cr-pro-title"><a href="product-left-sidebar.html">بسته خرما پک شده</a></h5>
+                                                <div class="cr-pro-rating">
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-line"></i>
+                                                </div>
+                                                <p class="cr-price"><span class="new-price">120 تومان</span> <span
+                                                        class="old-price">123 تومان</span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 mb-0">
+                                        <div class="cr-product-inner">
+                                            <div class="cr-pro-image-outer">
+                                                <div class="cr-pro-image">
+                                                    <a href="product-left-sidebar.html" class="image">
+                                                        <img class="main-image" src="assets/img/product/12.jpg"
+                                                            alt="Product">
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="cr-pro-content cr-product-details">
+                                                <h5 class="cr-pro-title"><a href="product-left-sidebar.html">اجیل عسلی دودی</a></h5>
+                                                <div class="cr-pro-rating">
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-fill"></i>
+                                                    <i class="ri-star-line"></i>
+                                                </div>
+                                                <p class="cr-price"><span class="new-price">120 تومان</span> <span
+                                                        class="old-price">123 تومان</span></p>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Sidebar Summary Block -->
+                    </div>
+                    <div class="cr-sidebar-wrap cr-checkout-del-wrap">
+                        <!-- Sidebar Summary Block -->
+                        <div class="cr-sidebar-block">
+                            <div class="cr-sb-title">
+                                <h3 class="cr-sidebar-title">روش تحویل</h3>
+                            </div>
+                            <div class="cr-sb-block-content">
+                                <div class="cr-checkout-del">
+                                    <div class="cr-del-desc">لطفاً روش حمل و نقل مورد نظر را برای استفاده در این مورد انتخاب کنید
+سفارش.</div>
+                                    <form action="#">
+                                        <span class="cr-del-option">
+                                            <span>
+                                                <span class="cr-del-opt-head">حمل و نقل رایگان</span>
+                                                <input type="radio" id="del1" name="radio-group" checked>
+                                                <label for="del1">نرخ - 0 تومان </label>
+                                            </span>
+                                            <span>
+                                                <span class="cr-del-opt-head">مسطح</span>
+                                                <input type="radio" id="del2" name="radio-group">
+                                                <label for="del2">نرخ - 5 تومان</label>
+                                            </span>
+                                        </span>
+                                        <span class="cr-del-commemt">
+                                            <span class="cr-del-opt-head">درباره سفارش خود چیزی اضافه کنید</span>
+                                            <textarea name="your-commemt" placeholder="نظرات"></textarea>
+                                        </span>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Sidebar Summary Block -->
+                    </div>
+                    <div class="cr-sidebar-wrap cr-checkout-pay-wrap">
+                        <!-- Sidebar Payment Block -->
+                        <div class="cr-sidebar-block">
+                            <div class="cr-sb-title">
+                                <h3 class="cr-sidebar-title">روش پرداخت</h3>
+                            </div>
+                            <div class="cr-sb-block-content">
+                                <div class="cr-checkout-pay">
+                                    <div class="cr-pay-desc">لطفاً روش پرداخت ترجیحی را برای استفاده در این مورد انتخاب کنید
+سفارش.</div>
+                                    <form action="#" class="payment-options">
+                                        <span class="cr-pay-option">
+                                            <span>
+                                                <input type="radio" id="pay1" name="radio-group" checked>
+                                                <label for="pay1">پرداخت نقدی هنگام تحویل</label>
+                                            </span>
+                                        </span>
+                                        <span class="cr-pay-option">
+                                            <span>
+                                                <input type="radio" id="pay2" name="radio-group">
+                                                <label for="pay2">کارت به کارت</label>
+                                            </span>
+                                        </span>
+                                        <span class="cr-pay-option">
+                                            <span>
+                                                <input type="radio" id="pay3" name="radio-group">
+                                                <label for="pay3">انتقال بانکی</label>
+                                            </span>
+                                        </span>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Sidebar Payment Block -->
+                    </div>
+                    <div class="cr-sidebar-wrap cr-check-pay-img-wrap">
+                        <!-- Sidebar Payment Block -->
+                        <div class="cr-sidebar-block">
+                            <div class="cr-sb-title">
+                                <h3 class="cr-sidebar-title">روش پرداخت</h3>
+                            </div>
+                            <div class="cr-sb-block-content">
+                                <div class="cr-check-pay-img-inner">
+                                    <div class="cr-check-pay-img">
+                                        <img src="assets/img/banner/payment.png" alt="payment">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Sidebar Payment Block -->
+                    </div>
+                </div>
+                <div class="cr-checkout-leftside col-lg-8 col-md-12 m-t-991">
+                    <!-- checkout content Start -->
+                    <div class="cr-checkout-content">
+                        <div class="cr-checkout-inner">
+                            <div class="cr-checkout-wrap">
+                                <div class="cr-checkout-block cr-check-bill">
+                                    <h3 class="cr-checkout-title">جزئیات صورتحساب</h3>
+                                    <div class="cr-bl-block-content">
+                                        <div class="cr-check-subtitle">گزینه های پرداخت</div>
+                                        <span class="cr-bill-option">
+                                            <span>
+                                                <input type="radio" id="bill1" name="radio-group">
+                                                <label for="bill1">استفاده از یک آدرس موجود</label>
+                                            </span>
+                                            <span>
+                                                <input type="radio" id="bill2" name="radio-group" checked>
+                                                <label for="bill2">استفاده از آدرس جدید</label>
+                                            </span>
+                                        </span>
+                                        <div class="cr-check-bill-form mb-minus-24">
+                                            <form action="#" method="post">
+                                                <span class="cr-bill-wrap cr-bill-half">
+                                                    <label> نام *</label>
+                                                    <input type="text" name="firstname"
+                                                        placeholder="نام خود را وارد نمایید" required>
+                                                </span>
+                                                <span class="cr-bill-wrap cr-bill-half">
+                                                    <label>نام خانوادگی*</label>
+                                                    <input type="text" name="lastname"
+                                                        placeholder="نام خانوادگی خود را وارد کنید" required>
+                                                </span>
+                                                <span class="cr-bill-wrap">
+                                                    <label>نشانی</label>
+                                                    <input type="text" name="address" placeholder="نشانی 1">
+                                                </span>
+                                                <span class="cr-bill-wrap cr-bill-half">
+                                                    <label>شهر *</label>
+                                                    <span class="cr-bl-select-inner">
+                                                        <select name="cr_select_city" id="cr-select-city"
+                                                            class="cr-bill-select">
+                                                            <option selected disabled>شهر</option>
+                                                            <option value="1">شهر 1</option>
+                                                            <option value="2">شهر 2</option>
+                                                            <option value="3">شهر 3</option>
+                                                            <option value="4">شهر 4</option>
+                                                            <option value="5">شهر 5</option>
+                                                        </select>
+                                                    </span>
+                                                </span>
+                                                <span class="cr-bill-wrap cr-bill-half">
+                                                    <label>کد پستی</label>
+                                                    <input type="text" name="postalcode" placeholder="کد پستی">
+                                                </span>
+                                                <span class="cr-bill-wrap cr-bill-half">
+                                                    <label>کشور *</label>
+                                                    <span class="cr-bl-select-inner">
+                                                        <select name="cr_select_country" id="cr-select-country"
+                                                            class="cr-bill-select">
+                                                            <option selected disabled>کشور</option>
+                                                            <option value="1">کشور 1</option>
+                                                            <option value="2">کشور 2</option>
+                                                            <option value="3">کشور 3</option>
+                                                            <option value="4">کشور 4</option>
+                                                            <option value="5">کشور 5</option>
+                                                        </select>
+                                                    </span>
+                                                </span>
+                                                <span class="cr-bill-wrap cr-bill-half">
+                                                    <label>ناحیه منطقه</label>
+                                                    <span class="cr-bl-select-inner">
+                                                        <select name="cr_select_state" id="cr-select-state"
+                                                            class="cr-bill-select">
+                                                            <option selected disabled>منطقه/ناحیه</option>
+                                                            <option value="1">منطقه/ناحیه 1</option>
+                                                            <option value="2">منطقه/ناحیه 2</option>
+                                                            <option value="3">منطقه/ناحیه 3</option>
+                                                            <option value="4">منطقه/ناحیه 4</option>
+                                                            <option value="5">منطقه/ناحیه 5</option>
+                                                        </select>
+                                                    </span>
+                                                </span>
+                                            </form>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="cr-check-order-btn">
+                                <a class="cr-button mt-30" href="#">ثبت سفارش</a>
+                            </span>
+                        </div>
+                    </div>
+                    <!--cart content End -->
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}
+    

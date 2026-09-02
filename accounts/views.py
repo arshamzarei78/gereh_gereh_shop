@@ -192,7 +192,10 @@ class VerifyOTPView(FormView):
             self.request.session.pop("phone_number", None)
             self.request.session.pop("otp_last_sent", None)
 
-            return redirect("home:home")
+            cart = self.request.session.get('cart')
+            if cart == {}:
+                return redirect("home:home")
+            return redirect("checkout:checkout")
 
         # کاربر جدید
         return redirect("accounts:register")
