@@ -175,6 +175,7 @@ $(document).on("change", ".cart-quantity-input", function () {
                 // در غیر این صورت، برای جلوگیری از بهم ریختگی تا زمان پیاده‌سازی کامل partial html، 
                 // می‌توانید موقتا صفحه را رفرش کنید:
                 $("#cart-sidebar-inner").html(response.sidebar_html);
+                $(".cart-badge").text(response.total_items);
             }
         },
         error: function (xhr) {

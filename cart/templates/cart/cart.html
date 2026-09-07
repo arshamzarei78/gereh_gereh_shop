@@ -95,6 +95,21 @@
                                         </tr>
                                         {% endfor %}
 
+                                        {% if cart %}
+                                        <tr>
+                                            <td class="cr-cart-name">جمع کل:</td>
+                                            <td></td>
+                                            <td class="cart-badge" style="text-align: center;">
+
+                                                {{ cart|length }}
+
+                                            </td>
+                                            <td>{{ cart.get_total_price_display }} تومان</td>
+                                            <td></td>
+                                        </tr>
+                                        {% endif %}
+
+
                                     </tbody>
                                 </table>
                             </div>
@@ -103,13 +118,13 @@
                                     <div class="cr-cart-update-bottom">
 
                                         {% if request.user.is_authenticated %}
-                                            <a href="{% url 'checkout:checkout' %}" class="cr-button">
-                                                ادامه خرید
-                                            </a>
+                                        <a href="{% url 'checkout:checkout' %}" class="cr-button">
+                                            ادامه خرید
+                                        </a>
                                         {% else %}
-                                            <a href="{% url 'accounts:register' %}" class="cr-button">
-                                                ادامه خرید
-                                            </a>
+                                        <a href="{% url 'accounts:register' %}" class="cr-button">
+                                            ادامه خرید
+                                        </a>
                                         {% endif %}
 
                                     </div>
