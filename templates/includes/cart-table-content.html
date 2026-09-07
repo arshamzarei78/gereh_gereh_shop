@@ -1,0 +1,67 @@
+<div class="cr-table-content">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>محصول</th>
+                                            <th>قیمت</th>
+                                            <th class="text-center">تعداد</th>
+                                            <th>کل</th>
+                                            <th>عمل</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        {% for item in cart %}
+                                        <tr>
+                                            <td class="cr-cart-name">
+                                                <a href="{{ item.variant.product.get_absolute_url }}">
+                                                    {% if item.variant.display_image %}
+                                                    <img src="{{ item.variant.display_image.image.url }}"
+                                                        alt="{{ item.variant.product.name }}" class="cr-cart-img">
+                                                    {% endif %}
+                                                    {{ item.variant.product.name }}
+                                                </a>
+                                            </td>
+                                            <td class="cr-cart-price">
+                                                <span class="amount">{{ item.variant.final_price_display }} تومان</span>
+                                            </td>
+                                            <td class="cr-cart-qty">
+                                                <div class="cart-qty-plus-minus">
+                                                    <button type="button" class="plus">+</button>
+                                                    <input type="text" readonly value="{{ item.quantity }}"
+                                                        class="quantity cart-quantity-input"
+                                                        data-variant-id="{{ item.variant.id }}"
+                                                        max="{{ item.variant.stock }}">
+                                                    <button type="button" class="minus">-</button>
+                                                </div>
+                                            </td>
+                                            <td class="cr-cart-subtotal">{{ item.total_price_display }} تومان</td>
+                                            <td class="cr-cart-remove">
+                                                <!-- فرم حذف شد، فقط یک دکمه ساده با تایپ button قرار دادیم -->
+                                                <button type="button" class="remove-cart-item"
+                                                    data-variant-id="{{ item.variant.id }}"
+                                                    style="background: none; border: none; padding: 0; cursor: pointer; color: inherit;">
+                                                    <i class="ri-delete-bin-line"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+
+                                        {% if cart %}
+                                        <tr>
+                                            <td class="cr-cart-name">جمع کل:</td>
+                                            <td></td>
+                                            <td class="cart-badge" style="text-align: center;">
+
+                                                {{ cart|length }}
+
+                                            </td>
+                                            <td>{{ cart.get_total_price_display }} تومان</td>
+                                            <td></td>
+                                        </tr>
+                                        {% endif %}
+
+
+                                    </tbody>
+                                </table>
+                            </div>

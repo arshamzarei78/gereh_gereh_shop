@@ -168,13 +168,16 @@ $(document).on("change", ".cart-quantity-input", function () {
         },
         success: function (response) {
             if (response.status === "success") {
-                // جایگذاری HTML جدید سایدبار (باید کلاس کانتینر اصلی سایدبار خود را اینجا بگذارید)
-                // مثلا اگر تگ <ul> داخل یک div با کلاس cart-sidebar-content است:
-                // $(".cart-sidebar-content").html(response.sidebar_html);
+                if ($("#cart-sidebar-inner").length) {
+                    $("#cart-sidebar-inner").html(response.sidebar_html);
+                }
                 
-                // در غیر این صورت، برای جلوگیری از بهم ریختگی تا زمان پیاده‌سازی کامل partial html، 
-                // می‌توانید موقتا صفحه را رفرش کنید:
-                $("#cart-sidebar-inner").html(response.sidebar_html);
+                // ۲. آپدیت جدول اصلی صفحه سبد خرید (این قسمت در کد شما جا مانده بود!)
+                if ($("#main-cart-table").length) {
+                    $("#main-cart-table").html(response.main_cart_html);
+                }
+                
+                // ۳. آپدیت بج تعداد کل
                 $(".cart-badge").text(response.total_items);
             }
         },
@@ -210,12 +213,13 @@ $(document).on("click", ".remove-cart-item", function (e) {
                     $("#cart-sidebar-inner").html(response.sidebar_html);
                 }
                 
-                // ۲. مدیریت صفحه اصلی سبد خرید
-                // اگر کاربر داخل صفحه سبد خرید است، بهتر است صفحه یک بار رفرش شود 
-                // تا اگر سبد خالی شده بود، پیام "سبد خرید خالی است" به درستی نمایش داده شود
-                if ($btn.closest('.cr-table-content').length) {
-                    location.reload(); 
+                // ۲. آپدیت جدول اصلی صفحه سبد خرید
+                if ($("#main-cart-table").length) {
+                    $("#main-cart-table").html(response.main_cart_html);
                 }
+                
+                // ۳. آپدیت بج بالای سایت (اینجا در کد شما خالی بود!)
+                $(".cart-badge").text(response.total_items);
                 
             }
         },

@@ -89,13 +89,14 @@ def cart_update(request, variant_id):
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         # دقت کنید که آدرس فایل کانتنت را دادیم
         sidebar_html = render_to_string('includes/sidebar-cart-content.html', {'cart': cart}, request=request)
-        
+        main_cart_html = render_to_string('includes/cart-table-content.html', {'cart': cart}, request=request)
         return JsonResponse({
             "status": "success",
             "message": "تعداد محصول بروزرسانی شد.",
             "total_items": len(cart),
             "total_price": cart.get_total_price_display(), # یا فیلتر intcomma
-            "sidebar_html": sidebar_html
+            "sidebar_html": sidebar_html,
+            "main_cart_html": main_cart_html
         })
 
 class CartDetail(TemplateView):

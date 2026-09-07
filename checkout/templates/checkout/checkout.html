@@ -24,68 +24,43 @@
                             <div class="cr-sb-block-content">
                                 <div class="cr-checkout-summary">
                                     <div>
-                                        <span class="text-left">ریز هزینه</span>
-                                        <span class="text-right">80 تومان</span>
-                                    </div>
-                                    <div>
                                         <span class="text-left">هزینه تحویل</span>
                                         <span class="text-right">80 تومان</span>
                                     </div>
                                     <div class="cr-checkout-summary-total">
                                         <span class="text-left">مقدار کل</span>
-                                        <span class="text-right">80 تومان</span>
+                                        <span class="text-right">{{ cart.get_total_price_display }} تومان</span>
                                     </div>
                                 </div>
                                 <div class="cr-checkout-pro">
-                                    <div class="col-sm-12 mb-6">
+                                    
+                                    {% for item in cart %}
+                                        <div class="col-sm-12 mb-6">
                                         <div class="cr-product-inner">
                                             <div class="cr-pro-image-outer">
                                                 <div class="cr-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image" src="assets/img/product/10.jpg"
-                                                            alt="Product">
+                                                    <a href="{{ item.variant.product.get_absolute_url }}" class="image">
+                                                        <img class="main-image" src="{{ item.variant.display_image.image.url }}"
+                                                            alt="{{ item.variant.product.name }}">
                                                     </a>
                                                 </div>
                                             </div>
                                             <div class="cr-pro-content cr-product-details">
-                                                <h5 class="cr-pro-title"><a href="product-left-sidebar.html">بسته خرما پک شده</a></h5>
-                                                <div class="cr-pro-rating">
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-line"></i>
-                                                </div>
-                                                <p class="cr-price"><span class="new-price">120 تومان</span> <span
-                                                        class="old-price">123 تومان</span></p>
+                                                <h5 class="cr-pro-title"><a href="{{ item.variant.product.get_absolute_url }}"> {{ item.quantity }} عدد {{ item.variant.product.name }}</a></h5>
+                                                <p class="cr-price"><span class="new-price">{{ item.total_price_display }} تومان</span> 
+                                                    
+                                                    {% if item.variant.discount > 0 %}
+                                                        <span class="old-price">{{ item.total_no_discount_display }}</span></p>
+                                                        {% else %}
+                                                        </p>
+                                                    {% endif %}
+                                                        
+                                                       
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-12 mb-0">
-                                        <div class="cr-product-inner">
-                                            <div class="cr-pro-image-outer">
-                                                <div class="cr-pro-image">
-                                                    <a href="product-left-sidebar.html" class="image">
-                                                        <img class="main-image" src="assets/img/product/12.jpg"
-                                                            alt="Product">
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="cr-pro-content cr-product-details">
-                                                <h5 class="cr-pro-title"><a href="product-left-sidebar.html">اجیل عسلی دودی</a></h5>
-                                                <div class="cr-pro-rating">
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-fill"></i>
-                                                    <i class="ri-star-line"></i>
-                                                </div>
-                                                <p class="cr-price"><span class="new-price">120 تومان</span> <span
-                                                        class="old-price">123 تومان</span></p>
+                                    {% endfor %}
 
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>

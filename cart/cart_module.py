@@ -12,6 +12,18 @@ class Cart:
             cart = self.session[CART_SESSION_ID] = {}
         self.cart = cart
 
+    def _format_price(self, amount):
+        """متد کمکی برای ۳ رقم ۳ رقم کردن اعداد"""
+        return f"{amount:,}"
+    
+    def _get_total_item_price(self, item):
+        """متد کمکی برای محاسبه قیمت کل یک آیتم"""
+        return item["price"] * item["quantity"]
+    
+    def _get_total_item_no_discount(self, item):
+        """متد کمکی برای محاسبه قیمت کل یک آیتم"""
+        return item["no_discount"] * item["quantity"]
+
     def save(self):
         self.session.modified = True
 
@@ -23,6 +35,7 @@ class Cart:
             self.cart[variant_id] = {
                 "quantity": 0,
                 "price": int(variant.final_price),
+                "no_discount" : int(variant.price),
             }
 
         item = self.cart[variant_id]
@@ -63,8 +76,9 @@ class Cart:
         for variant in variants:
             item = cart_copy[str(variant.id)]
             item["variant"] = variant
-            item["total_price"] = item["price"] * item["quantity"]
-            item["total_price_display"] = f"{item['total_price']:,}"
+            item["total_price"] = self._get_total_item_price(item)
+            item["total_price_display"] = self._format_price(item["total_price"])
+            item["total_no_discount_display"] = self._format_price(self._get_total_item_no_discount(item))
             yield item
 
     def __len__(self):
@@ -73,12 +87,24 @@ class Cart:
 
     def get_total_price(self):
         """مجموع مبلغ کل سبد خرید (تومان)"""
-        return sum(item["price"] * item["quantity"] for item in self.cart.values())
+        # استفاده از متد کمکی برای محاسبه قیمت
+        return sum(self._get_total_item_price(item) for item in self.cart.values())
 
     def get_total_price_display(self):
         """نمایش مجموع مبلغ کل با جداکننده ۳ رقم"""
-        return f"{self.get_total_price():,}"
+        # استفاده از متد کمکی برای فرمت‌دهی
+        return self._format_price(self.get_total_price())
+    
+    def get_total_no_discount(self):
+        """مجموع قیمت کل سبد خرید بدون اعمال هیچ تخفیفی (خروجی عدد)"""
+        # اینجا از دستور sum برای جمع زدن استفاده می‌کنیم
+        return sum(self._get_total_item_no_discount(item) for item in self.cart.values())
 
+    def get_total_no_discount_display(self):
+        """نمایش مجموع مبلغ کل بدون تخفیف با جداکننده ۳ رقم"""
+        # اینجا عدد نهایی را به متد فرمت می‌دهیم
+        return self._format_price(self.get_total_no_discount())
+    
     def clear(self):
         """پاک کردن کامل سبد خرید از session"""
         if CART_SESSION_ID in self.session:
