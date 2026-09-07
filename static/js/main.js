@@ -16,12 +16,25 @@
         // خواندن موجودی و قیمت از data-attributes
         var newStock = selectedOption.attr('data-stock');
         var newPrice = selectedOption.attr('data-price');
+
+        // دریافت اطلاعات مربوط به تخفیف
+        var oldPrice = selectedOption.attr('data-old-price');
+        var discount = parseInt(selectedOption.attr('data-discount'));
         
         // ۱. به‌روزرسانی متن موجودی در لیست
         $('#dynamic-stock').text(newStock);
         
         // ۲. به‌روزرسانی متن قیمت
         $('#dynamic-price').text(newPrice + ' تومان');
+
+        // ۳. بررسی و آپدیت قیمت خط‌خورده (قدیمی)
+        if (discount > 0) {
+            // اگر تخفیف داشت، قیمت قدیمی را قرار بده و تگ را نمایان کن
+            $('#dynamic-old-price').text(oldPrice).show();
+        } else {
+            // اگر تخفیف نداشت (تخفیف 0 بود)، تگ قیمت قدیمی را مخفی کن
+            $('#dynamic-old-price').hide();
+        }
         
         // ۳. به‌روزرسانی سقف انتخاب تعداد (max) برای دکمه‌های + و -
         var $qtyInput = $('#qty-input');
