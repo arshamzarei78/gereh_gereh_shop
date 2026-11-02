@@ -29,7 +29,10 @@
                                     </div>
                                     <div class="cr-checkout-summary-total">
                                         <span class="text-left">مقدار کل</span>
-                                        <span class="text-right">{{ cart.get_total_price_display }} تومان</span>
+                                        <div class="cr-product-details">
+                                            <p class="cr-price"><span class="old-price ">{{ cart.get_total_no_discount_display}} تومان</span></p>
+                                            <span class="text-right">{{ cart.get_total_price_display }} تومان</span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="cr-checkout-pro">

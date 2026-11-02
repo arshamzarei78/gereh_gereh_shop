@@ -1,7 +1,9 @@
 <!-- Cart Sidebar -->
+{% if request.resolver_match.url_name != 'checkout' %}
 <div class="cr-cart-overlay"></div>
 <div class="cr-cart-view">
     <div class="cr-cart-inner" id="cart-sidebar-inner">
         {% include 'includes/sidebar-cart-content.html' %}
     </div>
 </div>
+{% endif %}

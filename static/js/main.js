@@ -6,6 +6,49 @@
     });
 
     $(document).ready(function () {
+    var $themeToggleBtn = $('#theme-toggle-btn');
+    var $darkModeLink = $('#add_dark_mode');
+    var $themeIcon = $('#theme-icon');
+    var $themeText = $('#theme-text');
+
+    // ۱. بررسی وضعیت تم هنگام لود شدن صفحه (آیا کاربر قبلاً تم تاریک را انتخاب کرده؟)
+    if (localStorage.getItem('theme') === 'dark') {
+        enableDarkMode();
+    } else {
+        disableDarkMode();
+    }
+
+    // ۲. عملیات هنگام کلیک روی دکمه
+    $themeToggleBtn.on('click', function (e) {
+        e.preventDefault(); // جلوگیری از پرش صفحه
+        
+        // اگر تگ لینک غیرفعال بود، یعنی الان روشنیم و باید تاریک شویم
+        var isCurrentlyLight = $darkModeLink.prop('disabled');
+        
+        if (isCurrentlyLight) {
+            enableDarkMode();
+            localStorage.setItem('theme', 'dark'); // ذخیره در حافظه مرورگر
+        } else {
+            disableDarkMode();
+            localStorage.setItem('theme', 'light'); // ذخیره در حافظه مرورگر
+        }
+    });
+
+    // ۳. توابع کمکی برای تغییر ظاهر دکمه و فعال‌سازی فایل CSS
+    function enableDarkMode() {
+        $darkModeLink.prop('disabled', false); // فعال کردن فایل dark.css
+        $themeIcon.removeClass('ri-moon-line').addClass('ri-sun-line'); // تغییر آیکون به خورشید
+        $themeText.text('تم روشن');
+    }
+
+    function disableDarkMode() {
+        $darkModeLink.prop('disabled', true); // غیرفعال کردن فایل dark.css
+        $themeIcon.removeClass('ri-sun-line').addClass('ri-moon-line'); // تغییر آیکون به ماه
+        $themeText.text('تم تاریک');
+    }
+});
+
+    $(document).ready(function () {
         
         
         // وقتی کاربر گزینه‌ای را از لیست انتخاب می‌کند
@@ -696,5 +739,6 @@ $(document).on("click", ".remove-cart-item", function (e) {
         }
 
     });
+    
 
 })(jQuery);
