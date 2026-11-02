@@ -159,88 +159,91 @@
                     <div class="cr-checkout-content">
                         <div class="cr-checkout-inner">
                             <div class="cr-checkout-wrap">
-                                <div class="cr-checkout-block cr-check-bill">
-                                    <h3 class="cr-checkout-title">جزئیات صورتحساب</h3>
-                                    <div class="cr-bl-block-content">
-                                        <div class="cr-check-subtitle">گزینه های پرداخت</div>
-                                        <span class="cr-bill-option">
-                                            <span>
-                                                <input type="radio" id="bill1" name="radio-group">
-                                                <label for="bill1">استفاده از یک آدرس موجود</label>
-                                            </span>
-                                            <span>
-                                                <input type="radio" id="bill2" name="radio-group" checked>
-                                                <label for="bill2">استفاده از آدرس جدید</label>
-                                            </span>
-                                        </span>
-                                        <div class="cr-check-bill-form mb-minus-24">
-                                            <form action="#" method="post">
-                                                <span class="cr-bill-wrap cr-bill-half">
-                                                    <label> نام *</label>
-                                                    <input type="text" name="firstname"
-                                                        placeholder="نام خود را وارد نمایید" required>
-                                                </span>
-                                                <span class="cr-bill-wrap cr-bill-half">
-                                                    <label>نام خانوادگی*</label>
-                                                    <input type="text" name="lastname"
-                                                        placeholder="نام خانوادگی خود را وارد کنید" required>
-                                                </span>
-                                                <span class="cr-bill-wrap">
-                                                    <label>نشانی</label>
-                                                    <input type="text" name="address" placeholder="نشانی 1">
-                                                </span>
-                                                <span class="cr-bill-wrap cr-bill-half">
-                                                    <label>شهر *</label>
-                                                    <span class="cr-bl-select-inner">
-                                                        <select name="cr_select_city" id="cr-select-city"
-                                                            class="cr-bill-select">
-                                                            <option selected disabled>شهر</option>
-                                                            <option value="1">شهر 1</option>
-                                                            <option value="2">شهر 2</option>
-                                                            <option value="3">شهر 3</option>
-                                                            <option value="4">شهر 4</option>
-                                                            <option value="5">شهر 5</option>
-                                                        </select>
-                                                    </span>
-                                                </span>
-                                                <span class="cr-bill-wrap cr-bill-half">
-                                                    <label>کد پستی</label>
-                                                    <input type="text" name="postalcode" placeholder="کد پستی">
-                                                </span>
-                                                <span class="cr-bill-wrap cr-bill-half">
-                                                    <label>کشور *</label>
-                                                    <span class="cr-bl-select-inner">
-                                                        <select name="cr_select_country" id="cr-select-country"
-                                                            class="cr-bill-select">
-                                                            <option selected disabled>کشور</option>
-                                                            <option value="1">کشور 1</option>
-                                                            <option value="2">کشور 2</option>
-                                                            <option value="3">کشور 3</option>
-                                                            <option value="4">کشور 4</option>
-                                                            <option value="5">کشور 5</option>
-                                                        </select>
-                                                    </span>
-                                                </span>
-                                                <span class="cr-bill-wrap cr-bill-half">
-                                                    <label>ناحیه منطقه</label>
-                                                    <span class="cr-bl-select-inner">
-                                                        <select name="cr_select_state" id="cr-select-state"
-                                                            class="cr-bill-select">
-                                                            <option selected disabled>منطقه/ناحیه</option>
-                                                            <option value="1">منطقه/ناحیه 1</option>
-                                                            <option value="2">منطقه/ناحیه 2</option>
-                                                            <option value="3">منطقه/ناحیه 3</option>
-                                                            <option value="4">منطقه/ناحیه 4</option>
-                                                            <option value="5">منطقه/ناحیه 5</option>
-                                                        </select>
-                                                    </span>
-                                                </span>
-                                            </form>
-                                        </div>
+                                <div class="cr-check-bill">
+                                    <h3 class="cr-checkout-title">جزئیات صورت‌حساب و آدرس تحویل</h3>
+                                    
+                                    <div class="cr-check-bill-form">
+                                        <form method="post" action="{% url 'checkout:checkout' %}" id="checkout-form">
+                                            {% csrf_token %}
 
+                                            <!-- ۱. اطلاعات کاربری (فقط خواندنی یا قابل نمایش از پروفایل) -->
+                                            <div class="cr-bill-wrap cr-bill-half">
+                                                <label>نام و نام خانوادگی</label>
+                                                <input type="text" value="{{ request.user.get_full_name }}" readonly style="background-color: #f8f9fa;">
+                                            </div>
+                                            <div class="cr-bill-wrap cr-bill-half">
+                                                <label>شماره تماس / کاربری</label>
+                                                <input type="text" value="{{ request.user.phone_number|default:request.user.email }}" readonly style="background-color: #f8f9fa;">
+                                            </div>
+
+                                            <!-- ۲. انتخاب از بین آدرس‌های قبلی (اگر کاربر از قبل آدرسی داشته باشد) -->
+                                            {% if user_addresses.exists %}
+                                            <div class="cr-bill-wrap mb-4" style="background: #f7f7f8; padding: 15px; border-radius: 8px; border: 1px solid #e9e9e9;">
+                                                <label class="fw-bold mb-2">انتخاب از آدرس‌های ذخیره شده شما:</label>
+                                                <select id="saved-address-selector" name="selected_address_id" class="form-select mb-3">
+                                                    {% for addr in user_addresses %}
+                                                        <option value="{{ addr.id }}" 
+                                                                data-province="{{ addr.province.id }}"
+                                                                data-city="{{ addr.city.id }}"
+                                                                data-city-name="{{ addr.city.name }}"
+                                                                data-postal="{{ addr.postal_code }}"
+                                                                data-address="{{ addr.address }}"
+                                                                {% if selected_address and addr.id == selected_address.id %}selected{% endif %}>
+                                                            {{ addr.address_name }} - {{ addr.province.name }}، {{ addr.city.name }} ({{ addr.address|truncatechars:35 }})
+                                                        </option>
+                                                    {% endfor %}
+                                                    <option value="new" class="fw-bold text-success">+ افزودن و ذخیره یک آدرس جدید...</option>
+                                                </select>
+
+                                                
+                                                
+                                                <!-- فیلد نام آدرس جدید (فقط وقتی گزینه آدرس جدید انتخاب شود ظاهر می‌شود) -->
+                                                <div id="new-address-name-box" class="mt-3" style="display: none;">
+                                                    <label>عنوان آدرس جدید (مثلاً: خانه، محل کار)</label>
+                                                    <input type="text" name="address_name" class="cr-form-control mb-0" placeholder="مثلاً: محل کار">
+                                                </div>
+                                            </div>
+                                            {% else %}
+                                                <!-- اگر کاربر هیچ آدرسی ندارد، مستقیماً در حالت ثبت آدرس جدید قرار می‌گیرد -->
+                                                <input type="hidden" name="selected_address_id" value="new">
+                                                <div class="cr-bill-wrap">
+                                                    <label>عنوان آدرس (مثلاً: خانه، محل کار) *</label>
+                                                    <input type="text" name="address_name" class="cr-form-control" placeholder="خانه" required>
+                                                </div>
+                                            {% endif %}
+
+                                            <!-- ۳. فیلدهای اصلی فرم آدرس (که به صورت پیش‌فرض با اطلاعات پر شده‌اند) -->
+                                            <div class="cr-bill-wrap cr-bill-half">
+                                                <label>استان *</label>
+                                                <div class="cr-bl-select-inner">
+                                                    {{ form.province }}
+                                                </div>
+                                            </div>
+
+                                            <div class="cr-bill-wrap cr-bill-half">
+                                                <label>شهر *</label>
+                                                <div class="cr-bl-select-inner">
+                                                    {{ form.city }}
+                                                </div>
+                                            </div>
+
+                                            <div class="cr-bill-wrap">
+                                                <label>کد پستی *</label>
+                                                {{ form.postal_code }}
+                                            </div>
+                                            
+                                            <div class="cr-bill-wrap">
+                                                <label>آدرس دقیق *</label>
+                                                {{ form.address }}
+                                            </div>
+
+                                            <div class="cr-check-order-btn mt-3 w-100">
+                                                <button type="submit" class="cr-button">ثبت سفارش و پرداخت</button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
-                            </div>
+</div>
                             <span class="cr-check-order-btn">
                                 <a class="cr-button mt-30" href="#">ثبت سفارش</a>
                             </span>
@@ -253,3 +256,71 @@
     </section>
 {% endblock content %}
     
+<script>
+    // بارگذاری شهرهای استان جدید در صفحه Checkout
+$('#province').on('change', function () {
+    let provinceId = $(this).val();
+    if (!provinceId) return;
+
+    fetch(`/accounts/load-cities/?province=${provinceId}`)
+        .then(response => response.json())
+        .then(data => {
+            let $citySelect = $('#city');
+            let currentCity = $citySelect.val(); // نگهداری شهر فعلی در صورت وجود
+            
+            $citySelect.html('<option value="">انتخاب شهر</option>');
+            data.forEach(city => {
+                $citySelect.append(`<option value="${city.id}">${city.name}</option>`);
+            });
+
+            // اگر شهر قبلی در لیست جدید بود، دوباره انتخابش کن
+            if (currentCity) {
+                $citySelect.val(currentCity);
+            }
+        });
+});
+
+$(document).ready(function() {
+    $('#saved-address-selector').on('change', function() {
+        var selectedVal = $(this).val();
+
+        if (selectedVal === 'new') {
+            // ۱. کاربر می‌خواهد آدرس جدید ثبت کند: نمایش کادر عنوان و خالی کردن فیلدها
+            $('#new-address-name-box').slideDown();
+            $('#new_address_name').prop('required', true);
+            
+            $('#province').val('');
+            $('#city').html('<option value="">انتخاب شهر</option>');
+            $('input[name="postal_code"]').val('');
+            $('textarea[name="address"]').val('');
+        } else {
+            // ۲. کاربر یکی از آدرس‌های قبلی را انتخاب کرده است
+            $('#new-address-name-box').slideUp();
+            $('#new_address_name').prop('required', false).val('');
+
+            var selected = $(this).find('option:selected');
+            var provinceId = selected.data('province');
+            var cityId = selected.data('city');
+            var cityName = selected.data('city-name');
+            var postal = selected.data('postal');
+            var addressText = selected.data('address');
+
+            // پر کردن فیلدها با اطلاعات آدرس انتخاب‌شده
+            $('input[name="postal_code"]').val(postal);
+            $('textarea[name="address"]').val(addressText);
+            
+            // تغییر استان و فراخوانی شهرهای آن
+            $('#province').val(provinceId).trigger('change');
+
+            // انتخاب خودکار شهر پس از لود شدن لیست شهرها
+            setTimeout(function() {
+                if ($('#city option[value="' + cityId + '"]').length === 0) {
+                    $('#city').append(new Option(cityName, cityId, true, true));
+                } else {
+                    $('#city').val(cityId);
+                }
+            }, 200);
+        }
+    });
+});
+</script>

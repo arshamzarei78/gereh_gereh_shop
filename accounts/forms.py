@@ -101,6 +101,11 @@ class AddressForm(forms.ModelForm):
             except (ValueError, TypeError):
                 pass
 
+        elif self.instance.pk and self.instance.province_id:
+            self.fields["city"].queryset = City.objects.filter(
+                province_id=self.instance.province_id
+            ).order_by("name")
+
 class VerifyOTPForm(forms.Form):
     code = forms.CharField(
         max_length=6,

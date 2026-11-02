@@ -85,7 +85,9 @@ class RegisterView(FormView):
             # ۴. ورود کاربر
             login(self.request, user)
 
-            # ۵. انتقال قطعی به صفحه خانه
+            cart = self.request.session.get("cart")
+            if cart:
+                return redirect("checkout:checkout")
             return HttpResponseRedirect(self.get_success_url())
 
         except Exception as e:
