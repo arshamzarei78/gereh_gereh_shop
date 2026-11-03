@@ -1,0 +1,91 @@
+<div class="cr-blog-sideview" data-aos="fade-up" data-aos-duration="2000" data-aos-delay="400">
+    
+    <!-- ۱. باکس جستجو در وبلاگ -->
+    <div class="cr-serch-box">
+        <form class="cr-search" method="GET" action="{% url 'blog:list' %}">
+            <input class="search-input" type="text" name="q" placeholder="جستجو در مقالات..." value="{{ request.GET.q|default:'' }}">
+            <button type="submit" class="search-btn" style="border: none; background: transparent; cursor: pointer;">
+                <i class="ri-search-line"></i>
+            </button>
+        </form>
+    </div>
+
+    <!-- ۲. دسته‌بندی‌های بلاگ -->
+    {% if blog_categories %}
+    <div class="cr-blog-categories">
+        <div class="blog-heading">
+            <h4>دسته‌بندی مقالات</h4>
+        </div>
+        <div class="cr-blog-categories-content">
+            <ul>
+                {% for cat in blog_categories %}
+                <li>
+                    <a href="{% url 'blog:list' %}?category={{ cat.slug }}" 
+                       class="d-flex justify-content-between align-items-center {% if request.GET.category == cat.slug %}text-success fw-bold{% endif %}"
+                       style="color: inherit; text-decoration: none; width: 100%;">
+                        {{ cat.title }}
+                        <span>( {{ cat.post_count }} )</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- ۳. پست‌های اخیر -->
+    {% if recent_posts %}
+    <div class="cr-blog-recent">
+        <div class="blog-heading">
+            <h4>پست‌های اخیر</h4>
+        </div>
+        {% for recent in recent_posts %}
+        <div class="cr-blog-recent-post mb-3 pb-3 {% if not forloop.last %}border-bottom{% endif %}">
+            <div class="cr-blog-recent-image">
+                <a href="{{ recent.get_absolute_url }}">
+                    <img src="{{ recent.main_image.url }}" alt="{{ recent.title }}" style="object-fit: cover; border-radius: 8px;">
+                </a>
+            </div>
+            <div class="cr-blog-recent-content mt-2">
+                <span>{{ recent.created_at|date:"Y/m/d" }}</span>
+                <h4>
+                    <a href="{{ recent.get_absolute_url }}" style="color: inherit; text-decoration: none;">
+                        {{ recent.title }}
+                    </a>
+                </h4>
+                <p>{{ recent.short_description|truncatewords:10 }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- ۴. برچسب‌های محبوب -->
+    {% if blog_tags %}
+    <div class="cr-blog-tags">
+        <div class="blog-heading">
+            <h4>برچسب‌های محبوب</h4>
+        </div>
+        <div class="cr-blog-tags-inner">
+            <ul class="cr-tags">
+                {% for tag in blog_tags %}
+                <li>
+                    <a href="{% url 'blog:list' %}?tag={{ tag.slug }}"
+                       {% if request.GET.tag == tag.slug %}style="background-color: #64b496; color: #fff;"{% endif %}>
+                        {{ tag.name }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- دکمه پاک کردن فیلترها (در صورتی که کاربر چیزی سرچ یا فیلتر کرده باشد) -->
+    {% if request.GET.q or request.GET.category or request.GET.tag %}
+    <div class="mt-4">
+        <a href="{% url 'blog:list' %}" class="cr-button w-100 text-center d-block">نمایش همه مقالات</a>
+    </div>
+    {% endif %}
+
+</div>

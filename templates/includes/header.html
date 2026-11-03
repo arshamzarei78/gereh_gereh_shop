@@ -36,9 +36,6 @@
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li>
-                                        <a class="dropdown-item" href="checkout.html">ادامه خرید</a>
-                                    </li>
-                                    <li>
                                         <a class="dropdown-item" href="{% url 'accounts:verify_otp' %}">ورود</a>
                                     </li>
                                 </ul>
@@ -70,7 +67,7 @@
     <div class="cr-fix" id="cr-main-menu-desk">
         <div class="container">
             <div class="cr-menu-list">
-                <div class="cr-category-icon-block">
+               <div class="cr-category-icon-block">
                     <div class="cr-category-menu">
                         <div class="cr-category-toggle">
                             <i class="ri-menu-2-line"></i>
@@ -79,157 +76,48 @@
                     <div class="cr-cat-dropdown">
                         <div class="cr-cat-block">
                             <div class="cr-cat-tab">
-                                <div class="cr-tab-list nav flex-column nav-pills" id="v-pills-tab" role="tablist"
-                                    aria-orientation="vertical">
-                                    <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill"
-                                        data-bs-target="#v-pills-home" type="button" role="tab"
-                                        aria-controls="v-pills-home" aria-selected="true">
-                                        لبنیات و نان</button>
-                                    <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill"
-                                        data-bs-target="#v-pills-profile" type="button" role="tab"
-                                        aria-controls="v-pills-profile" aria-selected="false" tabindex="-1">
-                                        میوه و سبزی</button>
-                                    <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill"
-                                        data-bs-target="#v-pills-messages" type="button" role="tab"
-                                        aria-controls="v-pills-messages" aria-selected="false" tabindex="-1">
-                                        خوراکی و ادویه</button>
-                                    <button class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill"
-                                        data-bs-target="#v-pills-settings" type="button" role="tab"
-                                        aria-controls="v-pills-settings" aria-selected="false" tabindex="-1">
-                                        آبمیوه و نوشیدنی </button>
-                                    <a class="nav-link" href="shop-left-sidebar.html">
-                                        مشاهده همه </a>
+                                
+                                <!-- سمت راست: لیست داینامیک دسته‌بندی‌ها -->
+                                <div class="cr-tab-list nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                                    {% for cat in categories %}
+                                        <button class="nav-link {% if forloop.first %}active{% endif %}" 
+                                                id="v-pills-{{ cat.id }}-tab" data-bs-toggle="pill"
+                                                data-bs-target="#v-pills-{{ cat.id }}" type="button" role="tab"
+                                                aria-controls="v-pills-{{ cat.id }}" 
+                                                aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+                                            {{ cat.titel }}
+                                        </button>
+                                    {% endfor %}
+                                    <!-- دکمه ثابت برای مشاهده کل فروشگاه -->
+                                    <a class="nav-link text-success fw-bold" href="{% url 'products:search' %}">
+                                        مشاهده همه محصولات
+                                    </a>
                                 </div>
-                                <div class="tab-content" id="v-pills-tabContent">
-                                    <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel"
-                                        aria-labelledby="v-pills-home-tab">
-                                        <div class="tab-list row">
-                                            <div class="col">
-                                                <h6 class="cr-col-title">لبنیات</h6>
-                                                <ul class="cat-list">
-                                                    <li><a href="shop-left-sidebar.html">شیر</a></li>
-                                                    <li><a href="shop-left-sidebar.html">بستنی</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">پنیر</a></li>
-                                                    <li><a href="shop-left-sidebar.html">دسر یخ زده</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">ماست یخ زده</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="col">
-                                                <h6 class="cr-col-title">نان و شیرینی</h6>
-                                                <ul class="cat-list">
-                                                    <li><a href="shop-left-sidebar.html">کیک و شیرینی</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">تست </a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">نان ها</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">بروانی شکلاتی</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">رول دارچینی </a>
-                                                    </li>
-                                                </ul>
+                                
+                                <!-- سمت چپ: محتوای اختصاصی هر دسته‌بندی -->
+                                <div class="tab-content" id="v-pills-tabContent" style="min-width: 300px;">
+                                    {% for cat in categories %}
+                                        <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" 
+                                            id="v-pills-{{ cat.id }}" role="tabpanel" aria-labelledby="v-pills-{{ cat.id }}-tab">
+                                            <div class="tab-list row h-100 align-items-center justify-content-center text-center p-4">
+                                                <div class="col-12">
+                                                    <i class="ri-shopping-bag-3-line" style="font-size: 3rem; color: #7a7a7a; opacity: 0.3;"></i>
+                                                    <h6 class="cr-col-title mt-3 mb-2" style="font-size: 1.1rem;">
+                                                        محصولات {{ cat.titel }}
+                                                    </h6>
+                                                    <p class="text-muted mb-4" style="font-size: 0.85rem;">
+                                                        تنوع بی‌نظیر {{ cat.titel }} دست‌ساز با بهترین الیاف و کاموا
+                                                    </p>
+                                                    <!-- ارسال هوشمند کاربر به صفحه جستجو همراه با اعمال فیلتر این دسته -->
+                                                    <a href="{% url 'products:search' %}?category={{ cat.id }}" class="cr-button cr-btn-secondary btn-sm">
+                                                        مشاهده و خرید
+                                                    </a>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="v-pills-profile" role="tabpanel"
-                                        aria-labelledby="v-pills-profile-tab">
-                                        <div class="tab-list row">
-                                            <div class="col">
-                                                <h6 class="cr-col-title">میوه</h6>
-                                                <ul class="cat-list">
-                                                    <li><a href="shop-left-sidebar.html">گل کلم</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">فلفل دلمه</a></li>
-                                                    <li><a href="shop-left-sidebar.html">بروکلی</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">کلم</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">گوجه</a></li>
-                                                </ul>
-                                            </div>
-                                            <div class="col">
-                                                <h6 class="cr-col-title">سبریجات</h6>
-                                                <ul class="cat-list">
-                                                    <li><a href="shop-left-sidebar.html">گل کلم</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">فلفل دلمه</a></li>
-                                                    <li><a href="shop-left-sidebar.html">بروکلی</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">کلم</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">گوجه</a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="v-pills-messages" role="tabpanel"
-                                        aria-labelledby="v-pills-messages-tab">
-                                        <div class="tab-list row">
-                                            <div class="col">
-                                                <h6 class="cr-col-title">اسنک</h6>
-                                                <ul class="cat-list">
-                                                    <li><a href="shop-left-sidebar.html">فرنچ فرایز</a></li>
-                                                    <li><a href="shop-left-sidebar.html">چیپس سیب زمینی</a></li>
-                                                    <li><a href="shop-left-sidebar.html">بیسکوییت و کوکی</a></li>
-                                                    <li><a href="shop-left-sidebar.html">پاپ کورن</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">کیک برنج</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                            <div class="col">
-                                                <h6 class="cr-col-title">ادویه</h6>
-                                                <ul class="cat-list">
-                                                    <li><a href="shop-left-sidebar.html">پودر دارچین</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">پودر کاری</a></li>
-                                                    <li><a href="shop-left-sidebar.html">پودر نارگیل</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">پودر فلفل</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">پودر پاپریکا</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="tab-pane fade" id="v-pills-settings" role="tabpanel"
-                                        aria-labelledby="v-pills-settings-tab">
-                                        <div class="tab-list row">
-                                            <div class="col">
-                                                <h6 class="cr-col-title">آبمیوه</h6>
-                                                <ul class="cat-list">
-                                                    <li><a href="shop-left-sidebar.html">آب انبه</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">آب نارگیل</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">آب شاتوت</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">آب سیب</a></li>
-                                                    <li><a href="shop-left-sidebar.html">آب لیچی</a></li>
-                                                </ul>
-                                            </div>
-                                            <div class="col">
-                                                <h6 class="cr-col-title">نوشیدنی</h6>
-                                                <ul class="cat-list">
-                                                    <li><a href="shop-left-sidebar.html">کوکا کولا</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">کوکا کولا</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">کوکا کولا</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">کوکا کولا</a>
-                                                    </li>
-                                                    <li><a href="shop-left-sidebar.html">کوکا کولا</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    {% endfor %}
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -269,28 +157,6 @@
                                 </a>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="javascript:void(0)">
-                                    دسته بندی
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a class="dropdown-item" href="shop-right-sidebar.html">
-                                            فروشگاه سایدبار چپ
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="shop-left-sidebar.html">
-                                            فروشگاه سایدبار راست
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="shop-full-width.html">
-                                            عرض کامل
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
                                 <a class="nav-link" href="{% url 'products:list' %}">
                                     محصولات
                                 </a>
@@ -308,22 +174,10 @@
                                         <a class="dropdown-item" href="contact-us.html">تماس با ما</a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="cart.html">سبد خرید</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="checkout.html">ادامه خرید</a>
-                                    </li>
-                                    <li>
                                         <a class="dropdown-item" href="track-order.html">پیگیری سفارش</a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="wishlist.html">علاقه مندی </a>
-                                    </li>
-                                    <li>
                                         <a class="dropdown-item" href="{% url 'home:faq' %}">سوالات متداول</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="{% url 'accounts:verify_otp' %}">ورود</a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="policy.html">سیاست</a>
@@ -331,106 +185,18 @@
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="javascript:void(0)">
+                                <a class="nav-link" href="{% url 'blog:list' %}">
                                     بلاگ
                                 </a>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a class="dropdown-item" href="blog-right-sidebar.html">
-                                            سایدبار چپ
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="blog-left-sidebar.html">
-                                            سایدبار راست
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="blog-full-width.html">
-                                            عرض کامل
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="blog-detail-right-sidebar.html">جزییات
-                                            سایدبار چپ</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="blog-detail-left-sidebar.html">جزییات سایدبار
-                                            راست</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="blog-detail-full-width.html">جزییات تمام
-                                            عرض</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="javascript:void(0)">
-                                    عناصر
-                                </a>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a class="dropdown-item" href="elements-products.html">محصولات</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="elements-typography.html">تایپوگرافی</a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="elements-buttons.html">دکمه ها</a>
-                                    </li>
-                                </ul>
                             </li>
                         </ul>
                     </div>
                 </nav>
                 <div class="cr-location-block">
-                    {% comment %} <div class="cr-location-menu">
-                        <div class="cr-location-toggle">
-                            <i class="ri-map-pin-line"></i>
-                            <span class="cr-location-title d-1199 cr-location">نیویورک</span>
-                            <i class="ri-arrow-down-s-line d-1199 cr-angle"></i>
-                        </div>
-                        <div class="cr-location-content">
-                            <div class="cr-location-dropdown">
-                                <div class="row cr-location-wrapper">
-                                    <ul class="loc-grid">
-                                        <li class="loc-list current">
-                                            <i class="ri-map-pin-line"></i>
-                                            <span class="cr-detail-current">موقعیت فعلی</span>
-                                        </li>
-                                        <li class="loc-list">
-                                            <i class="ri-map-pin-line"></i>
-                                            <span class="cr-detail">فرشتگان</span>
-                                        </li>
-                                        <li class="loc-list">
-                                            <i class="ri-map-pin-line"></i>
-                                            <span class="cr-detail">شیکاگو</span>
-                                        </li>
-                                        <li class="loc-list">
-                                            <i class="ri-map-pin-line"></i>
-                                            <span class="cr-detail">هیوستون</span>
-                                        </li>
-                                        <li class="loc-list">
-                                            <i class="ri-map-pin-line"></i>
-                                            <span class="cr-detail">ققنوس</span>
-                                        </li>
-                                        <li class="loc-list">
-                                            <i class="ri-map-pin-line"></i>
-                                            <span class="cr-detail">سن دیگو</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div> {% endcomment %}
+                   
                 </div>
             </div>
         </div>
     </div>
 </header>
 
-<script>
-    function dark(){
-        document.querySelector(".darck").d
-    }
-</script>

@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'products',
     'django_cleanup.apps.CleanupConfig',
     'cart',
-    'checkout'
+    'checkout',
+    'blog'
 ]
 
 MIDDLEWARE = [

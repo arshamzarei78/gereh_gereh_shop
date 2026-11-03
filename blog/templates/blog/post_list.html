@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+مقالات
+{% endblock title %}
+{% block main_css %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/color-2.css' %}" id='add_class'>
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<section class="section-breadcrumb">
+    <div class="cr-breadcrumb-image">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="cr-breadcrumb-title">
+                        <h2>مجله و وبلاگ گره گره</h2>
+                        <span><a href="{% url 'home:home' %}">خانه</a> - بلاگ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- لیست مقالات -->
+<section class="section-blog-Classic padding-tb-100">
+    <div class="container">
+        <div class="row">
+            
+            <!-- سایدبار (سمت راست/چپ بسته به دایرکشن قالب) -->
+            <div class="col-lg-3 col-12 md-30">
+                {% include 'includes/blog_sidebar.html' %}
+            </div>
+
+            <!-- محتوای اصلی مقالات -->
+            <div class="col-lg-9 col-12 md-30">
+                {% for post in posts %}
+                <div class="cr-blog-classic" data-aos="fade-up" data-aos-duration="2000" data-aos-delay="400">
+                    <div class="cr-blog-classic-content">
+                        <div class="cr-comment">
+                            <span>
+                                توسط {{ post.author.get_full_name|default:"ادمین" }} 
+                                <code> / {{ post.approved_comments_count }} نظر</code>
+                                <code> / {{ post.created_at|date:"Y/m/d" }}</code>
+                            </span>
+                        </div>
+                        <h4>
+                            <a href="{{ post.get_absolute_url }}" style="color: inherit; text-decoration: none;">
+                                {{ post.title }}
+                            </a>
+                        </h4>
+                        <p>{{ post.short_description }}</p>
+                        <a href="{{ post.get_absolute_url }}">بیشتر بخوانید</a>
+                    </div>
+                    <div class="cr-blog-image">
+                        <a href="{{ post.get_absolute_url }}">
+                            <img src="{{ post.main_image.url }}" alt="{{ post.title }}">
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="alert alert-light text-center p-5 border rounded-3">
+                    <h5>مقاله‌ای یافت نشد!</h5>
+                    <p class="text-muted mt-2">متاسفانه مقاله‌ای مطابق با جستجوی شما وجود ندارد.</p>
+                    <a href="{% url 'blog:list' %}" class="cr-button mt-3 d-inline-block">مشاهده همه مقالات</a>
+                </div>
+                {% endfor %}
+
+                <!-- صفحه‌بندی (Pagination) هوشمند با حفظ فیلترها -->
+                {% if is_paginated %}
+                <nav aria-label="..." class="cr-pagination mt-4">
+                    <ul class="pagination">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{{ query_string }}page={{ page_obj.previous_page_number }}">قبلی</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">قبلی</span>
+                        </li>
+                        {% endif %}
+
+                        {% for num in paginator.page_range %}
+                            {% if page_obj.number == num %}
+                            <li class="page-item active" aria-current="page">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                            {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?{{ query_string }}page={{ num }}">{{ num }}</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{{ query_string }}page={{ page_obj.next_page_number }}">بعدی</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">بعدی</span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

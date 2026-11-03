@@ -85,6 +85,14 @@
     <!-- Main Custom -->
     <script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'js/demo-2.js' %}"></script>
+    <script>
+$(document).ready(function(){
+    // فعال‌سازی تغییر تب مگا منو با هاور کردن (بردن موس)
+    $('#v-pills-tab button[data-bs-toggle="pill"]').on('mouseenter', function () {
+        $(this).trigger('click');
+    });
+});
+</script>
 </body>
 
 </html>
