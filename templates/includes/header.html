@@ -8,17 +8,24 @@
                         <img src="{% static 'img/logo/logo.png' %}" alt="logo" class="logo">
                         <img src="{% static 'img/logo/dark-logo.png' %}" alt="logo" class="dark-logo">
                     </a>
-                    <form class="cr-search">
-                        <input class="search-input" type="text" placeholder="جستجو محصولات ...">
-                        <select class="form-select" aria-label="Default select example">
-                            <option selected>همه دسته‌بندی ها</option>
-                            <option value="1">مردانه</option>
-                            <option value="2">زنانه</option>
-                            <option value="3">الکترونیکی</option>
+                    <form class="cr-search" method="GET" action="{% url 'products:search' %}">
+                        <input class="search-input" name="q" type="text" placeholder="جستجو محصولات ..." autocomplete="on" {% if request.GET.q %} value="{{ request.GET.q }}" {% endif %}>
+                        
+                        <select name="category" class="form-select" aria-label="Default select example">
+                            <option value="" {% if not request.GET.category %}selected{% endif %}>همه دسته‌بندی ها</option>
+                            
+                            <!-- حلقه برای لود کردن داینامیک تمام دسته‌بندی‌ها -->
+                            {% for cat in categories %}
+                                <!-- بررسی اینکه آیا کاربر این دسته را سرچ کرده تا تیک selected روی آن بماند -->
+                                <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ cat.titel }}
+                                </option>
+                            {% endfor %}
                         </select>
-                        <a href="javascript:void(0)" class="search-btn">
+                        
+                        <button type="submit" class="search-btn">
                             <i class="ri-search-line"></i>
-                        </a>
+                        </button>
                     </form>
                     <div class="cr-right-bar">
                         <ul class="navbar-nav">
@@ -284,26 +291,10 @@
                                 </ul>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="javascript:void(0)">
+                                <a class="nav-link" href="{% url 'products:list' %}">
                                     محصولات
                                 </a>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a class="dropdown-item" href="product-right-sidebar.html">
-                                            محصول سایدبار چپ
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="product-left-sidebar.html">
-                                            محصول سایدبار راست
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href="product-full-width.html">
-                                            محصول تمام عرض
-                                        </a>
-                                    </li>
-                                </ul>
+                               
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="javascript:void(0)">
@@ -329,7 +320,7 @@
                                         <a class="dropdown-item" href="wishlist.html">علاقه مندی </a>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="faq.html">سوالات متداول</a>
+                                        <a class="dropdown-item" href="{% url 'home:faq' %}">سوالات متداول</a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" href="{% url 'accounts:verify_otp' %}">ورود</a>

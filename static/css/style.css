@@ -6825,12 +6825,12 @@ h4.cr-shop-sub-title {
 
 .cr-checkbox .checkbox-group input:checked+label:after {
   width: 6px;
-  height: 9px;
+  height: 12px;
   content: "";
   display: block;
   position: absolute;
-  top: 4px;
-  left: 6px;
+  top: 0%;
+  right: 6px;
   border: solid #64b496;
   border-width: 0 2px 2px 0;
   -webkit-transform: rotate(45deg);

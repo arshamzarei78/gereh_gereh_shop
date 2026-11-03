@@ -487,22 +487,40 @@ $(document).on("click", ".remove-cart-item", function (e) {
             setTimeout(function () { $('.cr-wish-notify').fadeOut(); }, 2000);
         });
 
-        /* Product Image Zoom & Range Slider */
+    /* Product Image Zoom */
         if ($.fn.zoom && $('.zoom-image-hover').length) {
             $('.zoom-image-hover').zoom();
         }
 
+        /* Range Slider (Customized for Django Toman) */
         if ($.fn.slider && $("#slider-range").length) {
+            // خواندن مقادیر فیلتر شده از فرم (برای بعد از رفرش شدن صفحه)
+            var minPrice = parseInt($('#min_price').val()) || 0;
+            var maxPrice = parseInt($('#max_price').val()) || 5000000;
+            var absoluteMax = 5000000; // سقف قیمت (مثلاً ۵ میلیون تومان)
+
             $("#slider-range").slider({
                 range: true,
-                min: 20,
-                max: 300,
-                values: [0, 250],
+                min: 0,
+                max: absoluteMax,
+                step: 50000, // پرش‌های ۵۰ هزار تومانی
+                values: [minPrice, maxPrice],
                 slide: function (event, ui) {
-                    $("#amount").val(ui.values[0] + " تومان - " + ui.values[1] + " تومان ");
+                    // نمایش زیبای اعداد با کاما برای کاربر
+                    var displayMin = ui.values[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    var displayMax = ui.values[1].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    $("#amount").val(displayMin + " - " + displayMax + " تومان ");
+                    
+                    // قرار دادن اعداد خام و واقعی در فیلدهای مخفی برای ارسال به جنگو
+                    $("#min_price").val(ui.values[0]);
+                    $("#max_price").val(ui.values[1]);
                 }
             });
-            $("#amount").val($("#slider-range").slider("values", 0) + " تومان - " + $("#slider-range").slider("values", 1) + " تومان ");
+
+            // تنظیم متن نمایشی در همان لحظه لود صفحه
+            var initialMin = $("#slider-range").slider("values", 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            var initialMax = $("#slider-range").slider("values", 1).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            $("#amount").val(initialMin + " - " + initialMax + " تومان ");
         }
 
         /* Tab to top */
