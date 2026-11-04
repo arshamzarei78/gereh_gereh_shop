@@ -6,6 +6,7 @@
  ============================================================-->
 {% extends "base.html" %}
 {% load static %}
+{% load jalali_tags %}
 
 {% block title %}
     صفحه خانه
@@ -39,10 +40,10 @@
                                     <div class="col-lg-12">
                                         <div class="cr-left-side-contain slider-animation">
                                             <h5> <Span> 100 ٪ </span> پارچه پنبه</h5>
-                                            <h1>فروش مد برای زنان.</h1>
-                                            <p>Lلورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده
-                                                از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه
-                                                و مجله در ستون و سطرآنچنان که لازم است</p>
+                                            <h1>هنر دست، زیبایی ماندگار</h1>
+                                            <p>با مکرمه، به فضای زندگی‌تان روحی تازه ببخشید
+                                                . ترکیبی از هنر، ظرافت و خلاقیت که با دستان هنرمندانه خلق شده
+                                                 تا گوشه‌گوشه خانه‌تان را گرم‌تر، زیباتر و خاص‌تر کند.</p>
                                             <div class="cr-last-buttons">
                                                 <a href="shop-left-sidebar.html" class="cr-button">
                                                     خرید
@@ -61,10 +62,10 @@
                                     <div class="col-lg-12">
                                         <div class="cr-left-side-contain slider-animation">
                                             <h5> <Span> 100 ٪ </span> پارچه پنبه</h5>
-                                            <h1>فروش تابستانی شلوار جین را کاوش کنید.</h1>
-                                            <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از
-                                                طراحان گرافیک است. چاپگرها و متون بلکه روزنامه
-                                                و مجله در ستون و سطرآنچنان که لازم است.</p>
+                                            <h1>زیبایی در تار و پود هنر</h1>
+                                            <p>با هنر مکرمه، سادگی را به زیبایی تبدیل کنید.
+                                                 دست‌سازه‌هایی خاص و چشم‌نواز که با عشق و ظرافت بافته شده‌اند
+                                                  تا به دکوراسیون خانه شما جلوه‌ای گرم، دلنشین و متفاوت ببخشند.</p>
                                             <div class="cr-last-buttons">
                                                 <a href="shop-left-sidebar.html" class="cr-button">
                                                     خرید
@@ -273,34 +274,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-12">
-                        <div class="cr-deal-rightside">
-                            <div class="cr-deal-content" data-aos="fade-up" data-aos-duration="2000">
-                                <span><code>40%</code> تخفیف</span>
-                                <h4 class="cr-deal-title">تخفیف زیادی در دسته بندی مد زنان.</h4>
-                                <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان
-                                    گرافیک است. مجله در ستون و سطرآنچنان که لازم است</p>
-                                <div id="timer" class="cr-counter">
-                                    <div class="cr-counter-inner">
-                                        <h4>
-                                            <span id="days"></span>
-                                            روز
-                                        </h4>
-                                        <h4>
-                                            <span id="hours"></span>
-                                            ساعت
-                                        </h4>
-                                        <h4>
-                                            <span id="minutes"></span>
-                                            دقیقه
-                                        </h4>
-                                        <h4>
-                                            <span id="seconds"></span>
-                                            ثانیه
-                                        </h4>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                       
                     </div>
                 </div>
             </div>
@@ -308,7 +282,7 @@
     </section>
 
     <!-- Product banner -->
-    <section class="section-product-banner padding-b-100">
+    {% comment %} <section class="section-product-banner padding-b-100">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12">
@@ -358,7 +332,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> {% endcomment %}
 
 
 
@@ -382,78 +356,26 @@
                 <div class="col-lg-12">
                     <div class="cr-blog-slider swiper-container">
                         <div class="swiper-wrapper">
+                            {% for post in posts %}
                             <div class="swiper-slide" data-aos="fade-up" data-aos-duration="2000">
                                 <div class="cr-blog">
                                     <div class="cr-blog-image">
-                                        <img src="{% static 'img/blog/4.jpg' %}" alt="blog-2">
+                                        <img src="{{post.main_image.url}}" alt="{{post.title}}">
                                         <div class="cr-blog-date">
                                             <span>
-                                                10
-                                                <code>دی</code>
+                                                {{ post.created_at|to_jalali:"%d" }}
+                                                <code>{{ post.created_at|to_jalali:"%B" }}</code>
                                             </span>
                                         </div>
                                     </div>
                                     <div class="cr-blog-content">
-                                        <span><code>توسط ادمین</code> | <a href="blog-left-sidebar.html">اسنک</a></span>
-                                        <h5> توسعه دهنده قیمت مائوریس در حال اجرا در .</h5>
+                                        <span><code>{{post.quote_author}}</code> | <a href="{{post.get_absolute_url}}">{{post.tags.first}}</a></span>
+                                        <h5>{{post.title}}</h5>
                                         <a class="read" href="blog-detail-left-sidebar.html">بیشتر بخوانید</a>
                                     </div>
                                 </div>
                             </div>
-                            <div class="swiper-slide" data-aos="fade-up" data-aos-duration="2000">
-                                <div class="cr-blog">
-                                    <div class="cr-blog-image">
-                                        <img src="{% static 'img/blog/5.jpg' %}" alt="blog-1">
-                                        <div class="cr-blog-date">
-                                            <span>
-                                                09<code>دی</code>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="cr-blog-content">
-                                        <span><code>توسط ادمین</code> | <a href="blog-left-sidebar.html">غذا</a></span>
-                                        <h5> بهترین راهنمای خرید مواد آلی.</h5>
-                                        <a class="read" href="blog-detail-left-sidebar.html">بیشتر بخوانید</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="swiper-slide" data-aos="fade-up" data-aos-duration="2000">
-                                <div class="cr-blog">
-                                    <div class="cr-blog-image">
-                                        <img src="{% static 'img/blog/6.jpg' %}" alt="blog-2">
-                                        <div class="cr-blog-date">
-                                            <span>
-                                                12
-                                                <code>دی</code>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="cr-blog-content">
-                                        <span><code>توسط ادمین</code> | <a href="blog-left-sidebar.html">اسنک</a></span>
-                                        <h5> در توسعه دهنده توسعه دهنده قیمت گلدان.</h5>
-                                        <a class="read" href="blog-detail-left-sidebar.html">بیشتر بخوانید</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="swiper-slide" data-aos="fade-up" data-aos-duration="2000">
-                                <div class="cr-blog">
-                                    <div class="cr-blog-image">
-                                        <img src="assets/img/blog/7.jpg" alt="blog-3">
-                                        <div class="cr-blog-date">
-                                            <span>
-                                                22
-                                                <code>دی</code>
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="cr-blog-content">
-                                        <span><code>توسط ادمین</code> | <a
-                                                href="blog-left-sidebar.html">سبریجات</a></span>
-                                        <h5> برای اعضای از اعضای متنفر.</h5>
-                                        <a class="read" href="blog-detail-left-sidebar.html">بیشتر بخوانید</a>
-                                    </div>
-                                </div>
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>

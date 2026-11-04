@@ -94,8 +94,9 @@
                                     <div class="cr-brand">
                                         <a href="{{product.get_absolute_url}}">{{product.name}}</a>
                                     </div>
-                                    <a href="{{product.get_absolute_url}}" class="title">{{product.description|truncatechars:30}}</a>
-بسته 500 گرم</a>
+                                    <a href="{{product.get_absolute_url}}" class="title">{{product.description|truncatechars:30}}
+
+                                    </a>{{product.variant.color}}</a>
                                     <p class="text">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است</p>
                                     <p class="cr-price">
                                         <span class="new-price">{{product.variant.final_price_display}} تومان</span>

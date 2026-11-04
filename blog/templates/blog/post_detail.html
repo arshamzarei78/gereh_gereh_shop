@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load jalali_tags %}
 {% block title %}
 {{ post.title }}
 {% endblock title %}
@@ -54,7 +55,7 @@
                             <span>
                                 <code>توسط {{ post.author.get_full_name|default:"ادمین" }}</code> / 
                                 {{ post.approved_comments_count }} نظر / 
-                                تاریخ - {{ post.created_at|date:"Y/m/d" }}
+                                تاریخ - {{ post.created_at|to_jalali:"%Y/%m/%d" }}
                             </span>
                         </div>
                         <div class="cr-banner">

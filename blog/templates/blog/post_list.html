@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load jalali_tags %}
 {% block title %}
 مقالات
 {% endblock title %}
@@ -44,7 +45,7 @@
                             <span>
                                 توسط {{ post.author.get_full_name|default:"ادمین" }} 
                                 <code> / {{ post.approved_comments_count }} نظر</code>
-                                <code> / {{ post.created_at|date:"Y/m/d" }}</code>
+                                <code> / {{ post.created_at|to_jalali:"%Y/%m/%d" }}</code>
                             </span>
                         </div>
                         <h4>
