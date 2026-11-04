@@ -158,13 +158,13 @@
                         <div class="cr-pro-content">
                             <div class="cr-info">
                                 <a href="shop-left-sidebar.html">{{product.category.first}}</a>
-                                <div class="cr-pro-rating">
+                                {% comment %} <div class="cr-pro-rating">
                                     <i class="ri-star-line fill"></i>
                                     <i class="ri-star-line fill"></i>
                                     <i class="ri-star-line fill"></i>
                                     <i class="ri-star-line fill"></i>
                                     <i class="ri-star-line fill"></i>
-                                </div>
+                                </div> {% endcomment %}
                             </div>
 
                             <h5 class="cr-pro-title"><a href="{{product.get_absolute_url}}">{{product.name}}</a>
@@ -173,32 +173,7 @@
                                 <span class="new-price">{{product.variant.final_price_display}} تومان</span>
                                 <span class="old-price">{{product.variant.price_display}} تومان</span>
                             </span>
-                            <div class="cr-pro-option">
-                                <div class="cr-pro-color">
-                                    <ul class="cr-opt-swatch cr-change-img">
-                                        <li class="active">
-                                            <a href="javascript:void(0)" class="cr-opt-clr-img">
-                                                <span style="background-color:#74c7ff;"></span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="javascript:void(0)" class="cr-opt-clr-img">
-                                                <span style="background-color:#f39fab;"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="cr-pro-size">
-                                    <ul class="cr-opt-size">
-                                        <li><a href="javascript:void(0)" class="cr-opt-sz" data-old=" 22 تومان"
-                                                data-new="17 تومان" data-tooltip="Medium">M</a></li>
-                                        <li><a href="javascript:void(0)" class="cr-opt-sz" data-old=" 25 تومان"
-                                                data-new="20 تومان" data-tooltip="Large">L</a></li>
-                                        <li><a href="javascript:void(0)" class="cr-opt-sz" data-old="27 تومان"
-                                                data-new=" 22 تومان" data-tooltip="Extra Large">XL</a></li>
-                                    </ul>
-                                </div>
-                            </div>
+                           
                         </div>
                     </div>
                 </div>

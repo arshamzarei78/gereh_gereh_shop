@@ -1,7 +1,8 @@
 from django.views.generic import ListView, DetailView
 from django.db.models import Count, Q
-from .models import Post, BlogCategory, BlogTag
-
+from .models import Post, BlogCategory, BlogTag, BlogComment
+from django.contrib import messages
+from django.shortcuts import redirect
 
 class BlogSidebarMixin:
     """
@@ -103,3 +104,28 @@ class PostDetailView(BlogSidebarMixin, DetailView):
         # ارسال لیست نظرات تایید شده این مقاله
         context["comments"] = self.object.comments.filter(is_approved=True).select_related("user")
         return context
+
+    def post(self, request, *args, **kwargs):
+        # این متد فرم ارسال نظر که با متد POST ارسال می‌شود را هندل می‌کند
+        self.object = self.get_object()
+
+        # بررسی لاگین بودن کاربر (محض اطمینان برای جلوگیری از ارسال مستقیم ریکوئست)
+        if not request.user.is_authenticated:
+            messages.error(request, "برای ثبت نظر ابتدا باید وارد حساب کاربری خود شوید.")
+            return redirect(self.request.path_info)
+
+        content = request.POST.get('content', '').strip()
+        if content:
+            # ایجاد و ذخیره نظر جدید در دیتابیس
+            # نیاز به ایمپورت BlogComment در بالای فایل دارید
+            BlogComment.objects.create(
+                post=self.object,
+                user=request.user,
+                content=content,
+            )
+            messages.success(request, "دیدگاه شما با موفقیت ثبت شد و پس از تایید مدیریت نمایش داده خواهد شد.")
+        else:
+            messages.error(request, "لطفاً متن نظر خود را وارد کنید.")
+
+        # بازگشت به همان صفحه مقاله و اسکرول خودکار به بخش نظرات
+        return redirect(f"{self.request.path_info}#comments-section")

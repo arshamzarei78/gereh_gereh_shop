@@ -66,7 +66,7 @@
                         </div>
                     </div>
 
-                    <!-- تصاویر فرعی میانی (فقط در صورتی نمایش داده می‌شود که در ادمین آپلود شده باشند) -->
+                    <!-- تصاویر فرعی میانی -->
                     {% if post.sub_image_1 or post.sub_image_2 %}
                     <div class="row mt-30">
                         {% if post.sub_image_1 %}
@@ -140,6 +140,95 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- ==================== بخش نظرات کاربران ==================== -->
+                    <div class="cr-blog-comments mt-5 pt-4 border-top" id="comments-section">
+                        
+                        <!-- نمایش پیام‌های سیستم (موفقیت یا خطا پس از ثبت نظر) -->
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show mb-4" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        <!-- ۱. لیست نظرات تایید شده -->
+                        <h4 class="mb-4 fw-bold">
+                            <i class="ri-chat-3-line text-success ms-1"></i>
+                            نظرات کاربران ({{ post.approved_comments_count|default:0 }})
+                        </h4>
+
+                        <div class="cr-comment-list mb-5">
+                            {% for comment in comments %}
+                                <div class="cr-comment-box p-3 mb-3 rounded border">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div class="d-flex align-items-center">
+                                            <i class="ri-user-smile-line fs-4 me-2 text-secondary"></i>
+                                            <strong class="ms-2">{{ comment.user.get_full_name|default:"کاربر گره گره" }}</strong>
+                                        </div>
+                                        <span class="text-muted small">
+                                            <i class="ri-calendar-line ms-1"></i>{{ comment.created_at|to_jalali:"%Y/%m/%d - %H:%M" }}
+                                        </span>
+                                    </div>
+                                    <p class="mb-0 text-secondary" style="line-height: 1.8;">
+                                        {{ comment.content|linebreaksbr }}
+                                    </p>
+                                </div>
+                            {% empty %}
+                                <div class="text-center p-4 rounded border border-dashed text-muted">
+                                    هنوز نظری برای این مقاله ثبت نشده است. اولین نفری باشید که نظر می‌دهد!
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- ۲. فرم ارسال نظر جدید -->
+                        <div class="cr-blog-comment-form">
+                            <h4 class="mb-3 fw-bold">ارسال دیدگاه</h4>
+                            
+                            {% if request.user.is_authenticated %}
+                                <p class="text-muted small mb-3">
+                                    شما با نام <strong>{{ request.user.get_full_name|default:request.user.phone_number }}</strong> وارد شده‌اید. نظر شما پس از تایید مدیر در سایت نمایش داده می‌شود.
+                                </p>
+                                <form method="post" action="{{ request.path }}#comments-section">
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-12 mb-3">
+                                            <div class="cr-form-control">
+                                                <label for="comment-content" class="form-label fw-medium">متن نظر شما <span class="text-danger">*</span></label>
+                                                <textarea 
+                                                    name="content" 
+                                                    id="comment-content" 
+                                                    rows="5" 
+                                                    class="form-control" 
+                                                    placeholder="دیدگاه یا سوال خود را در مورد این مقاله بنویسید..." 
+                                                    required></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <button type="submit" class="cr-button">
+                                                ثبت دیدگاه
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            {% else %}
+                                <div class="p-4 rounded border d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold">برای ثبت نظر ابتدا وارد حساب کاربری خود شوید</h6>
+                                        <p class="mb-0 text-muted small">جهت جلوگیری از ارسال هرزنامه، تنها کاربران عضو سایت امکان ثبت دیدگاه دارند.</p>
+                                    </div>
+                                    <!-- نام URL صفحه ورود خود را در صورت تفاوت جایگزین کنید -->
+                                    <a href="{% url 'accounts:send_otp' %}?next={{ request.path }}" class="cr-button text-nowrap">
+                                        ورود / ثبت‌نام
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                    <!-- ==================== پایان بخش نظرات ==================== -->
 
                 </div>
             </div>
