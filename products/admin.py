@@ -11,6 +11,16 @@ class VariantInline(admin.TabularInline):
     model = models.ProductVariant
     extra = 0
 
+@admin.register(models.ProductComment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = (
+                
+                "product",
+                "user",
+                "rating",
+                "content",
+                "is_approved",
+            )
 
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):

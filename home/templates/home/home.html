@@ -158,22 +158,29 @@
                         <div class="cr-pro-content">
                             <div class="cr-info">
                                 <a href="shop-left-sidebar.html">{{product.category.first}}</a>
-                                {% comment %} <div class="cr-pro-rating">
-                                    <i class="ri-star-line fill"></i>
-                                    <i class="ri-star-line fill"></i>
-                                    <i class="ri-star-line fill"></i>
-                                    <i class="ri-star-line fill"></i>
-                                    <i class="ri-star-line fill"></i>
-                                </div> {% endcomment %}
+                                
+                                <!-- اضافه شدن dir="ltr" به این تگ -->
+                                <div class="cr-pro-rating" dir="ltr">
+                                    {% for i in "12345" %}
+                                        {% if product.average_rating >= forloop.counter %}
+                                            <i class="ri-star-fill fill"></i>
+                                        {% else %}
+                                            <i class="ri-star-line"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
                             </div>
 
-                            <h5 class="cr-pro-title"><a href="{{product.get_absolute_url}}">{{product.name}}</a>
+                            <h5 class="cr-pro-title">
+                                <a href="{{product.get_absolute_url}}">{{product.name}}</a>
                             </h5>
+                            
                             <span class="cr-price">
                                 <span class="new-price">{{product.variant.final_price_display}} تومان</span>
-                                <span class="old-price">{{product.variant.price_display}} تومان</span>
+                                {% if product.variant.discount > 0 %}
+                                    <span class="old-price">{{product.variant.price_display}} تومان</span>
+                                {% endif %}
                             </span>
-                           
                         </div>
                     </div>
                 </div>

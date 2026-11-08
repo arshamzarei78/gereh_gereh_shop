@@ -1,6 +1,8 @@
 from django.db import models
+from django.conf import settings
 from django.urls import reverse
 from django.utils.text import slugify
+from django.db.models import Avg
 
 
 class Category(models.Model):
@@ -10,17 +12,22 @@ class Category(models.Model):
     class Meta:
         verbose_name = "دسته بندی"
         verbose_name_plural = "دسته بندی ها"
-    def __str__(self):
-            return self.titel
 
+    def __str__(self):
+        return self.titel
 
 
 class Product(models.Model):
-    category = models.ManyToManyField(Category,related_name='product')
+    category = models.ManyToManyField(Category, related_name='product', verbose_name="دسته‌بندی‌ها")
     name = models.CharField("نام محصول", max_length=200)
-    slug = models.SlugField("اسلاگ", max_length=220,blank=True)
-
+    slug = models.SlugField("اسلاگ", max_length=220, blank=True,allow_unicode=True,unique=True)
     description = models.TextField("توضیحات", blank=True)
+
+    # فیلدهای تکمیلی متناسب با محصولات مکرمه و بافتنی دست‌ساز
+    material = models.CharField("جنس نخ / متریال", max_length=150, blank=True, null=True, help_text="مثلاً: نخ مکرومه پنبه‌ای درجه یک و چوب طبیعی")
+    dimensions = models.CharField("ابعاد تقریبی", max_length=100, blank=True, null=True, help_text="مثلاً: عرض ۴۰ در ارتفاع ۷۰ سانتی‌متر")
+    weight = models.CharField("وزن", max_length=50, blank=True, null=True, help_text="مثلاً: ۳۵۰ گرم")
+    care_instructions = models.TextField("نحوه شستشو و نگهداری", blank=True, null=True, help_text="توضیحات مربوط به نحوه شستشو و بسته‌بندی محصول")
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -36,12 +43,12 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-
     def save(self, *args, **kwargs):
-            if not self.slug:
-                self.slug = slugify(self.name, allow_unicode=True)
-            super().save(*args, **kwargs)
-
+        # چه اسلاگ خالی باشد چه از قبل پر شده باشد، نیم‌فاصله‌ها را تمیز و استاندارد کن
+        target_slug = self.slug if self.slug else self.name
+        clean_slug = target_slug.replace('\u200c', ' ')
+        self.slug = slugify(clean_slug, allow_unicode=True)
+        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse(
@@ -54,12 +61,28 @@ class Product(models.Model):
 
     @property
     def main_image(self):
-        return self.images.filter(is_main=True).first()
+        return self.images.filter(is_main=True).first() or self.images.first()
 
     @property
     def variant(self):
         variant = self.variants.first()
-        return variant if variant else 0
+        return variant if variant else None
+
+    @property
+    def available_colors(self):
+        """لیست رنگ‌های یکتای این محصول برای نمایش در جدول مشخصات"""
+        return ", ".join(self.variants.values_list('color', flat=True).distinct())
+
+    @property
+    def available_sizes(self):
+        """لیست سایزهای یکتای این محصول"""
+        sizes = [s for s in self.variants.values_list('size', flat=True).distinct() if s]
+        return ", ".join(sizes)
+
+    @property
+    def average_rating(self):
+        avg = self.comments.filter(is_approved=True).aggregate(Avg('rating'))['rating__avg']
+        return round(avg, 1) if avg else 5.0
 
 
 class ProductVariant(models.Model):
@@ -69,8 +92,6 @@ class ProductVariant(models.Model):
         related_name="variants",
         verbose_name="محصول",
     )
-    
-    # فیلد جدید: اتصال تنوع به یکی از عکس‌های محصول
     image = models.ForeignKey(
         "ProductImage", 
         on_delete=models.SET_NULL,
@@ -79,7 +100,6 @@ class ProductVariant(models.Model):
         related_name="variant_items",
         verbose_name="تصویر اختصاصی این رنگ/تنوع"
     )
-
     color = models.CharField("رنگ", max_length=50)
     size = models.CharField("سایز", max_length=20, null=True, blank=True)
     price = models.PositiveBigIntegerField("قیمت (تومان)")
@@ -97,7 +117,7 @@ class ProductVariant(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.product.name} | {self.color} | {self.size}"
+        return f"{self.product.name} | {self.color} | {self.size or 'بدون سایز'}"
 
     @property
     def final_price(self):
@@ -113,14 +133,11 @@ class ProductVariant(models.Model):
 
     @property
     def display_image(self):
-        """
-        یک متد هوشمند: اگر این تنوع عکس اختصاصی داشت همان را برمی‌گرداند، 
-        در غیر این صورت عکس اصلی محصول را برمی‌گرداند.
-        """
         if self.image:
             return self.image
         return self.product.main_image
-    
+
+
 class ProductImage(models.Model):
     product = models.ForeignKey(
         Product,
@@ -128,8 +145,6 @@ class ProductImage(models.Model):
         related_name="images",
         verbose_name="محصول"
     )
-    
-    # فیلد جدیدی که پیشنهاد دادید
     title = models.CharField(
         "عنوان عکس", 
         max_length=100, 
@@ -137,7 +152,6 @@ class ProductImage(models.Model):
         null=True, 
         help_text="مثلاً: نمای روبرو - رنگ قرمز (برای تشخیص راحت در پنل ادمین)"
     )
-
     image = models.ImageField(upload_to="products/", verbose_name="تصویر")
     is_main = models.BooleanField(default=False, verbose_name="تصویر اصلی")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -147,8 +161,33 @@ class ProductImage(models.Model):
         verbose_name_plural = "تصاویر محصولات"
 
     def __str__(self):
-        # اگر ادمین برای عکس اسم گذاشته بود، اسم و نام محصول را نشان بده
         if self.title:
             return f"{self.product.name} | {self.title}"
-        # در غیر این صورت همان حالت پیش‌فرض را نمایش بده
         return f"تصویر {self.product.name}"
+
+
+class ProductComment(models.Model):
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="comments",
+        verbose_name="محصول"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="product_comments",
+        verbose_name="کاربر"
+    )
+    rating = models.PositiveSmallIntegerField("امتیاز (۱ تا ۵)", default=5)
+    content = models.TextField("متن نظر")
+    is_approved = models.BooleanField("تایید شده؟", default=False)
+    created_at = models.DateTimeField("تاریخ ثبت", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "نظر محصول"
+        verbose_name_plural = "نظرات محصولات"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"نظر {self.user} برای {self.product.name}"

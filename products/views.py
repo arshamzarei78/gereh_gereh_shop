@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.generic import DetailView,ListView
-from .models import Product
+from .models import Product,ProductComment
 from django.shortcuts import get_object_or_404, redirect
 from django.views.decorators.http import require_POST
 from django.contrib import messages
@@ -9,12 +9,65 @@ from .models import ProductVariant
 
 class PtoductView(DetailView):
     model = Product
+    template_name = "products/product_detail.html" # مسیر تمپلیت خود را بررسی کنید
+    context_object_name = "product"
+
+    def get_queryset(self):
+        return Product.objects.prefetch_related(
+            "images",
+            "variants__image",
+            "category"
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # نظرات تایید شده این محصول
+        context["comments"] = self.object.comments.filter(is_approved=True).select_related("user")
+        
+        # محصولات مشابه (بر اساس دسته‌بندی‌های مشترک، به جز خود محصول فعلی)
+        context["related_products"] = (
+            Product.objects.filter(category__in=self.object.category.all())
+            .exclude(id=self.object.id)
+            .prefetch_related("images", "variants", "category")
+            .distinct()[:6]
+        )
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        if not request.user.is_authenticated:
+            messages.error(request, "برای ثبت نظر روی محصول ابتدا باید وارد حساب کاربری خود شوید.")
+            return redirect(self.request.path_info)
+
+        content = request.POST.get("content", "").strip()
+        rating = request.POST.get("rating", 5)
+
+        try:
+            rating = int(rating)
+            if not (1 <= rating <= 5):
+                rating = 5
+        except ValueError:
+            rating = 5
+
+        if content:
+            ProductComment.objects.create(
+                product=self.object,
+                user=request.user,
+                rating=rating,
+                content=content,
+            )
+            messages.success(request, "دیدگاه شما با موفقیت ثبت شد و پس از تایید نمایش داده خواهد شد.")
+        else:
+            messages.error(request, "لطفاً متن نظر خود را بنویسید.")
+
+        return redirect(f"{self.request.path_info}#review")
 
 class ProductListView(ListView):
     model = Product
     template_name = 'products/products_list.html'
     context_object_name = 'products'
-    paginate_by = 10
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

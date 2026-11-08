@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load jalali_tags %}
+
 {% block title %}
-محصول
+{{ product.name }} | گره گره
 {% endblock title %}
 
 {% block main_css %}
@@ -9,7 +11,6 @@
 <link rel="stylesheet" href="{% static 'css/color-2.css' %}" id='add_class'>
 <link rel="stylesheet" class="dark-link-mode" href="{% static 'css/dark.css' %}" id="add_dark_mode" disabled>
 {% endblock %}
-
 
 {% block content %}
 <!-- Breadcrumb -->
@@ -19,8 +20,11 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="cr-breadcrumb-title">
-                        <h2>{{product.name}}</h2>
-                        <span> <a href="index.html">خانه</a> - محصول</span>
+                        <h2>{{ product.name }}</h2>
+                        <span>
+                            <a href="{% url 'home:home' %}">خانه</a> - 
+                            {{ product.name|truncatewords:5 }}
+                        </span>
                     </div>
                 </div>
             </div>
@@ -31,70 +35,123 @@
 <!-- Product -->
 <section class="section-product padding-t-100">
     <div class="container">
+        
+        <!-- نمایش پیام‌های سیستم (مثلاً پس از ثبت نظر) -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show mb-4" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
         <div class="row mb-minus-24" data-aos="fade-up" data-aos-duration="2000" data-aos-delay="600">
+            <!-- اسلایدر تصاویر محصول -->
             <div class="col-xxl-4 col-xl-5 col-md-6 col-12 mb-24">
                 <div class="vehicle-detail-banner banner-content clearfix">
                     <div class="banner-slider">
-                        <div class="slider slider-for">
+                        <!-- اسلایدر اصلی (بزرگ) -->
+<div class="slider slider-for">
+    {% for image in product.images.all %}
+        <div class="slider-banner-image">
+            <div class="zoom-image-hover">
+                <img src="{{ image.image.url }}" alt="{{ image.title|default:product.name }}" class="product-image">
+            </div>
+        </div>
+        
+        <!-- ترفند حل باگ Slick Slider زمانی که محصول فقط ۱ عکس دارد -->
+        {% if forloop.first and forloop.last %}
+        <div class="slider-banner-image">
+            <div class="zoom-image-hover">
+                <img src="{{ image.image.url }}" alt="{{ image.title|default:product.name }}" class="product-image">
+            </div>
+        </div>
+        {% endif %}
+    {% empty %}
+        <div class="slider-banner-image">
+            <div class="zoom-image-hover">
+                <img src="{% static 'img/product/placeholder.jpg' %}" alt="{{ product.name }}" class="product-image">
+            </div>
+        </div>
+    {% endfor %}
+</div>
 
-                            {% for image in product.images.all %}
-
-                            <div class="slider-banner-image">
-                                <div class="zoom-image-hover">
-                                    <img src="{{image.image.url}}" alt="product-tab-1" class="product-image">
-                                </div>
-                            </div>
-
-                            {% endfor %}
-                        </div>
-                        <div class="slider slider-nav thumb-image">
-                            {% for image in product.images.all %}
-                            <div class="thumbnail-image">
-                                <div class="thumbImg">
-                                    <img src="{{image.image.url}}" alt="product-tab-1">
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
+<!-- اسلایدر بندانگشتی (کوچکِ پایین) - اگر فقط ۱ عکس بود مخفی شود تا ظاهر سایت تمیز بماند -->
+<div class="slider slider-nav thumb-image" {% if product.images.count <= 1 %}style="display: none;"{% endif %}>
+    {% for image in product.images.all %}
+        <div class="thumbnail-image">
+            <div class="thumbImg">
+                <img src="{{ image.image.url }}" alt="{{ image.title|default:product.name }}">
+            </div>
+        </div>
+    {% endfor %}
+</div>
                     </div>
                 </div>
             </div>
+
+            <!-- اطلاعات و فرم خرید محصول -->
             <div class="col-xxl-8 col-xl-7 col-md-6 col-12 mb-24">
                 <div class="cr-size-and-weight-contain">
-                    <h2 class="heading">{{product.name}}</h2>
-                    <p>{{product.description}}</p>
+                    <h2 class="heading">{{ product.name }}</h2>
+                    <p>{{ product.description|truncatewords:45 }}</p>
                 </div>
 
                 <div class="cr-size-and-weight">
                     <div class="cr-review-star">
                         <div class="cr-star">
-                            <i class="ri-star-fill"></i><i class="ri-star-fill"></i>
-                            <i class="ri-star-fill"></i><i class="ri-star-fill"></i><i class="ri-star-fill"></i>
+                            <!-- حلقه ۵ تایی برای رسم ستاره‌ها -->
+                            {% for i in "12345" %}
+                                {% if product.average_rating >= forloop.counter %}
+                                    <i class="ri-star-fill"></i>    <!-- ستاره پر برای امتیاز کسب شده -->
+                                {% else %}
+                                    <i class="ri-star-line"></i>    <!-- ستاره خالی (خطی) برای بقیه -->
+                                {% endif %}
+                            {% endfor %}
                         </div>
-                        <p>( 75 مرور )</p>
-                    </div>
+        <p class="ms-2 mb-0">
+            <!-- نمایش عدد میانگین به صورت متنی در کنار ستاره‌ها -->
+            <span class="fw-bold text-dark">{{ product.average_rating }}</span> از ۵ 
+            ( {{ comments.count }} دیدگاه )
+        </p>
+    </div>
 
+                    <!-- مشخصات خلاصه محصول متناسب با فروشگاه مکرمه -->
                     <div class="list">
                         <ul>
-                            <li><label>دسته بندی<span>:</span></label>{{product.category.first}}</li>
-                            <li><label>طعم<span>:</span></label>بسته فوق العاده محافظ</li>
-                            <li><label>رژیم غذایی<span>:</span></label>گیاه خواری</li>
-                            <li><label>وزن<span>:</span></label>200 گرم</li>
-                            <li><label>تخصصی<span>:</span></label>بدون گلوتن ، بدون شکر</li>
-                            <li><label>اطلاعات<span>:</span></label>بدون تخم مرغ ، بدون آلرژن</li>
-                            <!-- آی‌دی dynamic-stock اضافه شد و از first استفاده کردیم -->
-                            <li><label>موجودی<span>:</span></label><span id="dynamic-stock"> 
-                                {{ product.variants.first.stock }} </span> عدد</li>
+                            <li>
+                                <label>دسته‌بندی<span>:</span></label>
+                                {% for cat in product.category.all %}
+                                    {{ cat.titel }}{% if not forloop.last %}، {% endif %}
+                                {% empty %}
+                                    عمومی
+                                {% endfor %}
+                            </li>
+                            {% if product.material %}
+                            <li><label>جنس / متریال<span>:</span></label>{{ product.material }}</li>
+                            {% endif %}
+                            {% if product.dimensions %}
+                            <li><label>ابعاد<span>:</span></label>{{ product.dimensions }}</li>
+                            {% endif %}
+                            {% if product.weight %}
+                            <li><label>وزن<span>:</span></label>{{ product.weight }}</li>
+                            {% endif %}
+                            <li>
+                                <label>موجودی<span>:</span></label>
+                                <span id="dynamic-stock">{{ product.variants.first.stock|default:0 }}</span> عدد
+                            </li>
                         </ul>
                     </div>
 
+                    <!-- قیمت محصول -->
+                    {% with first_variant=product.variants.first %}
+                    {% if first_variant %}
                     <div class="cr-product-price">
-                        <!-- آی‌دی dynamic-price اضافه شد و از first استفاده کردیم -->
-                        <span class="new-price" id="dynamic-price">{{product.variants.first.final_price_display}}
-                            تومان</span>
-                        {% if product.variants.first.discount > 0 %}
-                        <span class="old-price" id="dynamic-old-price">{{product.variants.first.price_display}}</span>
-                        {% endif %}
+                        <span class="new-price" id="dynamic-price">{{ first_variant.final_price_display }} تومان</span>
+                        <span class="old-price" id="dynamic-old-price" {% if first_variant.discount == 0 %}style="display: none;"{% endif %}>
+                            {{ first_variant.price_display }} تومان
+                        </span>
                     </div>
 
                     <!-- فرم افزودن به سبد خرید -->
@@ -102,208 +159,189 @@
                         {% csrf_token %}
 
                         <!-- انتخاب تنوع محصول -->
-                        {% if product.variants.exists %}
                         <div class="mb-3 mt-4">
-                            <label for="variant-select">انتخاب رنگ و سایز:</label>
+                            <label for="variant-select" class="mb-2 fw-medium">انتخاب رنگ و سایز:</label>
                             <select name="variant_id" id="variant-select" class="form-select" required>
                                 {% for variant in product.variants.all %}
-                                <!-- مقادیر data-old-price و data-discount اضافه شدند -->
-                                <option value="{{ variant.id }}" data-stock="{{ variant.stock }}"
+                                <option value="{{ variant.id }}" 
+                                    data-stock="{{ variant.stock }}"
                                     data-price="{{ variant.final_price_display }}"
-                                    data-old-price="{{ variant.price_display }}" data-discount="{{ variant.discount }}"
+                                    data-old-price="{{ variant.price_display }}" 
+                                    data-discount="{{ variant.discount }}"
                                     {% if variant.stock == 0 %}disabled{% endif %}>
                                     {{ variant.color }}
-                                    {% if variant.size %}
-                                    - {{ variant.size }}
-                                    {% endif %}
-
-                                    {% if variant.stock == 0 %} - (ناموجود){% endif %}
+                                    {% if variant.size %} - {{ variant.size }}{% endif %}
+                                    {% if variant.stock == 0 %} (ناموجود){% endif %}
                                 </option>
                                 {% endfor %}
                             </select>
                         </div>
-                        {% endif %}
 
                         <div class="cr-add-card">
                             <div class="cr-qty-main">
-                                <!-- آی‌دی qty-input اضافه شد و max از first گرفته شد -->
                                 <input type="text" readonly name="quantity" id="qty-input" value="1" minlength="1"
-                                    max="{{ product.variants.first.stock }}" class="quantity">
+                                    max="{{ first_variant.stock }}" class="quantity">
                                 <button type="button" class="plus">+</button>
                                 <button type="button" class="minus">-</button>
                             </div>
 
                             <div class="cr-add-button">
-                                <button type="submit" class="cr-button cr-shopping-bag">به سبد خرید اضافه کنید</button>
+                                <button type="submit" id="add-to-cart-btn" class="cr-button cr-shopping-bag" {% if first_variant.stock == 0 %}disabled{% endif %}>
+                                    {% if first_variant.stock == 0 %}ناموجود{% else %}افزودن به سبد خرید{% endif %}
+                                </button>
                             </div>
                         </div>
                     </form>
+                    {% else %}
+                    <div class="alert alert-warning mt-3">این محصول در حال حاضر موجود نمی‌باشد.</div>
+                    {% endif %}
+                    {% endwith %}
                 </div>
             </div>
-
-            <div class="cr-card-icon">
-                <a href="javascript:void(0)" class="wishlist">
-                    <i class="ri-heart-line"></i>
-                </a>
-                <a class="model-oraganic-product" data-bs-toggle="modal" href="#quickview" role="button">
-                    <i class="ri-eye-line"></i>
-                </a>
-            </div>
         </div>
-        </form>
-    </div>
-    </div>
-    </div>
-    <div class="row" data-aos="fade-up" data-aos-duration="2000" data-aos-delay="600">
-        <div class="col-12">
-            <div class="cr-paking-delivery">
-                <ul class="nav nav-tabs" id="myTab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="description-tab" data-bs-toggle="tab"
-                            data-bs-target="#description" type="button" role="tab" aria-controls="description"
-                            aria-selected="true">شرح</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="additional-tab" data-bs-toggle="tab" data-bs-target="#additional"
-                            type="button" role="tab" aria-controls="additional" aria-selected="false">اطلاعات</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="review-tab" data-bs-toggle="tab" data-bs-target="#review"
-                            type="button" role="tab" aria-controls="review" aria-selected="false">نظر</button>
-                    </li>
-                </ul>
-                <div class="tab-content" id="myTabContent">
-                    <div class="tab-pane fade show active" id="description" role="tabpanel"
-                        aria-labelledby="description-tab">
-                        <div class="cr-tab-content">
-                            <div class="cr-description">
-                                <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان
-                                    گرافیک است. چاپگرها و متون بلکه روزنامه
-                                    و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و
-                                    کاربردهای متنوع با هدف بهبود ابزارهای
-                                    کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت فراوان
-                                    جامعه و متخصصان را می طلبد تا با نرم
-                                    افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی و فرهنگ پیشرو
-                                    در زبان فارسی ایجاد کرد. در این صورت
-                                    می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها و شرایط سخت تایپ به پایان
-                                    رسد وزمان مورد نیاز شامل حروفچینی
-                                    دستاوردهای اصلی و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده
-                                    قرار گیرد.</p>
-                            </div>
-                            <h4 class="heading">بسته بندی و تحویل</h4>
-                            <div class="cr-description">
-                                <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان
-                                    گرافیک است. چاپگرها و متون بلکه روزنامه
-                                    و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و
-                                    کاربردهای متنوع با هدف بهبود ابزارهای
-                                    کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="additional" role="tabpanel" aria-labelledby="additional-tab">
-                        <div class="cr-tab-content">
-                            <div class="cr-description">
-                                <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان
-                                    گرافیک است. چاپگرها و متون بلکه روزنامه
-                                    و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و
-                                    کاربردهای متنوع با هدف بهبود ابزارهای
-                                    کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت.</p>
-                            </div>
-                            <div class="list">
-                                <ul>
-                                    <li><label>نام تجاری<span>:</span></label>این شرکت بهتر</li>
-                                    <li><label>طعم<span>:</span></label>بسته فوق العاده محافظ</li>
-                                    <li><label>رژیم غذایی<span>:</span></label>گیاه خواری</li>
-                                    <li><label>وزن<span>:</span></label>200 گرم</li>
-                                    <li><label>تخصصی<span>:</span></label>بدون گلوتن ، بدون شکر</li>
-                                    <li><label>اطلاعات<span>:</span></label>بدون تخم مرغ ، بدون آلرژن</li>
-                                    <li><label>موارد<span>:</span></label>1</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="review" role="tabpanel" aria-labelledby="review-tab">
-                        <div class="cr-tab-content-from">
-                            <div class="post">
-                                <div class="content">
-                                    <img src="assets/img/review/1.jpg" alt="review">
-                                    <div class="details">
-                                        <span class="date">8 دی 1403</span>
-                                        <span class="name">اوره</span>
-                                    </div>
-                                    <div class="cr-t-review-rating">
-                                        <i class="ri-star-s-fill"></i>
-                                        <i class="ri-star-s-fill"></i>
-                                        <i class="ri-star-s-fill"></i>
-                                        <i class="ri-star-s-fill"></i>
-                                        <i class="ri-star-s-fill"></i>
-                                    </div>
-                                </div>
-                                <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان
-                                    گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است </p>
-                                <div class="content mt-30">
-                                    <img src="assets/img/review/2.jpg" alt="review">
-                                    <div class="details">
-                                        <span class="date">22 دی 1403</span>
-                                        <span class="name">لینا ویلسون</span>
-                                    </div>
-                                    <div class="cr-t-review-rating">
-                                        <i class="ri-star-s-fill"></i>
-                                        <i class="ri-star-s-fill"></i>
-                                        <i class="ri-star-s-fill"></i>
-                                        <i class="ri-star-s-fill"></i>
-                                        <i class="ri-star-s-line"></i>
-                                    </div>
-                                </div>
-                                <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان
-                                    گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است </p>
-                            </div>
 
-                            <h4 class="heading">افزودن نظر</h4>
-                            <form action="javascript:void(0)">
-                                <div class="cr-ratting-star">
-                                    <span>امتیاز شما :</span>
-                                    <div class="cr-t-review-rating">
-                                        <i class="ri-star-s-fill"></i>
-                                        <i class="ri-star-s-fill"></i>
-                                        <i class="ri-star-s-line"></i>
-                                        <i class="ri-star-s-line"></i>
-                                        <i class="ri-star-s-line"></i>
+        <!-- تب‌های توضیحات، مشخصات و نظرات -->
+        <div class="row" data-aos="fade-up" data-aos-duration="2000" data-aos-delay="600">
+            <div class="col-12">
+                <div class="cr-paking-delivery">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="description-tab" data-bs-toggle="tab"
+                                data-bs-target="#description" type="button" role="tab" aria-controls="description"
+                                aria-selected="true">توضیحات محصول</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="additional-tab" data-bs-toggle="tab" data-bs-target="#additional"
+                                type="button" role="tab" aria-controls="additional" aria-selected="false">مشخصات تکمیلی</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="review-tab" data-bs-toggle="tab" data-bs-target="#review"
+                                type="button" role="tab" aria-controls="review" aria-selected="false">
+                                نظرات ({{ comments.count }})
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content" id="myTabContent">
+                        <!-- تب ۱: شرح و نحوه نگهداری -->
+                        <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                            <div class="cr-tab-content">
+                                <div class="cr-description">
+                                    {{ product.description|linebreaks|default:"توضیحاتی برای این محصول ثبت نشده است." }}
+                                </div>
+                                {% if product.care_instructions %}
+                                <h4 class="heading mt-4">نحوه شستشو، نگهداری و بسته‌بندی</h4>
+                                <div class="cr-description">
+                                    {{ product.care_instructions|linebreaks }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- تب ۲: جدول مشخصات فنی -->
+                        <div class="tab-pane fade" id="additional" role="tabpanel" aria-labelledby="additional-tab">
+                            <div class="cr-tab-content">
+                                <div class="list">
+                                    <ul>
+                                        <li><label>نام محصول<span>:</span></label>{{ product.name }}</li>
+                                        <li>
+                                            <label>دسته‌بندی<span>:</span></label>
+                                            {% for cat in product.category.all %}
+                                                {{ cat.titel }}{% if not forloop.last %}، {% endif %}
+                                            {% endfor %}
+                                        </li>
+                                        {% if product.available_colors %}
+                                        <li><label>رنگ‌بندی<span>:</span></label>{{ product.available_colors }}</li>
+                                        {% endif %}
+                                        {% if product.available_sizes %}
+                                        <li><label>سایزبندی<span>:</span></label>{{ product.available_sizes }}</li>
+                                        {% endif %}
+                                        {% if product.material %}
+                                        <li><label>جنس نخ و متریال<span>:</span></label>{{ product.material }}</li>
+                                        {% endif %}
+                                        {% if product.dimensions %}
+                                        <li><label>ابعاد<span>:</span></label>{{ product.dimensions }}</li>
+                                        {% endif %}
+                                        {% if product.weight %}
+                                        <li><label>وزن<span>:</span></label>{{ product.weight }}</li>
+                                        {% endif %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- تب ۳: نظرات کاربران -->
+                        <div class="tab-pane fade" id="review" role="tabpanel" aria-labelledby="review-tab">
+                            <div class="cr-tab-content-from">
+                                <div class="post mb-4">
+                                    {% for comment in comments %}
+                                    <div class="content {% if not forloop.first %}mt-30{% endif %}">
+                                        <div class="details">
+                                            <span class="date">{{ comment.created_at|to_jalali:"%Y/%m/%d" }}</span>
+                                            <span class="name fw-bold">{{ comment.user.get_full_name|default:"کاربر گره گره" }}</span>
+                                        </div>
+                                        <div class="cr-t-review-rating">
+                                            {% for i in "12345" %}
+                                                {% if forloop.counter <= comment.rating %}
+                                                    <i class="ri-star-s-fill"></i>
+                                                {% else %}
+                                                    <i class="ri-star-s-line"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
                                     </div>
+                                    <p>{{ comment.content|linebreaksbr }}</p>
+                                    {% empty %}
+                                    <p class="text-muted">هنوز نظری برای این محصول ثبت نشده است. اولین نفری باشید که تجربه خود را به اشتراک می‌گذارد!</p>
+                                    {% endfor %}
                                 </div>
-                                <div class="cr-ratting-input">
-                                    <input name="your-name" placeholder="نام" type="text">
+
+                                <h4 class="heading">افزودن دیدگاه</h4>
+                                {% if request.user.is_authenticated %}
+                                <form method="post" action="{{ request.path }}#review">
+                                    {% csrf_token %}
+                                    <div class="cr-ratting-star mb-3">
+                                        <span>امتیاز شما به این محصول:</span>
+                                        <select name="rating" class="form-select w-auto d-inline-block ms-2">
+                                            <option value="5">۵ ستاره (عالی)</option>
+                                            <option value="4">۴ ستاره (خوب)</option>
+                                            <option value="3">۳ ستاره (متوسط)</option>
+                                            <option value="2">۲ ستاره (ضعیف)</option>
+                                            <option value="1">۱ ستاره (بد)</option>
+                                        </select>
+                                    </div>
+                                    <div class="cr-ratting-input form-submit">
+                                        <textarea name="content" placeholder="دیدگاه خود را درباره کیفیت، بافت یا رنگ محصول بنویسید..." required></textarea>
+                                        <button class="cr-button" type="submit">ثبت دیدگاه</button>
+                                    </div>
+                                </form>
+                                {% else %}
+                                <div class="p-3 rounded border d-flex justify-content-between align-items-center">
+                                    <span>برای ثبت دیدگاه درباره این محصول، لطفاً وارد حساب کاربری خود شوید.</span>
+                                    <a href="{% url 'accounts:send_otp' %}?next={{ request.path }}" class="cr-button">ورود به حساب</a>
                                 </div>
-                                <div class="cr-ratting-input">
-                                    <input name="your-email" placeholder="*ایمیل" type="email" required="">
-                                </div>
-                                <div class="cr-ratting-input form-submit">
-                                    <textarea name="your-commemt" placeholder="افزودن نظر"></textarea>
-                                    <button class="cr-button" type="submit" value="Submit">ثبت</button>
-                                </div>
-                            </form>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
 </section>
 
-<!-- Popular products -->
-<section class="section-popular-products padding-tb-100" data-aos="fade-up" data-aos-duration="2000"
-    data-aos-delay="400">
+<!-- محصولات مشابه (داینامیک) -->
+{% if related_products %}
+<section class="section-popular-products padding-tb-100" data-aos="fade-up" data-aos-duration="2000" data-aos-delay="400">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
                 <div class="mb-30">
                     <div class="cr-banner">
-                        <h2> محصولات محبوب </h2>
+                        <h2>محصولات مشابه</h2>
                     </div>
                     <div class="cr-banner-sub-title">
-                        <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک
-                            است. و سطرآنچنان که لازم است</p>
+                        <p>سایر دست‌سازه‌های مرتبط در فروشگاه گره گره</p>
                     </div>
                 </div>
             </div>
@@ -311,265 +349,98 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="cr-popular-product">
+                    {% for rel_product in related_products %}
                     <div class="slick-slide">
                         <div class="cr-product-card">
                             <div class="cr-product-image">
                                 <div class="cr-image-inner zoom-image-hover">
-                                    <img src="assets/img/product/9.jpg" alt="product-1">
+                                    {% if rel_product.main_image %}
+                                        <img src="{{ rel_product.main_image.image.url }}" alt="{{ rel_product.name }}">
+                                    {% else %}
+                                        <img src="{% static 'img/product/placeholder.jpg' %}" alt="{{ rel_product.name }}">
+                                    {% endif %}
                                 </div>
-                                <div class="cr-side-view">
-                                    <a href="javascript:void(0)" class="wishlist">
-                                        <i class="ri-heart-line"></i>
-                                    </a>
-                                    <a class="model-oraganic-product" data-bs-toggle="modal" href="#quickview"
-                                        role="button">
-                                        <i class="ri-eye-line"></i>
-                                    </a>
-                                </div>
-                                <a class="cr-shopping-bag" href="javascript:void(0)">
-                                    <i class="ri-shopping-bag-line"></i>
-                                </a>
                             </div>
                             <div class="cr-product-details">
                                 <div class="cr-brand">
-                                    <a href="shop-left-sidebar.html">اسنک</a>
-                                    <div class="cr-star">
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-line"></i>
-                                        <p>(4.5)</p>
-                                    </div>
+                                    <a href="javascript:void(0)">{{ rel_product.category.first.titel }}</a>
                                 </div>
-                                <a href="product-left-sidebar.html" class="title">بهترین اسنک با فندق میکس 200 گرمی</a>
-                                <p class="cr-price"><span class="new-price">120 تومان</span> <span class="old-price">123
-                                        تومان</span></p>
+                                <a href="{{ rel_product.get_absolute_url }}" class="title">{{ rel_product.name }}</a>
+                                {% if rel_product.variant %}
+                                <p class="cr-price">
+                                    <span class="new-price">{{ rel_product.variant.final_price_display }} تومان</span>
+                                    {% if rel_product.variant.discount > 0 %}
+                                    <span class="old-price">{{ rel_product.variant.price_display }} تومان</span>
+                                    {% endif %}
+                                </p>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
-                    <div class="slick-slide">
-                        <div class="cr-product-card">
-                            <div class="cr-product-image">
-                                <div class="cr-image-inner zoom-image-hover">
-                                    <img src="assets/img/product/10.jpg" alt="product-1">
-                                </div>
-                                <div class="cr-side-view">
-                                    <a href="javascript:void(0)" class="wishlist">
-                                        <i class="ri-heart-line"></i>
-                                    </a>
-                                    <a class="model-oraganic-product" data-bs-toggle="modal" href="#quickview"
-                                        role="button">
-                                        <i class="ri-eye-line"></i>
-                                    </a>
-                                </div>
-                                <a class="cr-shopping-bag" href="javascript:void(0)">
-                                    <i class="ri-shopping-bag-line"></i>
-                                </a>
-                            </div>
-                            <div class="cr-product-details">
-                                <div class="cr-brand">
-                                    <a href="shop-left-sidebar.html">اسنک</a>
-                                    <div class="cr-star">
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <p>(5.0)</p>
-                                    </div>
-                                </div>
-                                <a href="product-left-sidebar.html" class="title">شیرین ترین اسنک با فندق میکس 200
-                                    گرمی</a>
-                                <p class="cr-price"><span class="new-price">100 تومان</span> <span class="old-price">110
-                                        تومان</span></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="slick-slide">
-                        <div class="cr-product-card">
-                            <div class="cr-product-image">
-                                <div class="cr-image-inner zoom-image-hover">
-                                    <img src="assets/img/product/1.jpg" alt="product-1">
-                                </div>
-                                <div class="cr-side-view">
-                                    <a href="javascript:void(0)" class="wishlist">
-                                        <i class="ri-heart-line"></i>
-                                    </a>
-                                    <a class="model-oraganic-product" data-bs-toggle="modal" href="#quickview"
-                                        role="button">
-                                        <i class="ri-eye-line"></i>
-                                    </a>
-                                </div>
-                                <a class="cr-shopping-bag" href="javascript:void(0)">
-                                    <i class="ri-shopping-bag-line"></i>
-                                </a>
-                            </div>
-                            <div class="cr-product-details">
-                                <div class="cr-brand">
-                                    <a href="shop-left-sidebar.html">اسنک</a>
-                                    <div class="cr-star">
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-line"></i>
-                                        <p>(4.5)</p>
-                                    </div>
-                                </div>
-                                <a href="product-left-sidebar.html" class="title">بهترین اسنک با فندق میکس 200 گرمی</a>
-                                <p class="cr-price"><span class="new-price">120 تومان</span> <span class="old-price">123
-                                        تومان</span></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="slick-slide">
-                        <div class="cr-product-card">
-                            <div class="cr-product-image">
-                                <div class="cr-image-inner zoom-image-hover">
-                                    <img src="assets/img/product/2.jpg" alt="product-1">
-                                </div>
-                                <div class="cr-side-view">
-                                    <a href="javascript:void(0)" class="wishlist">
-                                        <i class="ri-heart-line"></i>
-                                    </a>
-                                    <a class="model-oraganic-product" data-bs-toggle="modal" href="#quickview"
-                                        role="button">
-                                        <i class="ri-eye-line"></i>
-                                    </a>
-                                </div>
-                                <a class="cr-shopping-bag" href="javascript:void(0)">
-                                    <i class="ri-shopping-bag-line"></i>
-                                </a>
-                            </div>
-                            <div class="cr-product-details">
-                                <div class="cr-brand">
-                                    <a href="shop-left-sidebar.html">اسنک</a>
-                                    <div class="cr-star">
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <p>(5.0)</p>
-                                    </div>
-                                </div>
-                                <a href="product-left-sidebar.html" class="title">شیرین ترین اسنک با فندق میکس 200
-                                    گرمی</a>
-                                <p class="cr-price"><span class="new-price">100 تومان</span> <span class="old-price">110
-                                        تومان</span></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="slick-slide">
-                        <div class="cr-product-card">
-                            <div class="cr-product-image">
-                                <div class="cr-image-inner zoom-image-hover">
-                                    <img src="assets/img/product/3.jpg" alt="product-1">
-                                </div>
-                                <div class="cr-side-view">
-                                    <a href="javascript:void(0)" class="wishlist">
-                                        <i class="ri-heart-line"></i>
-                                    </a>
-                                    <a class="model-oraganic-product" data-bs-toggle="modal" href="#quickview"
-                                        role="button">
-                                        <i class="ri-eye-line"></i>
-                                    </a>
-                                </div>
-                                <a class="cr-shopping-bag" href="javascript:void(0)">
-                                    <i class="ri-shopping-bag-line"></i>
-                                </a>
-                            </div>
-                            <div class="cr-product-details">
-                                <div class="cr-brand">
-                                    <a href="shop-left-sidebar.html">اسنک</a>
-                                    <div class="cr-star">
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <p>(5.0)</p>
-                                    </div>
-                                </div>
-                                <a href="product-left-sidebar.html" class="title">شیرین ترین اسنک با فندق میکس 200
-                                    گرمی</a>
-                                <p class="cr-price"><span class="new-price">100 تومان</span> <span class="old-price">110
-                                        تومان</span></p>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
     </div>
 </section>
+{% endif %}
 
-<!-- Model -->
-<div class="modal fade quickview-modal" id="quickview" aria-hidden="true" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered cr-modal-dialog">
-        <div class="modal-content">
-            <button type="button" class="cr-close-model btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-5 col-sm-12 col-xs-12">
-                        <div class="zoom-image-hover modal-border-image">
-                            <img src="assets/img/product/tab-1.jpg" alt="product-tab-2" class="product-image">
-                        </div>
-                    </div>
-                    <div class="col-md-7 col-sm-12 col-xs-12">
-                        <div class="cr-size-and-weight-contain">
-                            <h2 class="heading">دانه های هلو تغییر ارگانیک ، میوه قهوه ای</h2>
-                            <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک
-                                است. چاپگرها و متون بلکه روزنامه
-                                و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز و کاربردهای
-                                متنوع با هدف بهبود ابزارهای
-                                کاربردی می باشد. کتابهای زیادی در شصت و سه درصد گذشته، حال و آینده شناخت</p>
-                        </div>
-                        <div class="cr-size-and-weight">
-                            <div class="cr-review-star">
-                                <div class="cr-star">
-                                    <i class="ri-star-fill"></i>
-                                    <i class="ri-star-fill"></i>
-                                    <i class="ri-star-fill"></i>
-                                    <i class="ri-star-fill"></i>
-                                    <i class="ri-star-fill"></i>
-                                </div>
-                                <p>( 75 نظر )</p>
-                            </div>
-                            <div class="cr-product-price">
-                                <span class="new-price">120 تومان</span>
-                                <span class="old-price">123 تومان</span>
-                            </div>
-                            <div class="cr-size-weight">
-                                <h5><span>اندازه</span>/<span>وزن</span> :</h5>
-                                <div class="cr-kg">
-                                    <ul>
-                                        <li class="active-color">500 گرم</li>
-                                        <li>1 کیلو</li>
-                                        <li>2 کیلو</li>
-                                        <li>5 کیلو</li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="cr-add-card">
-                                <div class="cr-qty-main">
-                                    <input type="text" placeholder="." value="1" minlength="1" maxlength="20"
-                                        class="quantity">
-                                    <button type="button" id="add_model" class="plus">+</button>
-                                    <button type="button" id="sub_model" class="minus">-</button>
-                                </div>
-                                <div class="cr-add-button">
-                                    <button type="button" class="cr-button cr-shopping-bag">به سبد خرید اضافه
-                                        کنید</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- اسکریپت تغییر داینامیک قیمت و موجودی بر اساس تنوع انتخابی -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const variantSelect = document.getElementById("variant-select");
+    const dynamicPrice = document.getElementById("dynamic-price");
+    const dynamicOldPrice = document.getElementById("dynamic-old-price");
+    const dynamicStock = document.getElementById("dynamic-stock");
+    const qtyInput = document.getElementById("qty-input");
+    const addToCartBtn = document.getElementById("add-to-cart-btn");
 
+    if (variantSelect) {
+        variantSelect.addEventListener("change", function () {
+            const selectedOption = this.options[this.selectedIndex];
+            const price = selectedOption.getAttribute("data-price");
+            const oldPrice = selectedOption.getAttribute("data-old-price");
+            const discount = parseInt(selectedOption.getAttribute("data-discount")) || 0;
+            const stock = parseInt(selectedOption.getAttribute("data-stock")) || 0;
+
+            // آپدیت قیمت جدید
+            if (dynamicPrice) {
+                dynamicPrice.textContent = price + " تومان";
+            }
+
+            // آپدیت قیمت قبل از تخفیف
+            if (dynamicOldPrice) {
+                if (discount > 0) {
+                    dynamicOldPrice.textContent = oldPrice + " تومان";
+                    dynamicOldPrice.style.display = "inline";
+                } else {
+                    dynamicOldPrice.style.display = "none";
+                }
+            }
+
+            // آپدیت موجودی و سقف انتخاب تعداد
+            if (dynamicStock) {
+                dynamicStock.textContent = stock;
+            }
+            if (qtyInput) {
+                qtyInput.max = stock;
+                if (parseInt(qtyInput.value) > stock) {
+                    qtyInput.value = stock > 0 ? 1 : 0;
+                }
+            }
+
+            // فعال/غیرفعال کردن دکمه خرید
+            if (addToCartBtn) {
+                if (stock === 0) {
+                    addToCartBtn.disabled = true;
+                    addToCartBtn.textContent = "ناموجود";
+                } else {
+                    addToCartBtn.disabled = false;
+                    addToCartBtn.textContent = "افزودن به سبد خرید";
+                }
+            }
+        });
+    }
+});
+</script>
 {% endblock content %}

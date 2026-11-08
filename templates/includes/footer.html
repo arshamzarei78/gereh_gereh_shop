@@ -52,12 +52,9 @@
                             <span class="cr-heading-res"></span>
                         </h4>
                         <ul class="cr-footer-links cr-footer-dropdown">
-                            <li><a href="shop-left-sidebar.html">مد و لباس</a></li>
-                            <li><a href="shop-left-sidebar.html"> لبنیات و نانوایی </a></li>
-                            <li><a href="shop-left-sidebar.html"> میوه و سبزی </a></li>
-                            <li><a href="shop-left-sidebar.html"> میان وعده و ادویه </a></li>
-                            <li><a href="shop-left-sidebar.html"> آبمیوه و نوشیدنی </a></li>
-                            <li><a href="shop-left-sidebar.html"> فست فود </a></li>
+                            {% for cat in categories %}
+                            <li><a href="shop-left-sidebar.html">{{ cat.titel }}</a></li>
+                            {% endfor %}
                         </ul>
                     </div>
                 </div>
