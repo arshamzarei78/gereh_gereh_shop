@@ -66,6 +66,9 @@ class VerifyOTPView(FormView):
     def dispatch(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             return redirect("home:home")
+        next_param = request.GET.get("next")
+        if next_param:
+            request.session["next_url"] = next_param
         return super().dispatch(request, *args, **kwargs)
 
     def form_invalid(self, form):
@@ -79,6 +82,7 @@ class VerifyOTPView(FormView):
         otp = self.request.session.get("otp")
         last_sent = self.request.session.get("otp_last_sent", 0)
         attempts = self.request.session.get("otp_attempts", 0)
+
 
         if code != otp:
             form.add_error("code", "کد وارد شده صحیح نیست")
@@ -100,17 +104,15 @@ class VerifyOTPView(FormView):
             self.request.session.pop("phone_number", None)
             self.request.session.pop("otp_last_sent", None)
 
-            cart = self.request.session.get('cart')
-            if cart:
+            next_url = self.request.session.pop("next_url", None)
+            if next_url:
+                return redirect(next_url)
+            if self.request.session.get("cart"):
                 return redirect("checkout:checkout")
-            else:
-                return redirect("home:home")
+            return redirect("home:home")
 
         # کاربر جدید
         self.request.session["is_phone_verified"] = True
-        cart = self.request.session.get("cart")
-        if cart:
-            return redirect("checkout:checkout")
         return redirect("accounts:register")
 
 
@@ -180,8 +182,10 @@ class RegisterView(FormView):
 
             login(self.request, user)
 
-            cart = self.request.session.get("cart")
-            if cart:
+            next_url = self.request.session.pop("next_url", None)
+            if next_url:
+                return redirect(next_url)
+            if self.request.session.get("cart"):
                 return redirect("checkout:checkout")
             return redirect("home:home")
 

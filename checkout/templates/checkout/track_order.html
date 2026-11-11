@@ -1,0 +1,211 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load jalali_tags %}
+
+{% block title %}
+پیگیری سفارش | گره گره
+{% endblock title %}
+
+{% block main_css %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/color-2.css' %}" id='add_class'>
+{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb -->
+<section class="section-breadcrumb">
+    <div class="cr-breadcrumb-image">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="cr-breadcrumb-title">
+                        <h2>پیگیری سفارش</h2>
+                        <span>
+                            <a href="{% url 'home:home' %}">خانه</a> - پیگیری سفارش
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Track Order section -->
+<section class="cr-track padding-tb-100">
+    <div class="container">
+        
+        <!-- باکس جستجوی سفارش با شماره فاکتور -->
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-6 col-md-8 col-12">
+                <form method="get" action="{% url 'checkout:track_order' %}" class="d-flex gap-2">
+                    <input type="text" name="order_id" value="{{ query_id|default:'' }}" 
+                           class="cr-form-control form-control" 
+                           placeholder="شماره سفارش خود را وارد کنید (مثلاً: 104)...">
+                    <button type="submit" class="cr-button text-nowrap">بررسی وضعیت</button>
+                </form>
+                {% if error_message %}
+                    <div class="alert alert-danger mt-3 mb-0">{{ error_message }}</div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if order %}
+        <div class="row">
+            <div class="container">
+                <div class="cr-track-box">
+                    
+                    <!-- کارت‌های اطلاعات کلی سفارش -->
+                    <div class="row">
+                        <div class="col-md-4 m-b-767">
+                            <div class="cr-track-card">
+                                <span class="cr-track-title">شماره و تاریخ سفارش</span>
+                                <span>#{{ order.id }} ({{ order.created_at|to_jalali:"%Y/%m/%d" }})</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 m-b-767">
+                            <div class="cr-track-card">
+                                <span class="cr-track-title">روش ارسال و کد پیگیری پرداخت</span>
+                                <span>
+                                    پست پیشتاز | 
+                                    {% if order.ref_id %}
+                                        کد تراکنش: {{ order.ref_id }}
+                                    {% else %}
+                                        پرداخت نشده
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 m-b-767">
+                            <div class="cr-track-card">
+                                <span class="cr-track-title">زمان تقریبی تحویل</span>
+                                <span>
+                                    {% if is_tehran %}
+                                        تهران: ۲ روز کاری پس از ارسال
+                                    {% else %}
+                                        سایر شهرها: تا ۷ روز کاری پس از ارسال
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- وضعیت سفارش در حالت لغو شده یا در انتظار پرداخت -->
+                    {% if order.status == 'canceled' %}
+                        <div class="alert alert-danger text-center my-4 p-4">
+                            <i class="ri-close-circle-line fs-2 d-block mb-2"></i>
+                            <h5 class="fw-bold">این سفارش لغو شده است</h5>
+                            {% if not order.is_paid %}
+                                <p class="mb-3">عملیات پرداخت این سفارش تکمیل نشده است. در صورت تمایل می‌توانید مجدداً نسبت به پرداخت آن اقدام کنید.</p>
+                                <a href="{% url 'checkout:payment' order.id %}" class="cr-button">پرداخت مجدد سفارش</a>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <!-- نوار مراحل پیشرفت سفارش (Progress Steps) -->
+                        <div class="cr-steps">
+                            <div class="cr-steps-body">
+                                
+                                <!-- مرحله ۱: ثبت سفارش -->
+                                <div class="cr-step {% if order.status == 'pending' %}cr-step-active{% else %}cr-step-completed{% endif %}">
+                                    {% if order.status != 'pending' %}
+                                    <span class="cr-step-indicator">
+                                        <i class="ri-check-line"></i>
+                                    </span>
+                                    {% endif %}
+                                    <span class="cr-step-icon">
+                                        <i class="ri-file-list-3-line"></i>
+                                    </span>
+                                    ثبت اولیه<br> سفارش
+                                </div>
+
+                                <!-- مرحله ۲: تایید پرداخت -->
+                                <div class="cr-step {% if order.is_paid %}cr-step-completed{% elif order.status == 'pending' %}cr-step-active{% endif %}">
+                                    {% if order.is_paid %}
+                                    <span class="cr-step-indicator">
+                                        <i class="ri-check-line"></i>
+                                    </span>
+                                    {% endif %}
+                                    <span class="cr-step-icon">
+                                        <i class="ri-shield-check-line"></i>
+                                    </span>
+                                    تایید پرداخت<br> (زرین‌پال)
+                                </div>
+
+                                <!-- مرحله ۳: در حال آماده‌سازی و بسته‌بندی دست‌سازه -->
+                                <div class="cr-step {% if order.status == 'shipped' or order.status == 'delivered' %}cr-step-completed{% elif order.status == 'paid' %}cr-step-active{% endif %}">
+                                    {% if order.status == 'shipped' or order.status == 'delivered' %}
+                                    <span class="cr-step-indicator">
+                                        <i class="ri-check-line"></i>
+                                    </span>
+                                    {% endif %}
+                                    <span class="cr-step-icon">
+                                        <i class="ri-truck-line"></i>
+                                    </span>
+                                    ارسال <br> با پست پیشتاز
+                                </div>
+
+                                <!-- مرحله ۵: تحویل به مشتری -->
+                                <div class="cr-step {% if order.status == 'delivered' %}cr-step-completed{% elif order.status == 'shipped' %}cr-step-active{% endif %}">
+                                    {% if order.status == 'delivered' %}
+                                    <span class="cr-step-indicator">
+                                        <i class="ri-check-line"></i>
+                                    </span>
+                                    {% endif %}
+                                    <span class="cr-step-icon">
+                                        <i class="ri-home-5-line"></i>
+                                    </span>
+                                    تحویل شده<br> به مشتری
+                                </div>
+
+                            </div>
+                        </div>
+
+                        {% if not order.is_paid %}
+                        <div class="text-center mt-4">
+                            <p class="text-warning fw-bold mb-2">این سفارش در انتظار پرداخت است.</p>
+                            <a href="{% url 'checkout:payment' order.id %}" class="cr-button">پرداخت آنلاین با زرین‌پال</a>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+
+                    <!-- جزئیات اقلام سفارش و آدرس گیرنده -->
+                    <div class="row mt-5 pt-4 border-top">
+                        <div class="col-md-6 mb-3">
+                            <h5 class="fw-bold mb-3">مشخصات تحویل‌گیرنده</h5>
+                            <p class="mb-1"><strong>نام گیرنده:</strong> {{ order.full_name }}</p>
+                            <p class="mb-1"><strong>شماره تماس:</strong> <span dir="ltr">{{ order.phone_number }}</span></p>
+                            <p class="mb-1"><strong>کد پستی:</strong> {{ order.postal_code }}</p>
+                            <p class="mb-0"><strong>آدرس:</strong> {{ order.address_text }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h5 class="fw-bold mb-3">اقلام سفارش ({{ order.items.count }} مورد)</h5>
+                            <ul class="list-group">
+                                {% for item in order.items.all %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
+                                    <span>{{ item.quantity }} × {{ item.product_name }}</span>
+                                    <span class="fw-bold">{{ item.cost_display }} تومان</span>
+                                </li>
+                                {% endfor %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent fw-bold text-success">
+                                    <span>مبلغ کل فاکتور:</span>
+                                    <span>{{ order.total_price_display }} تومان</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center p-5 border rounded">
+            <i class="ri-shopping-bag-line fs-1 text-muted d-block mb-2"></i>
+            <h5>هنوز سفارشی برای نمایش وجود ندارد</h5>
+            <p class="text-muted">شماره سفارش خود را در کادر بالا جستجو کنید یا از فروشگاه دیدن نمایید.</p>
+            <a href="{% url 'home:home' %}" class="cr-button mt-2">مشاهده محصولات گره گره</a>
+        </div>
+        {% endif %}
+
+    </div>
+</section>
+<!-- Track Order section End -->
+{% endblock content %}

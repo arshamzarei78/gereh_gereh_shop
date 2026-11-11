@@ -1,326 +1,341 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block title %}
-ادامه خرید
+تسویه حساب و ثبت سفارش | گره گره
 {% endblock title %}
+
 {% block main_css %}
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
 <link rel="stylesheet" href="{% static 'css/color-2.css' %}" id='add_class'>
 {% endblock %}
 
 {% block content %}
-<!-- Checkout section -->
-    <section class="cr-checkout-section padding-tb-100">
+<!-- Breadcrumb -->
+<section class="section-breadcrumb">
+    <div class="cr-breadcrumb-image">
         <div class="container">
             <div class="row">
-                <!-- Sidebar Area Start -->
-                <div class="cr-checkout-rightside col-lg-4 col-md-12">
-                    <div class="cr-sidebar-wrap">
-                        <!-- Sidebar Summary Block -->
-                        <div class="cr-sidebar-block">
-                            <div class="cr-sb-title">
-                                <h3 class="cr-sidebar-title">خلاصه</h3>
-                            </div>
-                            <div class="cr-sb-block-content">
-                                <div class="cr-checkout-summary">
-                                    <div>
-                                        <span class="text-left">هزینه تحویل</span>
-                                        <span class="text-right">80 تومان</span>
-                                    </div>
-                                    <div class="cr-checkout-summary-total">
-                                        <span class="text-left">مقدار کل</span>
-                                        <div class="cr-product-details">
-                                            <p class="cr-price"><span class="old-price ">{{ cart.get_total_no_discount_display}} تومان</span></p>
-                                            <span class="text-right">{{ cart.get_total_price_display }} تومان</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="cr-checkout-pro">
-                                    
-                                    {% for item in cart %}
-                                        <div class="col-sm-12 mb-6">
-                                        <div class="cr-product-inner">
-                                            <div class="cr-pro-image-outer">
-                                                <div class="cr-pro-image">
-                                                    <a href="{{ item.variant.product.get_absolute_url }}" class="image">
-                                                        <img class="main-image" src="{{ item.variant.display_image.image.url }}"
-                                                            alt="{{ item.variant.product.name }}">
-                                                    </a>
-                                                </div>
-                                            </div>
-                                            <div class="cr-pro-content cr-product-details">
-                                                <h5 class="cr-pro-title"><a href="{{ item.variant.product.get_absolute_url }}"> {{ item.quantity }} عدد {{ item.variant.product.name }}</a></h5>
-                                                <p class="cr-price"><span class="new-price">{{ item.total_price_display }} تومان</span> 
-                                                    
-                                                    {% if item.variant.discount > 0 %}
-                                                        <span class="old-price">{{ item.total_no_discount_display }}</span></p>
-                                                        {% else %}
-                                                        </p>
-                                                    {% endif %}
-                                                        
-                                                       
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {% endfor %}
-
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Sidebar Summary Block -->
+                <div class="col-lg-12">
+                    <div class="cr-breadcrumb-title">
+                        <h2>تسویه حساب</h2>
+                        <span><a href="{% url 'home:home' %}">خانه</a> - تسویه حساب</span>
                     </div>
-                    <div class="cr-sidebar-wrap cr-checkout-del-wrap">
-                        <!-- Sidebar Summary Block -->
-                        <div class="cr-sidebar-block">
-                            <div class="cr-sb-title">
-                                <h3 class="cr-sidebar-title">روش تحویل</h3>
-                            </div>
-                            <div class="cr-sb-block-content">
-                                <div class="cr-checkout-del">
-                                    <div class="cr-del-desc">لطفاً روش حمل و نقل مورد نظر را برای استفاده در این مورد انتخاب کنید
-سفارش.</div>
-                                    <form action="#">
-                                        <span class="cr-del-option">
-                                            <span>
-                                                <span class="cr-del-opt-head">حمل و نقل رایگان</span>
-                                                <input type="radio" id="del1" name="radio-group" checked>
-                                                <label for="del1">نرخ - 0 تومان </label>
-                                            </span>
-                                            <span>
-                                                <span class="cr-del-opt-head">مسطح</span>
-                                                <input type="radio" id="del2" name="radio-group">
-                                                <label for="del2">نرخ - 5 تومان</label>
-                                            </span>
-                                        </span>
-                                        <span class="cr-del-commemt">
-                                            <span class="cr-del-opt-head">درباره سفارش خود چیزی اضافه کنید</span>
-                                            <textarea name="your-commemt" placeholder="نظرات"></textarea>
-                                        </span>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Sidebar Summary Block -->
-                    </div>
-                    <div class="cr-sidebar-wrap cr-checkout-pay-wrap">
-                        <!-- Sidebar Payment Block -->
-                        <div class="cr-sidebar-block">
-                            <div class="cr-sb-title">
-                                <h3 class="cr-sidebar-title">روش پرداخت</h3>
-                            </div>
-                            <div class="cr-sb-block-content">
-                                <div class="cr-checkout-pay">
-                                    <div class="cr-pay-desc">لطفاً روش پرداخت ترجیحی را برای استفاده در این مورد انتخاب کنید
-سفارش.</div>
-                                    <form action="#" class="payment-options">
-                                        <span class="cr-pay-option">
-                                            <span>
-                                                <input type="radio" id="pay1" name="radio-group" checked>
-                                                <label for="pay1">پرداخت نقدی هنگام تحویل</label>
-                                            </span>
-                                        </span>
-                                        <span class="cr-pay-option">
-                                            <span>
-                                                <input type="radio" id="pay2" name="radio-group">
-                                                <label for="pay2">کارت به کارت</label>
-                                            </span>
-                                        </span>
-                                        <span class="cr-pay-option">
-                                            <span>
-                                                <input type="radio" id="pay3" name="radio-group">
-                                                <label for="pay3">انتقال بانکی</label>
-                                            </span>
-                                        </span>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Sidebar Payment Block -->
-                    </div>
-                    <div class="cr-sidebar-wrap cr-check-pay-img-wrap">
-                        <!-- Sidebar Payment Block -->
-                        <div class="cr-sidebar-block">
-                            <div class="cr-sb-title">
-                                <h3 class="cr-sidebar-title">روش پرداخت</h3>
-                            </div>
-                            <div class="cr-sb-block-content">
-                                <div class="cr-check-pay-img-inner">
-                                    <div class="cr-check-pay-img">
-                                        <img src="assets/img/banner/payment.png" alt="payment">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Sidebar Payment Block -->
-                    </div>
-                </div>
-                <div class="cr-checkout-leftside col-lg-8 col-md-12 m-t-991">
-                    <!-- checkout content Start -->
-                    <div class="cr-checkout-content">
-                        <div class="cr-checkout-inner">
-                            <div class="cr-checkout-wrap">
-                                <div class="cr-check-bill">
-                                    <h3 class="cr-checkout-title">جزئیات صورت‌حساب و آدرس تحویل</h3>
-                                    
-                                    <div class="cr-check-bill-form">
-                                        <form method="post" action="{% url 'checkout:checkout' %}" id="checkout-form">
-                                            {% csrf_token %}
-
-                                            <!-- ۱. اطلاعات کاربری (فقط خواندنی یا قابل نمایش از پروفایل) -->
-                                            <div class="cr-bill-wrap cr-bill-half">
-                                                <label>نام و نام خانوادگی</label>
-                                                <input type="text" value="{{ request.user.get_full_name }}" readonly style="background-color: #f8f9fa;">
-                                            </div>
-                                            <div class="cr-bill-wrap cr-bill-half">
-                                                <label>شماره تماس / کاربری</label>
-                                                <input type="text" value="{{ request.user.phone_number|default:request.user.email }}" readonly style="background-color: #f8f9fa;">
-                                            </div>
-
-                                            <!-- ۲. انتخاب از بین آدرس‌های قبلی (اگر کاربر از قبل آدرسی داشته باشد) -->
-                                            {% if user_addresses.exists %}
-                                            <div class="cr-bill-wrap mb-4" style="background: #f7f7f8; padding: 15px; border-radius: 8px; border: 1px solid #e9e9e9;">
-                                                <label class="fw-bold mb-2">انتخاب از آدرس‌های ذخیره شده شما:</label>
-                                                <select id="saved-address-selector" name="selected_address_id" class="form-select mb-3">
-                                                    {% for addr in user_addresses %}
-                                                        <option value="{{ addr.id }}" 
-                                                                data-province="{{ addr.province.id }}"
-                                                                data-city="{{ addr.city.id }}"
-                                                                data-city-name="{{ addr.city.name }}"
-                                                                data-postal="{{ addr.postal_code }}"
-                                                                data-address="{{ addr.address }}"
-                                                                {% if selected_address and addr.id == selected_address.id %}selected{% endif %}>
-                                                            {{ addr.address_name }} - {{ addr.province.name }}، {{ addr.city.name }} ({{ addr.address|truncatechars:35 }})
-                                                        </option>
-                                                    {% endfor %}
-                                                    <option value="new" class="fw-bold text-success">+ افزودن و ذخیره یک آدرس جدید...</option>
-                                                </select>
-
-                                                
-                                                
-                                                <!-- فیلد نام آدرس جدید (فقط وقتی گزینه آدرس جدید انتخاب شود ظاهر می‌شود) -->
-                                                <div id="new-address-name-box" class="mt-3" style="display: none;">
-                                                    <label>عنوان آدرس جدید (مثلاً: خانه، محل کار)</label>
-                                                    <input type="text" name="address_name" class="cr-form-control mb-0" placeholder="مثلاً: محل کار">
-                                                </div>
-                                            </div>
-                                            {% else %}
-                                                <!-- اگر کاربر هیچ آدرسی ندارد، مستقیماً در حالت ثبت آدرس جدید قرار می‌گیرد -->
-                                                <input type="hidden" name="selected_address_id" value="new">
-                                                <div class="cr-bill-wrap">
-                                                    <label>عنوان آدرس (مثلاً: خانه، محل کار) *</label>
-                                                    <input type="text" name="address_name" class="cr-form-control" placeholder="خانه" required>
-                                                </div>
-                                            {% endif %}
-
-                                            <!-- ۳. فیلدهای اصلی فرم آدرس (که به صورت پیش‌فرض با اطلاعات پر شده‌اند) -->
-                                            <div class="cr-bill-wrap cr-bill-half">
-                                                <label>استان *</label>
-                                                <div class="cr-bl-select-inner">
-                                                    {{ form.province }}
-                                                </div>
-                                            </div>
-
-                                            <div class="cr-bill-wrap cr-bill-half">
-                                                <label>شهر *</label>
-                                                <div class="cr-bl-select-inner">
-                                                    {{ form.city }}
-                                                </div>
-                                            </div>
-
-                                            <div class="cr-bill-wrap">
-                                                <label>کد پستی *</label>
-                                                {{ form.postal_code }}
-                                            </div>
-                                            
-                                            <div class="cr-bill-wrap">
-                                                <label>آدرس دقیق *</label>
-                                                {{ form.address }}
-                                            </div>
-
-                                            <div class="cr-check-order-btn mt-3 w-100">
-                                                <button type="submit" class="cr-button">ثبت سفارش و پرداخت</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-</div>
-                            <span class="cr-check-order-btn">
-                                <a class="cr-button mt-30" href="#">ثبت سفارش</a>
-                            </span>
-                        </div>
-                    </div>
-                    <!--cart content End -->
                 </div>
             </div>
         </div>
-    </section>
-{% endblock content %}
-    
+    </div>
+</section>
+
+<!-- Checkout section -->
+<section class="cr-checkout-section padding-tb-100">
+    <div class="container">
+        <div class="row">
+            <!-- Sidebar Area Start -->
+            <div class="cr-checkout-rightside col-lg-4 col-md-12">
+                
+                <!-- ۱. خلاصه سفارش و لیست محصولات -->
+                <div class="cr-sidebar-wrap">
+                    <div class="cr-sidebar-block">
+                        <div class="cr-sb-title">
+                            <h3 class="cr-sidebar-title">خلاصه سفارش</h3>
+                        </div>
+                        <div class="cr-sb-block-content">
+                            <div class="cr-checkout-summary">
+                                <div>
+                                    <span class="text-left">روش ارسال</span>
+                                    <span class="text-right">پست پیشتاز</span>
+                                </div>
+                                <div class="cr-checkout-summary-total">
+                                    <span class="text-left">مبلغ قابل پرداخت</span>
+                                    <div class="cr-product-details">
+                                        {% if cart.get_total_no_discount_display != cart.get_total_price_display %}
+                                            <p class="cr-price mb-0">
+                                                <span class="old-price">{{ cart.get_total_no_discount_display }} تومان</span>
+                                            </p>
+                                        {% endif %}
+                                        <span class="text-right fw-bold text-success">{{ cart.get_total_price_display }} تومان</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="cr-checkout-pro mt-3">
+                                {% for item in cart %}
+                                <div class="col-sm-12 mb-3">
+                                    <div class="cr-product-inner">
+                                        <div class="cr-pro-image-outer">
+                                            <div class="cr-pro-image">
+                                                <a href="{{ item.variant.product.get_absolute_url }}" class="image">
+                                                    {% if item.variant.display_image %}
+                                                        <img class="main-image" src="{{ item.variant.display_image.image.url }}" alt="{{ item.variant.product.name }}">
+                                                    {% else %}
+                                                        <img class="main-image" src="{% static 'img/product/placeholder.jpg' %}" alt="{{ item.variant.product.name }}">
+                                                    {% endif %}
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="cr-pro-content cr-product-details">
+                                            <h5 class="cr-pro-title">
+                                                <a href="{{ item.variant.product.get_absolute_url }}">
+                                                    {{ item.quantity }} عدد {{ item.variant.product.name }}
+                                                </a>
+                                            </h5>
+                                            <small class="text-muted d-block mb-1">
+                                                رنگ: {{ item.variant.color }}{% if item.variant.size %} | سایز: {{ item.variant.size }}{% endif %}
+                                            </small>
+                                            <p class="cr-price">
+                                                <span class="new-price">{{ item.total_price_display }} تومان</span>
+                                                {% if item.variant.discount > 0 %}
+                                                    <span class="old-price">{{ item.total_no_discount_display }} تومان</span>
+                                                {% endif %}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ۲. روش تحویل و یادداشت سفارش -->
+                <div class="cr-sidebar-wrap cr-checkout-del-wrap">
+                    <div class="cr-sidebar-block">
+                        <div class="cr-sb-title">
+                            <h3 class="cr-sidebar-title">نحوه و زمان ارسال</h3>
+                        </div>
+                        <div class="cr-sb-block-content">
+                            <div class="cr-checkout-del">
+                                <span class="cr-del-option d-block mb-3">
+                                    <span class="d-block w-100">
+                                        <input type="radio" id="del_post" name="shipping_method" checked readonly>
+                                        <label for="del_post" class="fw-bold">ارسال از طریق شرکت ملی پست</label>
+                                    </span>
+                                </span>
+                                <div class="p-3 rounded border mb-3 small" style="line-height: 1.9;">
+                                    <div><i class="ri-truck-line text-success ms-1"></i> <strong>تهران:</strong> تحویل ۲ روز کاری</div>
+                                    <div><i class="ri-map-pin-time-line text-success ms-1"></i> <strong>سایر شهرها:</strong> تحویل تا ۷ روز کاری</div>
+                                </div>
+                                <span class="cr-del-commemt">
+                                    <span class="cr-del-opt-head mb-2 d-block">یادداشت سفارش (اختیاری)</span>
+                                    <!-- متصل به فرم اصلی با ویژگی form="checkout-form" و نام منطبق با ویو -->
+                                    <textarea name="order_note" form="checkout-form" rows="3" placeholder="اگر نکته‌ای در مورد بسته‌بندی یا تحویل سفارش دارید اینجا بنویسید..."></textarea>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ۳. روش پرداخت (فقط زرین‌پال) -->
+                <div class="cr-sidebar-wrap cr-checkout-pay-wrap">
+                    <div class="cr-sidebar-block">
+                        <div class="cr-sb-title">
+                            <h3 class="cr-sidebar-title">روش پرداخت</h3>
+                        </div>
+                        <div class="cr-sb-block-content">
+                            <div class="cr-checkout-pay">
+                                <div class="cr-pay-desc mb-3">
+                                    پرداخت امن به صورت آنلاین با تمامی کارت‌های عضو شبکه شتاب انجام می‌شود.
+                                </div>
+                                <div class="payment-options">
+                                    <span class="cr-pay-option">
+                                        <span>
+                                            <input type="radio" id="pay_zarinpal" name="payment_method" value="zarinpal" checked readonly>
+                                            <label for="pay_zarinpal" class="fw-bold">درگاه پرداخت امن زرین‌پال</label>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- Sidebar Area End -->
+
+            <!-- Billing & Address Area Start -->
+            <div class="cr-checkout-leftside col-lg-8 col-md-12 m-t-991">
+                <div class="cr-checkout-content">
+                    <div class="cr-checkout-inner">
+                        <div class="cr-checkout-wrap">
+                            <div class="cr-check-bill">
+                                <h3 class="cr-checkout-title">جزئیات صورت‌حساب و آدرس تحویل</h3>
+
+                                <!-- نمایش خطاهای کلی فرم (مانند کسری موجودی انبار) -->
+                                {% if form.non_field_errors %}
+                                    <div class="alert alert-danger mb-4">
+                                        {% for error in form.non_field_errors %}
+                                            <div>{{ error }}</div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+
+                                <div class="cr-check-bill-form">
+                                    <form method="post" action="{% url 'checkout:checkout' %}" id="checkout-form">
+                                        {% csrf_token %}
+
+                                        <!-- ۱. اطلاعات کاربری (فقط خواندنی از پروفایل) -->
+                                        <div class="cr-bill-wrap cr-bill-half">
+                                            <label>نام و نام خانوادگی تحویل‌گیرنده</label>
+                                            <input type="text" value="{{ request.user.get_full_name }}" readonly class="opacity-75">
+                                        </div>
+                                        <div class="cr-bill-wrap cr-bill-half">
+                                            <label>شماره تماس</label>
+                                            <input type="text" value="{{ request.user.phone_number|default:request.user.email }}" readonly class="opacity-75" dir="ltr">
+                                        </div>
+
+                                        <!-- ۲. انتخاب از بین آدرس‌های قبلی -->
+                                        {% if user_addresses.exists %}
+                                        <div class="cr-bill-wrap mb-4 p-3 rounded border">
+                                            <label class="fw-bold mb-2" for="saved-address-selector">انتخاب از آدرس‌های ذخیره شده شما:</label>
+                                            <select id="saved-address-selector" name="selected_address_id" class="form-select mb-2">
+                                                {% for addr in user_addresses %}
+                                                    <option value="{{ addr.id }}" 
+                                                            data-province="{{ addr.province.id }}"
+                                                            data-city="{{ addr.city.id }}"
+                                                            data-city-name="{{ addr.city.name }}"
+                                                            data-postal="{{ addr.postal_code }}"
+                                                            data-address="{{ addr.address }}"
+                                                            {% if selected_address and addr.id == selected_address.id %}selected{% endif %}>
+                                                        {{ addr.address_name }} - {{ addr.province.name }}، {{ addr.city.name }} ({{ addr.address|truncatechars:35 }})
+                                                    </option>
+                                                {% endfor %}
+                                                <option value="new" class="fw-bold text-success">+ افزودن و ذخیره یک آدرس جدید...</option>
+                                            </select>
+
+                                            <!-- فیلد نام آدرس جدید (فقط هنگام انتخاب گزینه آدرس جدید ظاهر می‌شود) -->
+                                            <div id="new-address-name-box" class="mt-3" style="display: none;">
+                                                <label for="new_address_name">عنوان آدرس جدید (مثلاً: خانه، محل کار) *</label>
+                                                <input type="text" id="new_address_name" name="address_name" class="cr-form-control mb-0" placeholder="مثلاً: محل کار">
+                                            </div>
+                                        </div>
+                                        {% else %}
+                                            <!-- اگر کاربر هیچ آدرسی ندارد، مستقیماً در حالت ثبت آدرس جدید قرار می‌گیرد -->
+                                            <input type="hidden" name="selected_address_id" value="new">
+                                            <div class="cr-bill-wrap">
+                                                <label for="new_address_name">عنوان آدرس (مثلاً: خانه، محل کار) *</label>
+                                                <input type="text" id="new_address_name" name="address_name" class="cr-form-control" placeholder="خانه" required>
+                                            </div>
+                                        {% endif %}
+
+                                        <!-- ۳. فیلدهای اصلی فرم آدرس -->
+                                        <div class="cr-bill-wrap cr-bill-half">
+                                            <label>استان *</label>
+                                            <div class="cr-bl-select-inner">
+                                                {{ form.province }}
+                                            </div>
+                                            {% if form.province.errors %}
+                                                <small class="text-danger d-block mt-1">{{ form.province.errors.0 }}</small>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="cr-bill-wrap cr-bill-half">
+                                            <label>شهر *</label>
+                                            <div class="cr-bl-select-inner">
+                                                {{ form.city }}
+                                            </div>
+                                            {% if form.city.errors %}
+                                                <small class="text-danger d-block mt-1">{{ form.city.errors.0 }}</small>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="cr-bill-wrap">
+                                            <label>کد پستی ۱۰ رقمی *</label>
+                                            {{ form.postal_code }}
+                                            {% if form.postal_code.errors %}
+                                                <small class="text-danger d-block mt-1">{{ form.postal_code.errors.0 }}</small>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="cr-bill-wrap">
+                                            <label>آدرس دقیق پستی *</label>
+                                            {{ form.address }}
+                                            {% if form.address.errors %}
+                                                <small class="text-danger d-block mt-1">{{ form.address.errors.0 }}</small>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="cr-check-order-btn mt-4 w-100">
+                                            <button type="submit" class="cr-button w-100 justify-content-center py-3">
+                                                ثبت سفارش و انتقال به درگاه زرین‌پال
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Billing & Address Area End -->
+        </div>
+    </div>
+</section>
+
+<!-- اسکریپت‌های مدیریت آدرس و بارگذاری شهرها (درون بلاک content تا در خروجی رندر شود) -->
 <script>
-    // بارگذاری شهرهای استان جدید در صفحه Checkout
-$('#province').on('change', function () {
-    let provinceId = $(this).val();
-    if (!provinceId) return;
+document.addEventListener("DOMContentLoaded", function () {
+    const $province = $('select[name="province"]');
+    const $city = $('select[name="city"]');
+    const $addressSelector = $('#saved-address-selector');
+    const $newAddressBox = $('#new-address-name-box');
+    const $newAddressInput = $('#new_address_name');
 
-    fetch(`/accounts/load-cities/?province=${provinceId}`)
-        .then(response => response.json())
-        .then(data => {
-            let $citySelect = $('#city');
-            let currentCity = $citySelect.val(); // نگهداری شهر فعلی در صورت وجود
-            
-            $citySelect.html('<option value="">انتخاب شهر</option>');
-            data.forEach(city => {
-                $citySelect.append(`<option value="${city.id}">${city.name}</option>`);
+    // ۱. بارگذاری شهرهای استان به صورت ای‌جکس
+    $province.on('change', function () {
+        let provinceId = $(this).val();
+        if (!provinceId) {
+            $city.html('<option value="">انتخاب شهر</option>');
+            return;
+        }
+
+        fetch(`/accounts/load-cities/?province=${provinceId}`)
+            .then(response => response.json())
+            .then(data => {
+                let currentCity = $city.attr('data-pending-city') || $city.val();
+                $city.html('<option value="">انتخاب شهر</option>');
+                
+                data.forEach(city => {
+                    $city.append(`<option value="${city.id}">${city.name}</option>`);
+                });
+
+                if (currentCity) {
+                    $city.val(currentCity);
+                    $city.removeAttr('data-pending-city');
+                }
             });
+    });
 
-            // اگر شهر قبلی در لیست جدید بود، دوباره انتخابش کن
-            if (currentCity) {
-                $citySelect.val(currentCity);
-            }
-        });
-});
-
-$(document).ready(function() {
-    $('#saved-address-selector').on('change', function() {
+    // ۲. جابجایی بین آدرس‌های ذخیره‌شده و افزودن آدرس جدید
+    $addressSelector.on('change', function () {
         var selectedVal = $(this).val();
 
         if (selectedVal === 'new') {
-            // ۱. کاربر می‌خواهد آدرس جدید ثبت کند: نمایش کادر عنوان و خالی کردن فیلدها
-            $('#new-address-name-box').slideDown();
-            $('#new_address_name').prop('required', true);
-            
-            $('#province').val('');
-            $('#city').html('<option value="">انتخاب شهر</option>');
+            $newAddressBox.slideDown();
+            $newAddressInput.prop('required', true);
+
+            $province.val('');
+            $city.html('<option value="">انتخاب شهر</option>');
             $('input[name="postal_code"]').val('');
-            $('textarea[name="address"]').val('');
+            $('textarea[name="address"], input[name="address"]').val('');
         } else {
-            // ۲. کاربر یکی از آدرس‌های قبلی را انتخاب کرده است
-            $('#new-address-name-box').slideUp();
-            $('#new_address_name').prop('required', false).val('');
+            $newAddressBox.slideUp();
+            $newAddressInput.prop('required', false).val('');
 
             var selected = $(this).find('option:selected');
             var provinceId = selected.data('province');
             var cityId = selected.data('city');
-            var cityName = selected.data('city-name');
             var postal = selected.data('postal');
             var addressText = selected.data('address');
 
-            // پر کردن فیلدها با اطلاعات آدرس انتخاب‌شده
             $('input[name="postal_code"]').val(postal);
-            $('textarea[name="address"]').val(addressText);
-            
-            // تغییر استان و فراخوانی شهرهای آن
-            $('#province').val(provinceId).trigger('change');
+            $('textarea[name="address"], input[name="address"]').val(addressText);
 
-            // انتخاب خودکار شهر پس از لود شدن لیست شهرها
-            setTimeout(function() {
-                if ($('#city option[value="' + cityId + '"]').length === 0) {
-                    $('#city').append(new Option(cityName, cityId, true, true));
-                } else {
-                    $('#city').val(cityId);
-                }
-            }, 200);
+            // ذخیره موقت آیدی شهر تا پس از تکمیل درخواست fetch انتخاب شود
+            $city.attr('data-pending-city', cityId);
+            $province.val(provinceId).trigger('change');
         }
     });
 });
 </script>
+{% endblock content %}

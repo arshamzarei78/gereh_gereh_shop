@@ -9,7 +9,6 @@
 {% block main_css %}
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
 <link rel="stylesheet" href="{% static 'css/color-2.css' %}" id='add_class'>
-<link rel="stylesheet" class="dark-link-mode" href="{% static 'css/dark.css' %}" id="add_dark_mode" disabled>
 {% endblock %}
 
 {% block content %}
@@ -318,7 +317,7 @@
                                 {% else %}
                                 <div class="p-3 rounded border d-flex justify-content-between align-items-center">
                                     <span>برای ثبت دیدگاه درباره این محصول، لطفاً وارد حساب کاربری خود شوید.</span>
-                                    <a href="{% url 'accounts:send_otp' %}?next={{ request.path }}" class="cr-button">ورود به حساب</a>
+                                    <a href="{% url 'accounts:verify_otp' %}?next={{ request.path }}" class="cr-button">ورود به حساب</a>
                                 </div>
                                 {% endif %}
                             </div>

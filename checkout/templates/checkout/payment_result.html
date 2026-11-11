@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+نتیجه پرداخت | گره گره
+{% endblock title %}
+
+{% block main_css %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="{% static 'css/color-2.css' %}" id='add_class'>
+{% endblock %}
+
+{% block content %}
+<section class="section-breadcrumb">
+    <div class="cr-breadcrumb-image">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="cr-breadcrumb-title">
+                        <h2>نتیجه تراکنش</h2>
+                        <span><a href="{% url 'home:home' %}">خانه</a> - نتیجه پرداخت</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="padding-tb-100">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8 col-12">
+                <div class="p-4 p-md-5 rounded border text-center">
+                    {% if success %}
+                        <div class="mb-3">
+                            <i class="ri-checkbox-circle-fill text-success" style="font-size: 4rem;"></i>
+                        </div>
+                        <h3 class="fw-bold text-success mb-3">پرداخت شما با موفقیت انجام شد!</h3>
+                        <p class="text-muted mb-4">
+                            سفارش شما در فروشگاه «گره گره» ثبت شد و هم‌اکنون در حال آماده‌سازی است.
+                        </p>
+                        <div class="p-3 rounded border mb-4 text-end">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">شماره سفارش:</span>
+                                <strong class="fw-bold">#{{ order.id }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">مبلغ پرداخت‌شده:</span>
+                                <strong class="fw-bold">{{ order.total_price_display }} تومان</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">کد رهگیری بانکی (RefID):</span>
+                                <strong class="fw-bold text-success" dir="ltr">{{ order.ref_id }}</strong>
+                            </div>
+                        </div>
+                        <a href="{% url 'home:home' %}" class="cr-button" >بازگشت به صفحه اصلی</a>
+                        <a href="{% url 'checkout:track_order_detail' order.id %}" style="margin-top: 3px;" class="cr-button">پیگیری وضعیت سفارش</a>
+                    {% else %}
+                        <div class="mb-3">
+                            <i class="ri-close-circle-fill text-danger" style="font-size: 4rem;"></i>
+                        </div>
+                        <h3 class="fw-bold text-danger mb-3">پرداخت ناموفق بود</h3>
+                        <p class="text-muted mb-4">
+                            {{ error_message|default:"متأسفانه عملیات پرداخت تکمیل نشد." }}
+                        </p>
+                        <div class="p-3 rounded border mb-4 text-end">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">شماره سفارش:</span>
+                                <strong class="fw-bold">#{{ order.id }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">مبلغ قابل پرداخت:</span>
+                                <strong class="fw-bold">{{ order.total_price_display }} تومان</strong>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center gap-3">
+                            <a href="{% url 'checkout:payment' order.id %}" class="cr-button">تلاش مجدد برای پرداخت</a>
+                            <a href="{% url 'cart:cart_detail' %}" class="btn btn-outline-secondary">بازگشت به سبد خرید</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

@@ -4,8 +4,38 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 from .models import User , Address
 
-admin.site.register(Address)
+@admin.register(Address)
+class AddressAdmin(admin.ModelAdmin):
 
+    list_display = (
+            "user",
+            "get_user_full_name",
+            "address_name",
+            "province",
+            "city",
+            "postal_code",
+            "is_default",
+            "created_at",)
+
+    list_filter = ("province","created_at")
+    search_fields = (
+        "user__phone_number",   # جستجو بر اساس شماره تلفن کاربر
+        "user__first_name",     # جستجو بر اساس نام کاربر
+        "user__last_name",      # جستجو بر اساس نام خانوادگی کاربر
+        "postal_code",
+        "address"
+    )
+    
+    # برای بهینه‌سازی کوئری‌های دیتابیس در پنل ادمین
+    list_select_related = ("user", "province", "city")
+
+    def get_user_full_name(self, obj):
+        return obj.user.get_full_name()
+    
+    # تغییر عنوان این ستون در پنل ادمین
+    get_user_full_name.short_description = "نام و نام خانوادگی"
+
+    
 class UserCreationForm(forms.ModelForm):
     password1 = forms.CharField(
         label="Password",

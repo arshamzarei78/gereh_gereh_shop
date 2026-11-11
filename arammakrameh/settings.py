@@ -138,3 +138,7 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = "accounts.User"
+
+# تنظیمات درگاه پرداخت زرین‌پال
+SANDBOX = True  
+ZARINPAL_MERCHANT_ID = "00000000-0000-0000-0000-000000000000"  

@@ -220,7 +220,7 @@
                                         <p class="mb-0 text-muted small">جهت جلوگیری از ارسال هرزنامه، تنها کاربران عضو سایت امکان ثبت دیدگاه دارند.</p>
                                     </div>
                                     <!-- نام URL صفحه ورود خود را در صورت تفاوت جایگزین کنید -->
-                                    <a href="{% url 'accounts:send_otp' %}?next={{ request.path }}" class="cr-button text-nowrap">
+                                    <a href="{% url 'accounts:verify_otp' %}?next={{ request.path }}" class="cr-button text-nowrap">
                                         ورود / ثبت‌نام
                                     </a>
                                 </div>

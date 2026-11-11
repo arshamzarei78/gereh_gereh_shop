@@ -14,7 +14,6 @@
     
 {% block main_css %}
 <link rel="stylesheet" href="{% static 'css/demo-2.css' %}">
-<link rel="stylesheet" class="dark-link-mode" href="{% static 'css/dark.css' %}" id="add_dark_mode" disabled>
 <link rel="stylesheet" href="{% static 'css/color-2.css' %}" id='add_class' >
 {% endblock %}
 
@@ -342,7 +341,8 @@
                             <div class="swiper-slide" data-aos="fade-up" data-aos-duration="2000">
                                 <div class="cr-blog">
                                     <div class="cr-blog-image">
-                                        <img src="{{post.main_image.url}}" alt="{{post.title}}">
+                                        <a href="{{ post.get_absolute_url }}"><img src="{{post.main_image.url}}" alt="{{post.title}}"></a>
+                                        
                                         <div class="cr-blog-date">
                                             <span>
                                                 {{ post.created_at|to_jalali:"%d" }}
@@ -351,9 +351,9 @@
                                         </div>
                                     </div>
                                     <div class="cr-blog-content">
-                                        <span><code>{{post.quote_author}}</code> | <a href="{{post.get_absolute_url}}">{{post.tags.first}}</a></span>
+                                        <span><code>{{post.quote_author}}</code> | {{post.tags.first}}</span>
                                         <h5>{{post.title}}</h5>
-                                        <a class="read" href="blog-detail-left-sidebar.html">بیشتر بخوانید</a>
+                                        <a class="read" href="{{ post.get_absolute_url }}">بیشتر بخوانید</a>
                                     </div>
                                 </div>
                             </div>
@@ -364,75 +364,5 @@
             </div>
         </div>
     </section>
-    <!-- Model -->
-    <div class="modal fade quickview-modal" id="quickview" aria-hidden="true" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered cr-modal-dialog">
-            <div class="modal-content">
-                <button type="button" class="cr-close-model btn-close" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-5 col-sm-12 col-xs-12">
-                            <div class="zoom-image-hover modal-border-image">
-                                <img src="{{product.main_image.image.url}}" alt="product-tab-2" class="product-image">
-                            </div>
-                        </div>
-                        <div class="col-md-7 col-sm-12 col-xs-12">
-                            <div class="cr-size-and-weight-contain">
-                                <h2 class="heading">بهترین تاپ های رنگارنگ برای روند مد فصلی زنان</h2>
-                                <p>ۀورم ایپسوم به سادگی متن ساختگی چاپ و
-                                    صنعت تایپ کردن.ۀورم ایپسوم متن ساختگی استاندارد صنعت بوده است
-                                    همیشه
-                                    از دهه 1900,</p>
-                            </div>
-                            <div class="cr-size-and-weight">
-                                <div class="cr-review-star">
-                                    <div class="cr-star">
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                    </div>
-                                    <p>( 75 نظر)</p>
-                                </div>
-                                <div class="cr-product-price">
-                                    <span class="new-price">120 تومان</span>
-                                    <span class="old-price">123 تومان</span>
-                                </div>
-                                <div class="cr-size-weight">
-                                    <h5>
-                                        <pan> اندازه: </SPAN>
-                                    </h5>
-                                    <div class="cr-kg">
-                                        <ul>
-                                            <li class="active-color">S</li>
-                                            <li>M</li>
-                                            <li>L</li>
-                                            <li>XL</li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="cr-add-card">
-                                    <div class="cr-qty-main">
-                                        <input type="text" placeholder="." value="1" minlength="1" maxlength="20"
-                                            class="quantity">
-                                        <button type="button" id="add_model" class="plus">+</button>
-                                        <button type="button" id="sub_model" class="minus">-</button>
-                                    </div>
-                                    <div class="cr-add-button">
-                                        <button type="button" class="cr-button">افزودن به سبد</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-   
-
-    
 {% endblock %}

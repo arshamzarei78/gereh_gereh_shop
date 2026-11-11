@@ -27,7 +27,7 @@
                                 </li>
                             {% endfor %}
                             <li>
-                                <a href="{% url 'products:search' %}" style="color: #28a745; font-weight: bold;">
+                                <a href="{% url 'products:search' %}" style="color: #9e7a15; font-weight: bold;">
                                     مشاهده همه محصولات
                                 </a>
                             </li>
@@ -45,17 +45,16 @@
                         <a href="javascript:void(0)" class="dropdown-list">صفحات</a>
                         <ul class="sub-menu">
                             <li><a href="about.html">درباره ما</a></li>
-                            <li><a href="contact-us.html">تماس با ما</a></li>
-                            <li><a href="track-order.html">پیگیری سفارش</a></li>
+                            <li><a href="{% url 'home:contact_us' %}">تماس با ما</a></li>
+                            <li><a href="{% url 'checkout:track_order' %}">پیگیری سفارش</a></li>
                             <li><a href="{% url 'home:faq' %}">سوالات متداول</a></li>
                             <li><a href="{% url 'accounts:verify_otp' %}">ورود / ثبت‌نام</a></li>
-                            <li><a href="policy.html">سیاست حریم خصوصی</a></li>
                         </ul>
                     </li>
 
                     <!-- لینک بلاگ -->
                     <li class="dropdown drop-list">
-                        <a href="javascript:void(0)">بلاگ</a>
+                        <a href="{% url 'blog:list' %}">بلاگ</a>
                     </li>
                 </ul>
             </div>
