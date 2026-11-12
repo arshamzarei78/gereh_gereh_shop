@@ -108,7 +108,7 @@
                                 <div class="cr-brand">
                                     {% with first_cat=product.category.first %}
                                         {% if first_cat %}
-                                            <a href="{% url 'products:search' %}?category={{ first_cat.id }}">{{ first_cat.titel }}</a>
+                                            <a href="{% url 'products:search' %}?category={{ first_cat.id }}">{{ first_cat.title }}</a>
                                         {% else %}
                                             <a href="{% url 'products:search' %}">گره گره</a>
                                         {% endif %}
@@ -217,8 +217,8 @@
                     <div class="checkbox-group">
                         <input type="checkbox" name="category" value="{{ cat.id }}" id="cat_{{ cat.id }}"
                                {% if cat.id|stringformat:"s" in selected_categories %}checked{% endif %}>
-                        <label for="cat_{{ cat.id }}">{{ cat.titel }}</label>
-                        <span>[{{ cat.product.count }}]</span>
+                        <label for="cat_{{ cat.id }}">{{ cat.title }}</label>
+                        <span>[{{ cat.products.count }}]</span>
                     </div>
                     {% endfor %}
                 </div>

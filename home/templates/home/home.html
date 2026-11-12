@@ -102,7 +102,7 @@
                         
                         <div class="category-icon icon-{{ forloop.counter }}">
                             {% if cat.image %}
-                            <img src="{{ cat.image.url }}" alt="{{ cat.titel }}" class="cat-circle-img"
+                            <img src="{{ cat.image.url }}" alt="{{ cat.title }}" class="cat-circle-img"
                             style="width: 75px !important; height: 75px !important; max-width: 80px !important; object-fit: cover; border-radius: 50%; display: block;">
                             {% else %}
                             <i class="ri-handbag-line"></i>
@@ -112,10 +112,10 @@
                         <div class="category-title">
                             <h4>
                                 <a href="{% url 'products:search' %}?category={{ cat.id }}">
-                                    {{ cat.titel }}
+                                    {{ cat.title }}
                                 </a>
                             </h4>
-                            <p>({{ cat.product.count }} محصول)</p>
+                            <p>({{ cat.products.count }} محصول)</p>
                         </div>
                         
                     </div>

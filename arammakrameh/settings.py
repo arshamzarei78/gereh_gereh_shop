@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'django_cleanup.apps.CleanupConfig',
     'cart',
     'checkout',
-    'blog'
+    'blog',
+    'django.contrib.humanize'
 ]
 
 MIDDLEWARE = [

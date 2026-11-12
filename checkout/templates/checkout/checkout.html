@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block title %}
 تسویه حساب و ثبت سفارش | گره گره
@@ -43,18 +44,34 @@
                         <div class="cr-sb-block-content">
                             <div class="cr-checkout-summary">
                                 <div>
-                                    <span class="text-left">روش ارسال</span>
-                                    <span class="text-right">پست پیشتاز</span>
+                                    <span class="text-left">جمع کل کالاها ({{ cart|length }} عدد)</span>
+                                    <span class="text-right">{{ cart.get_total_no_discount_display }} تومان</span>
                                 </div>
+
+                                {% if cart.get_total_discount > 0 %}
+                                <div class="text-danger">
+                                    <span class="text-left">سود شما از خرید (تخفیف)</span>
+                                    <span class="text-right">{{ cart.get_total_discount_display }}- تومان</span>
+                                </div>
+                                {% endif %}
+
+                                <div>
+                                    <span class="text-left">هزینه ارسال (پست پیشتاز)</span>
+                                    <span class="text-right fw-bold" id="shipping-cost-display">
+                                        {% if initial_shipping_cost == 0 %}
+                                            رایگان
+                                        {% else %}
+                                            {{ initial_shipping_cost|intcomma }} تومان
+                                        {% endif %}
+                                    </span>
+                                </div>
+
                                 <div class="cr-checkout-summary-total">
                                     <span class="text-left">مبلغ قابل پرداخت</span>
                                     <div class="cr-product-details">
-                                        {% if cart.get_total_no_discount_display != cart.get_total_price_display %}
-                                            <p class="cr-price mb-0">
-                                                <span class="old-price">{{ cart.get_total_no_discount_display }} تومان</span>
-                                            </p>
-                                        {% endif %}
-                                        <span class="text-right fw-bold text-success">{{ cart.get_total_price_display }} تومان</span>
+                                        <span class="text-right fw-bold text-success fs-5" id="final-payable-display">
+                                            {{ initial_total_payable|intcomma }} تومان
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -102,23 +119,33 @@
                 <div class="cr-sidebar-wrap cr-checkout-del-wrap">
                     <div class="cr-sidebar-block">
                         <div class="cr-sb-title">
-                            <h3 class="cr-sidebar-title">نحوه و زمان ارسال</h3>
+                            <h3 class="cr-sidebar-title">نحوه و تعرفه ارسال</h3>
                         </div>
                         <div class="cr-sb-block-content">
                             <div class="cr-checkout-del">
                                 <span class="cr-del-option d-block mb-3">
                                     <span class="d-block w-100">
                                         <input type="radio" id="del_post" name="shipping_method" checked readonly>
-                                        <label for="del_post" class="fw-bold">ارسال از طریق شرکت ملی پست</label>
+                                        <label for="del_post" class="fw-bold">ارسال از طریق شرکت ملی پست (پیشتاز)</label>
                                     </span>
                                 </span>
-                                <div class="p-3 rounded border mb-3 small" style="line-height: 1.9;">
-                                    <div><i class="ri-truck-line text-success ms-1"></i> <strong>تهران:</strong> تحویل ۲ روز کاری</div>
-                                    <div><i class="ri-map-pin-time-line text-success ms-1"></i> <strong>سایر شهرها:</strong> تحویل تا ۷ روز کاری</div>
+                                <div class="p-3 rounded border mb-3 small" style="line-height: 2;">
+                                    <div class="d-flex justify-content-between">
+                                        <span><i class="ri-truck-line text-success ms-1"></i> <strong>تهران (۲ روز کاری):</strong></span>
+                                        <span>{{ shipping_setting.tehran_cost|intcomma }} تومان</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span><i class="ri-map-pin-time-line text-success ms-1"></i> <strong>سایر شهرها (تا ۷ روز کاری):</strong></span>
+                                        <span>{{ shipping_setting.other_cities_cost|intcomma }} تومان</span>
+                                    </div>
+                                    {% if shipping_setting.free_shipping_threshold > 0 %}
+                                    <div class="mt-1 pt-1 border-top text-success fw-bold text-center">
+                                        ارسال رایگان برای خریدهای بالای {{ shipping_setting.free_shipping_threshold|intcomma }} تومان!
+                                    </div>
+                                    {% endif %}
                                 </div>
                                 <span class="cr-del-commemt">
                                     <span class="cr-del-opt-head mb-2 d-block">یادداشت سفارش (اختیاری)</span>
-                                    <!-- متصل به فرم اصلی با ویژگی form="checkout-form" و نام منطبق با ویو -->
                                     <textarea name="order_note" form="checkout-form" rows="3" placeholder="اگر نکته‌ای در مورد بسته‌بندی یا تحویل سفارش دارید اینجا بنویسید..."></textarea>
                                 </span>
                             </div>
@@ -185,13 +212,14 @@
                                         </div>
 
                                         <!-- ۲. انتخاب از بین آدرس‌های قبلی -->
-                                        {% if user_addresses.exists %}
+                                        {% if user_addresses %}
                                         <div class="cr-bill-wrap mb-4 p-3 rounded border">
                                             <label class="fw-bold mb-2" for="saved-address-selector">انتخاب از آدرس‌های ذخیره شده شما:</label>
                                             <select id="saved-address-selector" name="selected_address_id" class="form-select mb-2">
                                                 {% for addr in user_addresses %}
                                                     <option value="{{ addr.id }}" 
                                                             data-province="{{ addr.province.id }}"
+                                                            data-province-name="{{ addr.province.name }}"
                                                             data-city="{{ addr.city.id }}"
                                                             data-city-name="{{ addr.city.name }}"
                                                             data-postal="{{ addr.postal_code }}"
@@ -272,7 +300,7 @@
     </div>
 </section>
 
-<!-- اسکریپت‌های مدیریت آدرس و بارگذاری شهرها (درون بلاک content تا در خروجی رندر شود) -->
+<!-- اسکریپت‌های مدیریت آدرس، بارگذاری شهرها و محاسبه لحظه‌ای هزینه ارسال -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const $province = $('select[name="province"]');
@@ -281,8 +309,41 @@ document.addEventListener("DOMContentLoaded", function () {
     const $newAddressBox = $('#new-address-name-box');
     const $newAddressInput = $('#new_address_name');
 
-    // ۱. بارگذاری شهرهای استان به صورت ای‌جکس
+    // مقادیر مالی ارسال شده از بک‌اند (پشتیبانی از تنظیمات پنل ادمین)
+    const cartTotal = Number("{{ cart.get_total_price|default:0 }}");
+    const tehranCost = Number("{{ shipping_setting.tehran_cost|default:0 }}");
+    const otherCitiesCost = Number("{{ shipping_setting.other_cities_cost|default:0 }}");
+    const freeThreshold = Number("{{ shipping_setting.free_shipping_threshold|default:0 }}");
+
+    function formatNumber(num) {
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    // تابع بروزرسانی آنی هزینه ارسال و جمع کل بر اساس استان انتخاب‌شده
+    function updateShippingAndTotal() {
+        let provinceText = $province.find('option:selected').text().trim();
+        let shippingCost = otherCitiesCost;
+
+        if (freeThreshold > 0 && cartTotal >= freeThreshold) {
+            shippingCost = 0;
+        } else if (provinceText.includes('تهران')) {
+            shippingCost = tehranCost;
+        }
+
+        const finalPayable = cartTotal + shippingCost;
+
+        if (shippingCost === 0) {
+            $('#shipping-cost-display').text('رایگان');
+        } else {
+            $('#shipping-cost-display').text(formatNumber(shippingCost) + ' تومان');
+        }
+        $('#final-payable-display').text(formatNumber(finalPayable) + ' تومان');
+    }
+
+    // ۱. بارگذاری شهرهای استان به صورت ای‌جکس + آپدیت هزینه ارسال
     $province.on('change', function () {
+        updateShippingAndTotal();
+
         let provinceId = $(this).val();
         if (!provinceId) {
             $city.html('<option value="">انتخاب شهر</option>');
@@ -318,6 +379,7 @@ document.addEventListener("DOMContentLoaded", function () {
             $city.html('<option value="">انتخاب شهر</option>');
             $('input[name="postal_code"]').val('');
             $('textarea[name="address"], input[name="address"]').val('');
+            updateShippingAndTotal();
         } else {
             $newAddressBox.slideUp();
             $newAddressInput.prop('required', false).val('');
@@ -336,6 +398,9 @@ document.addEventListener("DOMContentLoaded", function () {
             $province.val(provinceId).trigger('change');
         }
     });
+
+    // اجرای اولیه در زمان باز شدن صفحه
+    updateShippingAndTotal();
 });
 </script>
 {% endblock content %}

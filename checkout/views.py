@@ -1,16 +1,14 @@
 import requests
 from django.conf import settings
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.urls import reverse
 from django.db import transaction
-
-from accounts.models import Address
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from accounts.forms import AddressForm
-from products.models import ProductVariant
+from accounts.models import Address
 from cart.cart_module import Cart
-from .models import Order, OrderItem
+from products.models import ProductVariant
+from .models import Order, OrderItem,ShippingSetting
 
 # تنظیم آدرس‌های وب‌سرویس زرین‌پال بر اساس حالت Sandbox یا واقعی
 if getattr(settings, "SANDBOX", True):
@@ -31,17 +29,23 @@ def checkout_view(request):
     if len(cart) == 0:
         return redirect("cart:cart_detail")
 
-    user_addresses = request.user.addresses.select_related("province", "city").all()
-    selected_address = (
-        user_addresses.filter(is_default=True).first() or user_addresses.first()
+    # دریافت تنظیمات هزینه ارسال از دیتابیس (تعریف شده در پنل ادمین)
+    shipping_setting = ShippingSetting.load()
+
+    user_addresses = list(
+        request.user.addresses.select_related("province", "city").all()
     )
-    
+    selected_address = next(
+        (addr for addr in user_addresses if addr.is_default),
+        user_addresses[0] if user_addresses else None,
+    )
+
     if request.method == "POST":
         selected_address_id = request.POST.get("selected_address_id")
 
-        if selected_address_id and selected_address_id != "new":
+        if selected_address_id and selected_address_id != "new" and selected_address_id.isdigit():
             addr_instance = get_object_or_404(
-                Address, id=selected_address_id, user=request.user
+                Address, id=int(selected_address_id), user=request.user
             )
             form = AddressForm(request.POST, instance=addr_instance)
         else:
@@ -50,30 +54,41 @@ def checkout_view(request):
         if form.is_valid():
             try:
                 with transaction.atomic():
-                    # ۱. ذخیره یا آپدیت آدرس
                     saved_address = form.save(commit=False)
                     saved_address.user = request.user
 
                     if not saved_address.pk:
                         saved_address.address_name = (
                             request.POST.get("address_name")
-                            or f"آدرس {user_addresses.count() + 1}"
+                            or f"آدرس {len(user_addresses) + 1}"
                         )
-                        if not user_addresses.exists():
+                        if not user_addresses:
                             saved_address.is_default = True
 
                     saved_address.save()
 
-                    # ۲. بررسی اولیه موجودی انبار قبل از ثبت سفارش
-                    for item in cart:
+                    cart_items = list(cart)
+                    if not cart_items:
+                        return redirect("cart:cart_detail")
+
+                    for item in cart_items:
                         variant = item["variant"]
                         if variant.stock < item["quantity"]:
                             raise ValueError(
                                 f"موجودی محصول «{variant.product.name} ({variant.color})» کافی نیست. (موجودی فعلی: {variant.stock})"
                             )
 
-                    # ۳. ایجاد سفارش اصلی (Order)
-                    full_address_str = f"استان {saved_address.province.name}، شهر {saved_address.city.name}، {saved_address.address}"
+                    full_address_str = (
+                        f"استان {saved_address.province.name}، "
+                        f"شهر {saved_address.city.name}، {saved_address.address}"
+                    )
+
+                    # محاسبه دقیق هزینه ارسال بر اساس استان انتخاب‌شده (تهران یا شهرستان)
+                    cart_total = cart.get_total_price()
+                    shipping_cost = shipping_setting.calculate_cost(
+                        saved_address.province.name, cart_total
+                    )
+                    total_payable = cart_total + shipping_cost
 
                     order = Order.objects.create(
                         user=request.user,
@@ -82,13 +97,14 @@ def checkout_view(request):
                         phone_number=request.user.phone_number,
                         address_text=full_address_str,
                         postal_code=saved_address.postal_code,
-                        total_price=cart.get_total_price(),
-                        order_note=request.POST.get("order_note", ""),
+                        shipping_cost=shipping_cost,
+                        discount_amount=cart.get_total_discount(),
+                        total_price=total_payable,
+                        order_note=request.POST.get("order_note", "").strip(),
                     )
 
-                    # ۴. ثبت یکجای آیتم‌های سفارش (Bulk Create)
                     order_items = []
-                    for item in cart:
+                    for item in cart_items:
                         variant = item["variant"]
                         size_str = f" - سایز: {variant.size}" if variant.size else ""
                         product_title = f"{variant.product.name} (رنگ: {variant.color}{size_str})"
@@ -98,6 +114,7 @@ def checkout_view(request):
                                 order=order,
                                 variant=variant,
                                 product_name=product_title,
+                                original_price=variant.price,
                                 price=variant.final_price,
                                 quantity=item["quantity"],
                             )
@@ -105,37 +122,62 @@ def checkout_view(request):
 
                     OrderItem.objects.bulk_create(order_items)
 
-                # هدایت کاربر به ویوی اتصال به درگاه زرین‌پال
                 return redirect("checkout:payment", order_id=order.id)
 
             except ValueError as e:
                 form.add_error(None, str(e))
-    
+
     else:
         form = AddressForm(instance=selected_address)
+
+    # محاسبه اولیه هزینه ارسال برای نمایش در هنگام بارگذاری صفحه
+    initial_province_name = (
+        selected_address.province.name if (selected_address and selected_address.province) else ""
+    )
+    initial_shipping_cost = shipping_setting.calculate_cost(
+        initial_province_name, cart.get_total_price()
+    )
 
     context = {
         "cart": cart,
         "form": form,
         "user_addresses": user_addresses,
         "selected_address": selected_address,
+        "shipping_setting": shipping_setting,
+        "initial_shipping_cost": initial_shipping_cost,
+        "initial_total_payable": cart.get_total_price() + initial_shipping_cost,
     }
     return render(request, "checkout/checkout.html", context)
 
 
-@login_required
+@login_required(login_url="accounts:verify_otp")
 def payment_request_view(request, order_id):
     """ارسال اطلاعات سفارش به زرین‌پال و دریافت Authority"""
     order = get_object_or_404(
-        Order, id=order_id, user=request.user, is_paid=False
+        Order.objects.prefetch_related("items__variant__product"),
+        id=order_id,
+        user=request.user,
+        is_paid=False,
     )
+
+    for item in order.items.all():
+        if not item.variant or item.variant.stock < item.quantity:
+            return render(
+                request,
+                "checkout/payment_result.html",
+                {
+                    "order": order,
+                    "success": False,
+                    "error_message": f"متاسفانه موجودی محصول «{item.product_name}» به پایان رسیده است.",
+                },
+            )
 
     callback_url = request.build_absolute_uri(reverse("checkout:payment_verify"))
 
     payload = {
         "merchant_id": settings.ZARINPAL_MERCHANT_ID,
         "amount": int(order.total_price),
-        "currency": "IRT",  # واحد تومان؛ نیازی به ضرب در ۱۰ نیست
+        "currency": "IRT",
         "description": f"پرداخت سفارش شماره #{order.id} از فروشگاه گره گره",
         "callback_url": callback_url,
         "metadata": {
@@ -152,15 +194,16 @@ def payment_request_view(request, order_id):
         )
         res_data = response.json()
 
-        # کد 100 در زرین‌پال به معنای ایجاد موفق تراکنش است
         if res_data.get("data") and res_data["data"].get("code") == 100:
             authority = res_data["data"]["authority"]
-            # ذخیره کد Authority در سفارش برای شناسایی در زمان بازگشت از بانک
             order.authority = authority
-            order.save(update_fields=["authority"])
+            order.status = Order.StatusChoices.PENDING
+            order.save(update_fields=["authority", "status", "updated_at"])
             return redirect(f"{ZP_API_STARTPAY}{authority}")
 
-        error_msg = res_data.get("errors", {}).get("message", "خطا در برقراری ارتباط با درگاه زرین‌پال.")
+        error_msg = res_data.get("errors", {}).get(
+            "message", "خطا در برقراری ارتباط با درگاه زرین‌پال."
+        )
         return render(
             request,
             "checkout/payment_result.html",
@@ -179,18 +222,19 @@ def payment_request_view(request, order_id):
         )
 
 
-@login_required
 def payment_verify_view(request):
-    """بازگشت کاربر از درگاه زرین‌پال و اعتبارسنجی نهایی تراکنش"""
+    """
+    بازگشت کاربر از درگاه زرین‌پال و اعتبارسنجی نهایی تراکنش.
+    نکته مهم: بدون @login_required تا در صورت عدم ارسال کوکی سشن در ریدایرکت شاپرک، تراکنش نسوزد.
+    """
     authority = request.GET.get("Authority")
     status = request.GET.get("Status")
 
     if not authority:
         return redirect("home:home")
 
-    order = get_object_or_404(Order, authority=authority, user=request.user)
+    order = get_object_or_404(Order, authority=authority)
 
-    # اگر سفارش قبلاً تایید شده باشد (جلوگیری از رفرش صفحه توسط کاربر)
     if order.is_paid:
         return render(
             request,
@@ -198,10 +242,9 @@ def payment_verify_view(request):
             {"order": order, "success": True, "already_verified": True},
         )
 
-    # اگر کاربر دکمه انصراف را زده باشد یا پرداخت ناموفق بوده باشد
     if status != "OK":
         order.status = Order.StatusChoices.CANCELED
-        order.save(update_fields=["status"])
+        order.save(update_fields=["status", "updated_at"])
         return render(
             request,
             "checkout/payment_result.html",
@@ -212,7 +255,6 @@ def payment_verify_view(request):
             },
         )
 
-    # ارسال درخواست تایید نهایی به زرین‌پال
     payload = {
         "merchant_id": settings.ZARINPAL_MERCHANT_ID,
         "amount": int(order.total_price),
@@ -227,33 +269,40 @@ def payment_verify_view(request):
             timeout=10,
         )
         res_data = response.json()
-        data = res_data.get("data", {})
+        data = res_data.get("data", {}) if isinstance(res_data.get("data"), dict) else {}
         code = data.get("code")
 
-        # کد 100 (موفق) و کد 101 (قبلاً تایید شده)
         if code in (100, 101):
             with transaction.atomic():
-                # کسر موجودی انبار برای هر تنوع محصول با قفل ردیف دیتابیس
-                for item in order.items.select_related("variant"):
-                    if item.variant:
-                        variant = ProductVariant.objects.select_for_update().get(pk=item.variant.pk)
-                        if variant.stock >= item.quantity:
-                            variant.stock -= item.quantity
-                            variant.save(update_fields=["stock"])
-                        else:
-                            # اگر در فاصله رفتن به درگاه موجودی تمام شده باشد
-                            variant.stock = 0
-                            variant.save(update_fields=["stock"])
+                locked_order = Order.objects.select_for_update().get(pk=order.pk)
+                if locked_order.is_paid:
+                    return render(
+                        request,
+                        "checkout/payment_result.html",
+                        {"order": locked_order, "success": True, "already_verified": True},
+                    )
 
-                # بروزرسانی وضعیت سفارش و ذخیره کد رهگیری
-                order.is_paid = True
-                order.status = Order.StatusChoices.PAID
-                order.ref_id = str(data.get("ref_id", ""))
-                order.save(update_fields=["is_paid", "status", "ref_id"])
+                order_items = list(locked_order.items.all())
+                variant_ids = [item.variant_id for item in order_items if item.variant_id]
+                locked_variants = {
+                    v.id: v
+                    for v in ProductVariant.objects.filter(id__in=variant_ids)
+                    .order_by("id")
+                    .select_for_update()
+                }
 
-                # خالی کردن سبد خرید پس از پرداخت موفق
-                cart = Cart(request)
-                cart.clear()
+                for item in order_items:
+                    variant = locked_variants.get(item.variant_id)
+                    if variant:
+                        variant.stock = max(0, variant.stock - item.quantity)
+                        variant.save(update_fields=["stock"])
+
+                ref_id = str(data.get("ref_id", ""))
+                locked_order.mark_as_paid(ref_id=ref_id)
+                order = locked_order
+
+            cart = Cart(request)
+            cart.clear()
 
             return render(
                 request,
@@ -262,8 +311,13 @@ def payment_verify_view(request):
             )
         else:
             order.status = Order.StatusChoices.CANCELED
-            order.save(update_fields=["status"])
-            error_msg = res_data.get("errors", {}).get("message", "تراکنش توسط بانک تایید نشد.")
+            order.save(update_fields=["status", "updated_at"])
+            errors = res_data.get("errors", {})
+            error_msg = (
+                errors.get("message", "تراکنش توسط بانک تایید نشد.")
+                if isinstance(errors, dict)
+                else "تراکنش توسط بانک تایید نشد."
+            )
             return render(
                 request,
                 "checkout/payment_result.html",
@@ -282,37 +336,29 @@ def payment_verify_view(request):
         )
 
 
+@login_required(login_url="accounts:verify_otp")
 def track_order_view(request, order_id=None):
-    if not request.user.is_authenticated:
-        return redirect("accounts:verify_otp")
     """ویوی پیگیری وضعیت سفارش با شماره سفارش یا لینک مستقیم"""
-    # دریافت شماره سفارش از URL یا از فرم جستجو (GET)
     query_id = order_id or request.GET.get("order_id", "").strip().replace("#", "")
     order = None
     error_message = None
 
+    base_qs = (
+        Order.objects.filter(user=request.user)
+        .select_related("address__province", "address__city")
+        .prefetch_related("items__variant__product")
+    )
+
     if query_id:
         if str(query_id).isdigit():
-            order = (
-                Order.objects.filter(id=int(query_id), user=request.user)
-                .select_related("address__province", "address__city")
-                .prefetch_related("items__variant__product")
-                .first()
-            )
+            order = base_qs.filter(id=int(query_id)).first()
             if not order:
                 error_message = f"سفارشی با شماره #{query_id} در حساب کاربری شما یافت نشد."
         else:
             error_message = "لطفاً شماره سفارش را به صورت عدد وارد کنید."
     else:
-        # اگر کاربر بدون شماره سفارش وارد صفحه شد، آخرین سفارش او را به صورت پیش‌فرض نمایش بده
-        order = (
-            Order.objects.filter(user=request.user)
-            .select_related("address__province", "address__city")
-            .prefetch_related("items__variant__product")
-            .first()
-        )
+        order = base_qs.first()
 
-    # تشخیص تهران یا شهرستان برای نمایش زمان تحویل
     is_tehran = False
     if order:
         if order.address and order.address.province and "تهران" in order.address.province.name:

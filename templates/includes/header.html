@@ -18,7 +18,7 @@
                             {% for cat in categories %}
                                 <!-- بررسی اینکه آیا کاربر این دسته را سرچ کرده تا تیک selected روی آن بماند -->
                                 <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"s" %}selected{% endif %}>
-                                    {{ cat.titel }}
+                                    {{ cat.title }}
                                 </option>
                             {% endfor %}
                         </select>
@@ -84,7 +84,7 @@
                                 data-bs-target="#v-pills-{{ cat.id }}" type="button" role="tab"
                                 aria-controls="v-pills-{{ cat.id }}" 
                                 aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
-                            {{ cat.titel }}
+                            {{ cat.title }}
                         </button>
                     {% endfor %}
                     <a class="nav-link text-success fw-bold" href="{% url 'products:search' %}">
@@ -101,7 +101,7 @@
 
                                     <div class="cat-image-circle mx-auto mb-3">
                                         {% if cat.image %}
-                                            <img src="{{ cat.image.url }}" alt="{{ cat.titel }}" class="img-fluid rounded-circle object-fit-cover" style="width: 80px; height: 80px;">
+                                            <img src="{{ cat.image.url }}" alt="{{ cat.title }}" class="img-fluid rounded-circle object-fit-cover" style="width: 80px; height: 80px;">
                                         {% else %}
 
                                             <div class="rounded-circle d-flex align-items-center justify-content-center bg-light" style="width: 80px; height: 80px; margin: 0 auto;">
@@ -111,10 +111,10 @@
                                     </div>
                                     
                                     <h6 class="cr-col-title mb-2" style="font-size: 1.1rem;">
-                                        محصولات {{ cat.titel }}
+                                        محصولات {{ cat.title }}
                                     </h6>
                                     <p class="text-muted mb-4" style="font-size: 0.85rem;">
-                                        تنوع بی‌نظیر {{ cat.titel }} دست‌ساز با بهترین الیاف و کاموا
+                                        تنوع بی‌نظیر {{ cat.title }} دست‌ساز با بهترین الیاف و کاموا
                                     </p>
                                     <a href="{% url 'products:search' %}?category={{ cat.id }}" class="cr-button cr-btn-secondary btn-sm">
                                         مشاهده و خرید

@@ -115,7 +115,7 @@
                                     <div class="cr-brand">
                                         {% with first_cat=product.category.first %}
                                             {% if first_cat %}
-                                                <a href="{% url 'products:search' %}?category={{ first_cat.id }}">{{ first_cat.titel }}</a>
+                                                <a href="{% url 'products:search' %}?category={{ first_cat.id }}">{{ first_cat.title }}</a>
                                             {% else %}
                                                 <a href="{% url 'products:search' %}">گره گره</a>
                                             {% endif %}

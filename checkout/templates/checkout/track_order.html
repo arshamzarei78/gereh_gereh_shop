@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load jalali_tags %}
+{% load humanize %}
 
 {% block title %}
 پیگیری سفارش | گره گره
@@ -58,27 +59,28 @@
                     <div class="row">
                         <div class="col-md-4 m-b-767">
                             <div class="cr-track-card">
-                                <span class="cr-track-title">شماره و تاریخ سفارش</span>
-                                <span>#{{ order.id }} ({{ order.created_at|to_jalali:"%Y/%m/%d" }})</span>
+                                <span class="cr-track-title">شماره و تاریخ ثبت سفارش</span>
+                                <span>#{{ order.id }} ({{ order.created_at|to_jalali:"%Y/%m/%d - %H:%M" }})</span>
                             </div>
                         </div>
                         <div class="col-md-4 m-b-767">
                             <div class="cr-track-card">
-                                <span class="cr-track-title">روش ارسال و کد پیگیری پرداخت</span>
+                                <span class="cr-track-title">وضعیت و کد پیگیری پرداخت</span>
                                 <span>
-                                    پست پیشتاز | 
-                                    {% if order.ref_id %}
-                                        کد تراکنش: {{ order.ref_id }}
+                                    {% if order.is_paid %}
+                                        <span class="text-success fw-bold">پرداخت موفق</span>
+                                        {% if order.ref_id %} | کد تراکنش: <span dir="ltr">{{ order.ref_id }}</span>{% endif %}
                                     {% else %}
-                                        پرداخت نشده
+                                        <span class="text-danger fw-bold">پرداخت نشده</span>
                                     {% endif %}
                                 </span>
                             </div>
                         </div>
                         <div class="col-md-4 m-b-767">
                             <div class="cr-track-card">
-                                <span class="cr-track-title">زمان تقریبی تحویل</span>
+                                <span class="cr-track-title">روش ارسال و زمان تقریبی تحویل</span>
                                 <span>
+                                    پست پیشتاز | 
                                     {% if is_tehran %}
                                         تهران: ۲ روز کاری پس از ارسال
                                     {% else %}
@@ -88,6 +90,30 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- باکس اختصاصی کد رهگیری مرسوله پستی (در صورت ثبت توسط ادمین) -->
+                    {% if order.tracking_code %}
+                    <div class="alert alert-success d-flex flex-wrap justify-content-between align-items-center mt-4 mb-2 p-3 border-success">
+                        <div class="d-flex align-items-center gap-2 mb-2 mb-md-0">
+                            <i class="ri-truck-line fs-3 text-success"></i>
+                            <div>
+                                <div class="fw-bold">مرسوله شما تحویل اداره پست شده است!</div>
+                                <div class="small text-muted">
+                                    کد رهگیری ۲۴ رقمی پست: 
+                                    <strong id="postal-tracking-code" class="text-dark fs-6 ms-1" dir="ltr">{{ order.tracking_code }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-sm btn-outline-success" onclick="copyTrackingCode()">
+                                <i class="ri-file-copy-line"></i> <span id="copy-btn-text">کپی کد</span>
+                            </button>
+                            <a href="https://tracking.post.ir/?id={{ order.tracking_code }}" target="_blank" rel="noopener" class="cr-button btn-sm text-decoration-none">
+                                رهگیری در سامانه پست <i class="ri-external-link-line"></i>
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
 
                     <!-- وضعیت سفارش در حالت لغو شده یا در انتظار پرداخت -->
                     {% if order.status == 'canceled' %}
@@ -105,12 +131,10 @@
                             <div class="cr-steps-body">
                                 
                                 <!-- مرحله ۱: ثبت سفارش -->
-                                <div class="cr-step {% if order.status == 'pending' %}cr-step-active{% else %}cr-step-completed{% endif %}">
-                                    {% if order.status != 'pending' %}
+                                <div class="cr-step cr-step-completed">
                                     <span class="cr-step-indicator">
                                         <i class="ri-check-line"></i>
                                     </span>
-                                    {% endif %}
                                     <span class="cr-step-icon">
                                         <i class="ri-file-list-3-line"></i>
                                     </span>
@@ -138,9 +162,22 @@
                                     </span>
                                     {% endif %}
                                     <span class="cr-step-icon">
+                                        <i class="ri-gift-2-line"></i>
+                                    </span>
+                                    آماده‌سازی و<br> بسته‌بندی
+                                </div>
+
+                                <!-- مرحله ۴: تحویل به پست -->
+                                <div class="cr-step {% if order.status == 'shipped' or order.status == 'delivered' %}cr-step-completed{% endif %}">
+                                    {% if order.status == 'shipped' or order.status == 'delivered' %}
+                                    <span class="cr-step-indicator">
+                                        <i class="ri-check-line"></i>
+                                    </span>
+                                    {% endif %}
+                                    <span class="cr-step-icon">
                                         <i class="ri-truck-line"></i>
                                     </span>
-                                    ارسال <br> با پست پیشتاز
+                                    ارسال با<br> پست پیشتاز
                                 </div>
 
                                 <!-- مرحله ۵: تحویل به مشتری -->
@@ -169,24 +206,59 @@
 
                     <!-- جزئیات اقلام سفارش و آدرس گیرنده -->
                     <div class="row mt-5 pt-4 border-top">
-                        <div class="col-md-6 mb-3">
-                            <h5 class="fw-bold mb-3">مشخصات تحویل‌گیرنده</h5>
-                            <p class="mb-1"><strong>نام گیرنده:</strong> {{ order.full_name }}</p>
-                            <p class="mb-1"><strong>شماره تماس:</strong> <span dir="ltr">{{ order.phone_number }}</span></p>
-                            <p class="mb-1"><strong>کد پستی:</strong> {{ order.postal_code }}</p>
-                            <p class="mb-0"><strong>آدرس:</strong> {{ order.address_text }}</p>
+                        <div class="col-md-6 mb-4">
+                            <h5 class="fw-bold mb-3"><i class="ri-map-pin-user-line me-1"></i> مشخصات تحویل‌گیرنده</h5>
+                            <div class="p-3 bg-light rounded border">
+                                <p class="mb-2"><strong>نام گیرنده:</strong> {{ order.full_name }}</p>
+                                <p class="mb-2"><strong>شماره تماس:</strong> <span dir="ltr">{{ order.phone_number }}</span></p>
+                                <p class="mb-2"><strong>کد پستی:</strong> <span dir="ltr">{{ order.postal_code }}</span></p>
+                                <p class="mb-0"><strong>آدرس کامل:</strong> {{ order.address_text }}</p>
+                                {% if order.order_note %}
+                                    <hr class="my-2">
+                                    <p class="mb-0 text-muted small"><strong>یادداشت سفارش:</strong> {{ order.order_note }}</p>
+                                {% endif %}
+                            </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <h5 class="fw-bold mb-3">اقلام سفارش ({{ order.items.count }} مورد)</h5>
+
+                        <div class="col-md-6 mb-4">
+                            <h5 class="fw-bold mb-3"><i class="ri-shopping-basket-2-line me-1"></i> اقلام سفارش ({{ order.items.all|length }} مورد)</h5>
                             <ul class="list-group">
                                 {% for item in order.items.all %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent">
-                                    <span>{{ item.quantity }} × {{ item.product_name }}</span>
-                                    <span class="fw-bold">{{ item.cost_display }} تومان</span>
+                                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent py-3">
+                                    <div>
+                                        {% if item.variant and item.variant.product %}
+                                            <a href="{{ item.variant.product.get_absolute_url }}" class="text-dark fw-bold text-decoration-none">
+                                                {{ item.quantity }} × {{ item.product_name }}
+                                            </a>
+                                        {% else %}
+                                            <span class="fw-bold">{{ item.quantity }} × {{ item.product_name }}</span>
+                                        {% endif %}
+
+                                        {% if item.original_price and item.original_price > item.price %}
+                                            <div class="small text-muted mt-1">
+                                                قیمت واحد: <del class="me-1">{{ item.original_price|intcomma }}</del> 
+                                                <span class="text-danger">{{ item.price_display }} تومان</span>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    <span class="fw-bold text-nowrap">{{ item.cost_display }} تومان</span>
                                 </li>
                                 {% endfor %}
-                                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent fw-bold text-success">
-                                    <span>مبلغ کل فاکتور:</span>
+
+                                {% if order.discount_amount > 0 %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent text-danger">
+                                    <span>سود شما از این خرید (تخفیف):</span>
+                                    <span>{{ order.discount_amount|intcomma }} تومان</span>
+                                </li>
+                                {% endif %}
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent text-muted">
+                                    <span>هزینه ارسال:</span>
+                                    <span>{{ order.shipping_cost_display }}{% if order.shipping_cost %} تومان{% endif %}</span>
+                                </li>
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center bg-light fw-bold text-success fs-6">
+                                    <span>مبلغ کل قابل پرداخت:</span>
                                     <span>{{ order.total_price_display }} تومان</span>
                                 </li>
                             </ul>
@@ -208,4 +280,17 @@
     </div>
 </section>
 <!-- Track Order section End -->
+
+<script>
+function copyTrackingCode() {
+    const codeElement = document.getElementById('postal-tracking-code');
+    const btnText = document.getElementById('copy-btn-text');
+    if (codeElement && navigator.clipboard) {
+        navigator.clipboard.writeText(codeElement.innerText.trim()).then(() => {
+            btnText.innerText = 'کپی شد!';
+            setTimeout(() => { btnText.innerText = 'کپی کد'; }, 2000);
+        });
+    }
+}
+</script>
 {% endblock content %}

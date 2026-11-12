@@ -22,7 +22,7 @@
                             {% for cat in categories %}
                                 <li>
                                     <a href="{% url 'products:search' %}?category={{ cat.id }}">
-                                        {{ cat.titel }}
+                                        {{ cat.title }}
                                     </a>
                                 </li>
                             {% endfor %}

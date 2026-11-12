@@ -67,7 +67,7 @@
                     <ul class="cr-footer-links cr-footer-dropdown">
                         {% for cat in categories|slice:":6" %}
                             <li>
-                                <a href="{% url 'products:search' %}?category={{ cat.id }}">{{ cat.titel }}</a>
+                                <a href="{% url 'products:search' %}?category={{ cat.id }}">{{ cat.title }}</a>
                             </li>
                         {% empty %}
                             <li><a href="{% url 'products:search' %}">مشاهده محصولات</a></li>
