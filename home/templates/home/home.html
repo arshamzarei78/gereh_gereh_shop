@@ -32,17 +32,18 @@
             <div class="cr-slider swiper-container">
                 <span class="shape"></span>
                 <div class="swiper-wrapper">
+                    {% if banners %}
+                    {% for banner in banners %}
                     <div class="swiper-slide">
-                        <div class="cr-hero-banner cr-banner-image-two">
+                        <div class="cr-hero-banner" style="background-image: url('{{ banner.image.url }}');">
                             <div class="container-fluid">
                                 <div class="row">
                                     <div class="col-lg-12">
                                         <div class="cr-left-side-contain slider-animation">
-                                            <h5> <Span> 100 ٪ </span> پارچه پنبه</h5>
-                                            <h1>هنر دست، زیبایی ماندگار</h1>
-                                            <p>با مکرمه، به فضای زندگی‌تان روحی تازه ببخشید
-                                                . ترکیبی از هنر، ظرافت و خلاقیت که با دستان هنرمندانه خلق شده
-                                                 تا گوشه‌گوشه خانه‌تان را گرم‌تر، زیباتر و خاص‌تر کند.</p>
+                                            <h5> <Span>{% if banner.span %} {{banner.span}} {% endif %}</span> 
+                                              {% if banner.h5 %}  {{banner.h5}} {% endif %}</h5>
+                                            <h1>{{banner.title}}</h1>
+                                            <p>{{banner.text}}</p>
                                             <div class="cr-last-buttons">
                                                 <a href="shop-left-sidebar.html" class="cr-button">
                                                     خرید
@@ -54,6 +55,8 @@
                             </div>
                         </div>
                     </div>
+                    {% endfor %}
+                    {% else %}
                     <div class="swiper-slide">
                         <div class="cr-hero-banner cr-banner-image-one">
                             <div class="container-fluid">
@@ -76,6 +79,7 @@
                             </div>
                         </div>
                     </div>
+                    {% endif %}
                 </div>
                 <div class="swiper-pagination"></div>
             </div>
@@ -136,7 +140,7 @@
                                 <p>در مجموعه محصولات برتر مشاهده کنید.</p>
                             </div>
                         </div>
-                        <div id="dealend" class="dealend-timer"></div>
+                        <!-- <div id="dealend" class="dealend-timer"></div> -->
                     </div>
                 </div>
             </div>
@@ -162,7 +166,7 @@
                             <div class="cr-info">
                                 <a href="shop-left-sidebar.html">{{product.category.first}}</a>
                                 
-                                <!-- اضافه شدن dir="ltr" به این تگ -->
+                                
                                 <div class="cr-pro-rating" dir="ltr">
                                     {% for i in "12345" %}
                                         {% if product.average_rating >= forloop.counter %}

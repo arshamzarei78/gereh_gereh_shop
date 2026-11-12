@@ -2,9 +2,11 @@ from django.shortcuts import get_object_or_404 , redirect
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.views.decorators.http import require_POST
-from products.models import ProductVariant
+from products.models import ProductVariant,Product
 from .cart_module import Cart
 from django.views.generic import TemplateView
+from django.db.models import Avg, Q, FloatField
+from django.db.models.functions import Coalesce
 
 @require_POST
 def cart_add(request, product_id):
@@ -100,4 +102,21 @@ def cart_update(request, variant_id):
         })
 
 class CartDetail(TemplateView):
-    template_name = 'cart/cart.html'
+    template_name = "cart/cart.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        # واکشی ۸ محصول با بالاترین میانگین امتیاز (محصولات بدون نظر، امتیاز پیش‌فرض 5.0 می‌گیرند)
+        context["popular_products"] = (
+            Product.objects.annotate(
+                calculated_rating=Coalesce(
+                    Avg("comments__rating", filter=Q(comments__is_approved=True)),
+                    5.0,
+                    output_field=FloatField(),
+                )
+            )
+            .prefetch_related("category", "variants", "images")
+            .order_by("-calculated_rating", "-id")[:8]
+        )
+        return context

@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}
-لیست
+فروشگاه محصولات | گره گره
 {% endblock title %}
 
 {% block main_css %}
@@ -11,155 +11,186 @@
 
 {% block content %}
 
-    <!-- Breadcrumb -->
-    <section class="section-breadcrumb">
-        <div class="cr-breadcrumb-image">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="cr-breadcrumb-title">
-                            <h2>فروشگاه</h2>
-                            <span> <a href="index.html">خانه</a> - فروشگاه</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Shop -->
-    <section class="section-shop padding-tb-100">
+<!-- Breadcrumb -->
+<section class="section-breadcrumb">
+    <div class="cr-breadcrumb-image">
         <div class="container">
-            <div class="row d-none">
-                <div class="col-lg-12">
-                    <div class="mb-30" data-aos="fade-up" data-aos-duration="2000" data-aos-delay="400">
-                        <div class="cr-banner">
-                            <h2>دسته بندی</h2>
-                        </div>
-                        <div class="cr-banner-sub-title">
-                            <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک
-                                است.  و سطرآنچنان که لازم است</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="row">
-                <div class="col-12" data-aos="fade-up" data-aos-duration="2000" data-aos-delay="600">
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="cr-shop-bredekamp">
-                                <div class="cr-toggle">
-                                    <a href="javascript:void(0)" class="shop_side_view">
-                                        <i class="ri-filter-line"></i>
-                                    </a>
-                                    <a href="javascript:void(0)" class="gridCol active-grid">
-                                        <i class="ri-grid-line"></i>
-                                    </a>
-                                    <a href="javascript:void(0)" class="gridRow">
-                                        <i class="ri-list-check-2"></i>
-                                    </a>
-                                </div>
-                                <div class="center-content">
-                                    <span> ما {{ products|length }} مورد را برای شما پیدا کردیم!</span>
-                                </div>
-                                <div class="cr-select">
-                                    <label>نمایش:</label>
-                                    <select class="form-select" aria-label="Default select example">
-                                        <option selected>ویژه</option>
-                                        <option value="1">یک</option>
-                                        <option value="2">دو</option>
-                                        <option value="3">سه</option>
-                                        <option value="4">چهار</option>
-                                        <option value="5">پنج</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
+                <div class="col-lg-12">
+                    <div class="cr-breadcrumb-title">
+                        <h2>فروشگاه</h2>
+                        <span><a href="{% url 'home:home' %}">خانه</a> - فروشگاه</span>
                     </div>
-                    <div class="row col-50 mb-minus-24">
-                        {% for product in products %}
-                        <div class="col-lg-3 col-6 cr-product-box mb-24">
-                            <div class="cr-product-card">
-                                <div class="cr-product-image">
-                                    <div class="cr-image-inner">
-                                        <a href="{{product.get_absolute_url}}"><img src="{{product.main_image.image.url}}" alt="product-1"></a>
-                                        
-                                    </div>
-                                    
-                                    <a class="cr-shopping-bag" href="{{product.get_absolute_url}}">
-                                        <i class="ri-shopping-bag-line"></i>
-                                    </a>
-                                </div>
-                                <div class="cr-product-details">
-                                    <div class="cr-brand">
-                                        <a href="{{product.get_absolute_url}}">{{product.name}}</a>
-                                    </div>
-                                    <a href="{{product.get_absolute_url}}" class="title">{{product.description|truncatechars:30}}
-
-                                    </a>{{product.variant.color}}</a>
-                                    <p class="text">لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است. چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است</p>
-                                    <p class="cr-price">
-                                        <span class="new-price">{{product.variant.final_price_display}} تومان</span>
-                                        <span class="old-price">{{product.variant.price_display}} تومان</span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    <!-- بخش صفحه‌بندی (Pagination) -->
-                    {% if is_paginated %}
-                    <nav aria-label="..." class="cr-pagination mt-4 mb-4">
-                        <ul class="pagination">
-                            
-                            <!-- دکمه صفحه قبلی -->
-                            {% if page_obj.has_previous %}
-                            <li class="page-item">
-                                <!-- استفاده از query_string برای حفظ فیلترها (رنگ، قیمت و...) در هنگام تغییر صفحه -->
-                                <a class="page-link" href="?{{ query_string }}page={{ page_obj.previous_page_number }}">قبلی</a>
-                            </li>
-                            {% else %}
-                            <li class="page-item disabled">
-                                <span class="page-link">قبلی</span>
-                            </li>
-                            {% endif %}
-
-                            <!-- تولید خودکار شماره صفحات -->
-                            {% for num in paginator.page_range %}
-                                <!-- اگر این شماره همان صفحه فعلی کاربر است، رنگ آن را متمایز (Active) کن -->
-                                {% if page_obj.number == num %}
-                                <li class="page-item active" aria-current="page">
-                                    <span class="page-link">{{ num }}</span>
-                                </li>
-                                {% else %}
-                                <!-- سایر صفحات -->
-                                <li class="page-item">
-                                    <a class="page-link" href="?{{ query_string }}page={{ num }}">{{ num }}</a>
-                                </li>
-                                {% endif %}
-                            {% endfor %}
-
-                            <!-- دکمه صفحه بعدی -->
-                            {% if page_obj.has_next %}
-                            <li class="page-item">
-                                <a class="page-link" href="?{{ query_string }}page={{ page_obj.next_page_number }}">بعدی</a>
-                            </li>
-                            {% else %}
-                            <li class="page-item disabled">
-                                <span class="page-link">بعدی</span>
-                            </li>
-                            {% endif %}
-                            
-                        </ul>
-                    </nav>
-                    {% endif %}
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
+<!-- Shop -->
+<section class="section-shop padding-tb-100">
+    <div class="container">
+        <div class="row">
+            <div class="col-12" data-aos="fade-up" data-aos-duration="2000" data-aos-delay="600">
+                
+                <!-- نوار بالای محصولات (تعداد و مرتب‌سازی) -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="cr-shop-bredekamp">
+                            <div class="cr-toggle">
+                                <a href="javascript:void(0)" class="shop_side_view" title="فیلترها">
+                                    <i class="ri-filter-line"></i>
+                                </a>
+                                <a href="javascript:void(0)" class="gridCol active-grid">
+                                    <i class="ri-grid-line"></i>
+                                </a>
+                                <a href="javascript:void(0)" class="gridRow">
+                                    <i class="ri-list-check-2"></i>
+                                </a>
+                            </div>
+                            <div class="center-content">
+                                <span>ما {{ products|length }} محصول برای شما پیدا کردیم!</span>
+                            </div>
+                            
+                            <!-- منوی کشویی مرتب‌سازی متصل به پارامتر sort -->
+                            <div class="cr-select">
+                                <label for="sort-select">مرتب‌سازی بر اساس:</label>
+                                <select id="sort-select" class="form-select" aria-label="مرتب‌سازی محصولات" onchange="applySort(this.value)">
+                                    <option value="newest" {% if current_sort == 'newest' %}selected{% endif %}>جدیدترین</option>
+                                    <option value="cheapest" {% if current_sort == 'cheapest' %}selected{% endif %}>ارزان‌ترین</option>
+                                    <option value="expensive" {% if current_sort == 'expensive' %}selected{% endif %}>گران‌ترین</option>
+                                    <option value="rating" {% if current_sort == 'rating' %}selected{% endif %}>بیشترین امتیاز</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- sidebar-shop -->
+                <!-- لیست کارت‌های محصولات -->
+                <div class="row col-50 mb-minus-24">
+                    {% for product in products %}
+                    <div class="col-lg-3 col-6 cr-product-box mb-24">
+                        <div class="cr-product-card">
+                            <div class="cr-product-image">
+                                <div class="cr-image-inner">
+                                    <a href="{{ product.get_absolute_url }}" class="image d-block">
+                                        <!-- تصویر اول (اصلی) -->
+                                        {% if product.main_image %}
+                                            <img class="main-image" src="{{ product.main_image.image.url }}" alt="{{ product.name }}">
+                                        {% elif product.images.first %}
+                                            <img class="main-image" src="{{ product.images.first.image.url }}" alt="{{ product.name }}">
+                                        {% else %}
+                                            <img class="main-image" src="{% static 'img/product/placeholder.jpg' %}" alt="{{ product.name }}">
+                                        {% endif %}
+
+                                        <!-- تصویر دوم (نمایش در حالت هاور در صورت وجود عکس دوم) -->
+                                        {% with second_img=product.images.all.1 %}
+                                            {% if second_img %}
+                                                <img class="hover-image" src="{{ second_img.image.url }}" alt="{{ product.name }}">
+                                            {% endif %}
+                                        {% endwith %}
+                                    </a>
+                                </div>
+
+                                <!-- نشان درصد تخفیف -->
+                                {% if product.variant.discount > 0 %}
+                                <span class="flags">
+                                    <span class="sale">{{ product.variant.discount }}% تخفیف</span>
+                                </span>
+                                {% endif %}
+
+                                <a class="cr-shopping-bag" href="{{ product.get_absolute_url }}">
+                                    <i class="ri-shopping-bag-line"></i>
+                                </a>
+                            </div>
+
+                            <div class="cr-product-details">
+                                <div class="cr-brand">
+                                    {% with first_cat=product.category.first %}
+                                        {% if first_cat %}
+                                            <a href="{% url 'products:search' %}?category={{ first_cat.id }}">{{ first_cat.titel }}</a>
+                                        {% else %}
+                                            <a href="{% url 'products:search' %}">گره گره</a>
+                                        {% endif %}
+                                    {% endwith %}
+
+                                    <!-- ستاره‌های امتیاز -->
+                                    <div class="cr-star" dir="ltr">
+                                        {% for i in "12345" %}
+                                            {% if product.average_rating >= forloop.counter %}
+                                                <i class="ri-star-fill fill"></i>
+                                            {% else %}
+                                                <i class="ri-star-line"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <p>({{ product.average_rating }})</p>
+                                    </div>
+                                </div>
+
+                                <a href="{{ product.get_absolute_url }}" class="title">{{ product.name }}</a>
+                                <p class="text">{{ product.description|truncatechars:120 }}</p>
+
+                                <p class="cr-price">
+                                    <span class="new-price">{{ product.variant.final_price_display }} تومان</span>
+                                    {% if product.variant.discount > 0 %}
+                                        <span class="old-price">{{ product.variant.price_display }} تومان</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center py-5">
+                        <p class="text-muted">محصولی با این مشخصات یافت نشد.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- بخش صفحه‌بندی (Pagination) -->
+                {% if is_paginated %}
+                <nav aria-label="..." class="cr-pagination mt-4 mb-4">
+                    <ul class="pagination">
+                        {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{{ query_string }}page={{ page_obj.previous_page_number }}">قبلی</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">قبلی</span>
+                        </li>
+                        {% endif %}
+
+                        {% for num in paginator.page_range %}
+                            {% if page_obj.number == num %}
+                            <li class="page-item active" aria-current="page">
+                                <span class="page-link">{{ num }}</span>
+                            </li>
+                            {% else %}
+                            <li class="page-item">
+                                <a class="page-link" href="?{{ query_string }}page={{ num }}">{{ num }}</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?{{ query_string }}page={{ page_obj.next_page_number }}">بعدی</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">بعدی</span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- sidebar-shop -->
 <div class="filter-sidebar-overlay"></div>
 <div class="cr-shop-leftside">
     <div class="cr-shop-leftside-inner">
@@ -170,15 +201,15 @@
             </a>
         </div>
         
-        <!-- قرار دادن کل سایدبار داخل فرم برای ارسال فیلترها با متد GET -->
         <form method="GET" action="{% url 'products:search' %}" class="cr-shop-sideview">
-            
-            <!-- حفظ کلمه سرچ شده قبلی (اگر کاربر اول چیزی سرچ کرده و بعد فیلتر می‌کند) -->
             {% if request.GET.q %}
                 <input type="hidden" name="q" value="{{ request.GET.q }}">
             {% endif %}
+            {% if request.GET.sort %}
+                <input type="hidden" name="sort" value="{{ request.GET.sort }}">
+            {% endif %}
 
-            <!-- ۱. فیلتر دسته‌بندی‌ها (بر اساس مدل Category و related_name='product') -->
+            <!-- ۱. فیلتر دسته‌بندی‌ها -->
             <div class="cr-shop-categories">
                 <h4 class="cr-shop-sub-title">دسته‌بندی‌ها</h4>
                 <div class="cr-checkbox">
@@ -187,33 +218,27 @@
                         <input type="checkbox" name="category" value="{{ cat.id }}" id="cat_{{ cat.id }}"
                                {% if cat.id|stringformat:"s" in selected_categories %}checked{% endif %}>
                         <label for="cat_{{ cat.id }}">{{ cat.titel }}</label>
-                        <!-- نمایش تعداد محصولات هر دسته -->
                         <span>[{{ cat.product.count }}]</span>
                     </div>
                     {% endfor %}
                 </div>
             </div>
 
-            <!-- ۲. فیلتر محدوده قیمت (بر اساس فیلد price در ProductVariant) -->
+            <!-- ۲. فیلتر محدوده قیمت -->
             <div class="cr-shop-price">
                 <h4 class="cr-shop-sub-title">محدوده قیمت (تومان)</h4>
                 <div class="price-range-slider mt-4">
-                    <!-- نوار اسلایدر جی‌کوئری -->
                     <div id="slider-range" class="range-bar"></div>
-                    
                     <p class="range-value mt-3">
                         <label class="text-muted small">محدوده:</label>
-                        <!-- این فیلد فقط برای نمایش به کاربر است (فرمت شده با کاما) -->
-                        <input type="text" id="amount" readonly style="border:0; color:#2b2b2d; font-weight:bold; background: transparent; width: 100%; text-align: left; direction: ltr;">
+                        <input type="text" id="amount" readonly style="border:0; font-weight:bold; background: transparent; width: 100%; text-align: left; direction: ltr;">
                     </p>
-                    
-                    <!-- فیلدهای مخفی که مقادیر واقعی را به جنگو می‌فرستند -->
                     <input type="hidden" name="min_price" id="min_price" value="{{ request.GET.min_price|default:'0' }}">
                     <input type="hidden" name="max_price" id="max_price" value="{{ request.GET.max_price|default:'5000000' }}">
                 </div>
             </div>
 
-            <!-- ۳. فیلتر رنگ‌ها (استخراج شده به صورت داینامیک از ProductVariant) -->
+            <!-- ۳. فیلتر رنگ‌ها -->
             {% if available_colors %}
             <div class="cr-shop-color">
                 <h4 class="cr-shop-sub-title">رنگ‌ها</h4>
@@ -229,7 +254,7 @@
             </div>
             {% endif %}
 
-            <!-- ۴. فیلتر سایز / وزن (جایگزین پک‌های کیلوگرمی، متصل به فیلد size در ProductVariant) -->
+            <!-- ۴. فیلتر سایز / ابعاد -->
             {% if available_sizes %}
             <div class="cr-shop-weight">
                 <h4 class="cr-shop-sub-title">سایز / ابعاد</h4>
@@ -245,18 +270,24 @@
             </div>
             {% endif %}
 
-            <!-- دکمه‌های اعمال و حذف فیلتر -->
             <div class="mt-4 pt-3 border-top d-flex gap-2">
                 <button type="submit" class="cr-button w-100">اعمال فیلتر</button>
                 {% if request.GET %}
                     <a href="{% url 'products:search' %}" class="cr-btn-secondary text-center" style="white-space: nowrap;">حذف فیلترها</a>
                 {% endif %}
             </div>
-
         </form>
     </div>
 </div>
 
-
+<!-- اسکریپت تغییر مرتب‌سازی با حفظ فیلترهای فعلی در URL -->
+<script>
+function applySort(sortValue) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('sort', sortValue);
+    url.searchParams.delete('page'); // بازگشت به صفحه ۱ پس از تغییر مرتب‌سازی
+    window.location.href = url.toString();
+}
+</script>
 
 {% endblock content %}

@@ -1,99 +1,128 @@
 {% load static %}
 <footer class="footer padding-t-100 bg-off-white">
-        <div class="container">
-            <div class="row footer-top padding-b-100">
-                <div class="col-xl-4 col-lg-6 col-sm-12 col-12 cr-footer-border">
-                    <div class="cr-footer-logo">
-                        <div class="image">
-                            <img src="{% static "img/logo/logo.png" %}" alt="logo" class="logo">
-                            <img src="{% static "img/logo/dark-logo.png" %}" alt="logo" class="dark-logo">
-                        </div>
-                        <p>کرت بزرگترین بازار محصولات مواد غذایی است.نیازهای روزانه خود را از فروشگاه ما دریافت کنید.
-                        </p>
+    <div class="container">
+        <div class="row footer-top padding-b-100">
+            
+            <!-- ستون اول: لوگو، معرفی کوتاه و اطلاعات تماس -->
+            <div class="col-xl-4 col-lg-6 col-sm-12 col-12 cr-footer-border">
+                <div class="cr-footer-logo">
+                    <div class="image">
+                        <a href="{% url 'home:home' %}">
+                            <img src="{% static 'img/logo/logo.png' %}" alt="گره گره" class="logo">
+                            <img src="{% static 'img/logo/dark-logo.png' %}" alt="گره گره" class="dark-logo">
+                        </a>
                     </div>
-                    <div class="cr-footer">
-                        <h4 class="cr-sub-title cr-title-hidden">
-                            تماس با ما
-                            <span class="cr-heading-res"></span>
-                        </h4>
-                        <ul class="cr-footer-links cr-footer-dropdown">
-                            <li class="location-icon">
-                                سک آدرس کاملا فرضی در این محل قرار دارد و شامل چند سطر میباشد
-                            </li>
-                            <li class="mail-icon">
-                                <a href="javascript:void(0)">example@email.com</a>
-                            </li>
-                            <li class="phone-icon">
-                                <a href="javascript:void(0)"> +91 123 4567890</a>
-                            </li>
-                        </ul>
-                    </div>
+                    <p>
+                        {{ site_setting.about_footer|default:"فروشگاه اینترنتی «گره گره»، ارائه‌دهنده انواع دست‌سازه‌های هنری مکرمه، دیوارکوب، آویز گلدان و محصولات بافتنی با بهترین الیاف طبیعی." }}
+                    </p>
                 </div>
-                <div class="col-xl-2 col-lg-6 col-sm-12 col-12 cr-footer-border">
-                    <div class="cr-footer">
-                        <h4 class="cr-sub-title">
-                            شرکت
-                            <span class="cr-heading-res"></span>
-                        </h4>
-                        <ul class="cr-footer-links cr-footer-dropdown">
-                            <li><a href="about.html">درباره ما</a></li>
-                            <li><a href="track-order.html"> اطلاعات تحویل </a></li>
-                            <li><a href="policy.html"> سیاست حفظ حریم خصوصی </a></li>
-                            <li><a href="terms.html"> شرایط و ضوابط </a></li>
-                            <li><a href="contact-us.html">تماس با ما</a></li>
-                            <li><a href="faq.html"> مرکز پشتیبانی </a></li>
-                        </ul>
-                    </div>
+                <div class="cr-footer">
+                    <h4 class="cr-sub-title cr-title-hidden">
+                        تماس با ما
+                        <span class="cr-heading-res"></span>
+                    </h4>
+                    <ul class="cr-footer-links cr-footer-dropdown">
+                        <li class="location-icon">
+                            {{ site_setting.address|default:"تهران، کارگاه هنری گره گره (ارسال به سراسر کشور با پست پیشتاز)" }}
+                        </li>
+                        <li class="mail-icon">
+                            <a href="mailto:{{ site_setting.email|default:'info@gereh-gereh.ir' }}">
+                                {{ site_setting.email|default:"info@gereh-gereh.ir" }}
+                            </a>
+                        </li>
+                        <li class="phone-icon">
+                            <a href="tel:{{ site_setting.phone|default:'09365958252' }}" dir="ltr">
+                                {{ site_setting.phone|default:"09365958252" }}
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-                <div class="col-xl-2 col-lg-6 col-sm-12 col-12 cr-footer-border footer-list">
-                    <div class="cr-footer">
-                        <h4 class="cr-sub-title">
-                            دسته بندی
-                            <span class="cr-heading-res"></span>
-                        </h4>
-                        <ul class="cr-footer-links cr-footer-dropdown">
-                            {% for cat in categories %}
-                            <li><a href="shop-left-sidebar.html">{{ cat.titel }}</a></li>
-                            {% endfor %}
-                        </ul>
-                    </div>
+            </div>
+
+            <!-- ستون دوم: دسترسی سریع -->
+            <div class="col-xl-2 col-lg-6 col-sm-12 col-12 cr-footer-border">
+                <div class="cr-footer">
+                    <h4 class="cr-sub-title">
+                        دسترسی سریع
+                        <span class="cr-heading-res"></span>
+                    </h4>
+                    <ul class="cr-footer-links cr-footer-dropdown">
+                        <li><a href="{% url 'home:home' %}">صفحه اصلی</a></li>
+                        <li><a href="{% url 'products:search' %}">فروشگاه محصولات</a></li>
+                        <li><a href="{% url 'checkout:track_order' %}">پیگیری سفارش</a></li>
+                        <li><a href="{% url 'cart:cart_detail' %}">سبد خرید</a></li>
+                        <li><a href="{% url 'blog:list' %}">مقالات و بلاگ</a></li>
+                        <li><a href="{% url 'home:contact_us' %}">تماس با ما</a></li>
+                    </ul>
                 </div>
-                <div class="col-xl-4 col-lg-6 col-sm-12 col-12 cr-footer-border">
-                    <div class="cr-footer cr-newsletter">
-                        <h4 class="cr-sub-title">
-                            خبرنامه
-                            <span class="cr-heading-res"></span>
-                        </h4>
-                        <div class="cr-footer-links cr-footer-dropdown">
-                            <p class="news">مشترک شوید تا در تماس باشید.</p>
-                            <form class="cr-search-footer">
-                                <input class="search-input" type="text" placeholder="جستجو ... ">
-                                <a href="javascript:void(0)" class="search-btn">
-                                    <i class="ri-send-plane-fill"></i>
-                                </a>
-                            </form>
-                        </div>
-                        <div class="cr-social-media">
-                            <span><a href="javascript:void(0)"><i class="ri-facebook-line"></i></a></span>
-                            <span><a href="javascript:void(0)"><i class="ri-twitter-x-line"></i></a></span>
-                            <span><a href="javascript:void(0)"><i class="ri-dribbble-line"></i></a></span>
-                            <span><a href="javascript:void(0)"><i class="ri-instagram-line"></i></a></span>
-                        </div>
-                        <div class="cr-apps">
-                            <a href="#" class="app-img"><img src="{% static "img/apps/android.png" %}" class="adroid"
-                                    alt="apple"></a>
-                            <a href="#" class="app-img"><img src="{% static "img/apps/apple.png" %}" class="apple"
-                                    alt="apple"></a>
-                        </div>
+            </div>
+
+            <!-- ستون سوم: دسته‌بندی‌های داینامیک -->
+            <div class="col-xl-2 col-lg-6 col-sm-12 col-12 cr-footer-border footer-list">
+                <div class="cr-footer">
+                    <h4 class="cr-sub-title">
+                        دسته‌بندی‌ها
+                        <span class="cr-heading-res"></span>
+                    </h4>
+                    <ul class="cr-footer-links cr-footer-dropdown">
+                        {% for cat in categories|slice:":6" %}
+                            <li>
+                                <a href="{% url 'products:search' %}?category={{ cat.id }}">{{ cat.titel }}</a>
+                            </li>
+                        {% empty %}
+                            <li><a href="{% url 'products:search' %}">مشاهده محصولات</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- ستون چهارم: خبرنامه و شبکه‌های اجتماعی -->
+            <div class="col-xl-4 col-lg-6 col-sm-12 col-12 cr-footer-border">
+                <div class="cr-footer cr-newsletter">
+                    <h4 class="cr-sub-title">
+                        خبرنامه گره گره
+                        <span class="cr-heading-res"></span>
+                    </h4>
+                    <div class="cr-footer-links cr-footer-dropdown">
+                        <p class="news">برای اطلاع از جدیدترین بافت‌ها و کدهای تخفیف، شماره موبایل یا ایمیل خود را ثبت کنید.</p>
+                        
+                        <form method="post" action="{% url 'home:newsletter_subscribe' %}" class="cr-search-footer">
+                            {% csrf_token %}
+                            <input class="search-input" type="text" name="contact_info" placeholder="شماره موبایل یا ایمیل..." required>
+                            <button type="submit" class="search-btn border-0" style="cursor: pointer;">
+                                <i class="ri-send-plane-fill"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- شبکه‌های اجتماعی متناسب با ایران -->
+                    <div class="cr-social-media">
+                        <span>
+                            <a href="{{ site_setting.instagram_url|default:'#' }}" target="_blank" title="اینستاگرام">
+                                <i class="ri-instagram-line"></i>
+                            </a>
+                        </span>
+                        <span>
+                            <a href="{{ site_setting.telegram_url|default:'#' }}" target="_blank" title="تلگرام">
+                                <i class="ri-telegram-line"></i>
+                            </a>
+                        </span>
+                        <span>
+                            <a href="{{ site_setting.whatsapp_url|default:'https://wa.me/989365958252' }}" target="_blank" title="واتساپ">
+                                <i class="ri-whatsapp-line"></i>
+                            </a>
+                        </span>
                     </div>
                 </div>
             </div>
-            <div class="cr-last-footer">
-                <p>&copy; <span>1403</span> <a href="index.html">کرت</a>، کلیه حقوق محفوظ است.
-                </p>
-                <div class="payment-link">
-                    <img src="{% static "img/banner/payment.png" %}" alt="payment">
-                </div>
-            </div>
+
         </div>
-    </footer>
+
+        <!-- نوار کپی‌رایت پایانی -->
+        <div class="cr-last-footer">
+            <p>
+                &copy; <span>1405</span> فروشگاه اینترنتی <a href="{% url 'home:home' %}">گره گره</a>، کلیه حقوق محفوظ است.
+            </p>
+        </div>
+    </div>
+</footer>

@@ -2746,9 +2746,8 @@ p.news {
   background-color: #9e7a15;
 }
 
-.cr-banner-image-one {
+.cr-hero-banner {
   width: 100%;
-  background-image: url("../img/banner/2.jpg");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;

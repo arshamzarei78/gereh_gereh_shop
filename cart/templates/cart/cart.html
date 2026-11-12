@@ -75,18 +75,16 @@
 </section>
 
 <!-- Popular products -->
-<section class="section-popular-products padding-tb-100" data-aos="fade-up" data-aos-duration="2000"
-    data-aos-delay="400">
+<section class="section-popular-products padding-tb-100" data-aos="fade-up" data-aos-duration="2000" data-aos-delay="400">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
                 <div class="mb-30">
                     <div class="cr-banner">
-                        <h2> محصولات محبوب </h2>
+                        <h2>محصولات محبوب</h2>
                     </div>
                     <div class="cr-banner-sub-title">
-                        <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک
-                            است. و سطرآنچنان که لازم است</p>
+                        <p>محبوب‌ترین دست‌سازه‌های مکرومه و بافتنی «گره گره» بر اساس امتیاز و رضایت مشتریان</p>
                     </div>
                 </div>
             </div>
@@ -94,194 +92,74 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="cr-popular-product">
-                    <div class="slick-slide">
-                        <div class="cr-product-card">
-                            <div class="cr-product-image">
-                                <div class="cr-image-inner zoom-image-hover">
-                                    <img src="assets/img/product/9.jpg" alt="product-1">
-                                </div>
-                                <div class="cr-side-view">
-                                    <a href="javascript:void(0)" class="wishlist">
-                                        <i class="ri-heart-line"></i>
-                                    </a>
-                                    <a class="model-oraganic-product" data-bs-toggle="modal" href="#quickview"
-                                        role="button">
-                                        <i class="ri-eye-line"></i>
-                                    </a>
-                                </div>
-                                <a class="cr-shopping-bag" href="javascript:void(0)">
-                                    <i class="ri-shopping-bag-line"></i>
-                                </a>
-                            </div>
-                            <div class="cr-product-details">
-                                <div class="cr-brand">
-                                    <a href="shop-left-sidebar.html">اسنک</a>
-                                    <div class="cr-star">
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-line"></i>
-                                        <p>(4.5)</p>
+                    {% for product in popular_products %}
+                        {% with default_variant=product.variants.first main_img=product.images.first %}
+                        <div class="slick-slide">
+                            <div class="cr-product-card">
+                                <div class="cr-product-image">
+                                    <div class="cr-image-inner">
+                                        <a href="{{ product.get_absolute_url }}">
+                                            {% if main_img %}
+                                                <img src="{{ main_img.image.url }}" alt="{{ product.name }}">
+                                            {% else %}
+                                                <img src="{% static 'img/product/placeholder.jpg' %}" alt="{{ product.name }}">
+                                            {% endif %}
+                                        </a>
                                     </div>
+                                    <a class="cr-shopping-bag" href="{{ product.get_absolute_url }}" title="مشاهده و خرید">
+                                        <i class="ri-shopping-bag-line"></i>
+                                    </a>
                                 </div>
-                                <a href="product-left-sidebar.html" class="title">بهترین اسنک با فندق میکس 200 گرمی</a>
-                                <p class="cr-price"><span class="new-price">120 تومان</span> <span class="old-price">123
-                                        تومان</span></p>
+                                
+                                <div class="cr-product-details">
+                                    <div class="cr-brand">
+                                        {% with first_cat=product.category.first %}
+                                            {% if first_cat %}
+                                                <a href="{% url 'products:search' %}?category={{ first_cat.id }}">{{ first_cat.titel }}</a>
+                                            {% else %}
+                                                <a href="{% url 'products:search' %}">گره گره</a>
+                                            {% endif %}
+                                        {% endwith %}
+                                        
+                                        <!-- نمایش داینامیک ستاره‌ها و امتیاز محصول -->
+                                        <div class="cr-star" dir="ltr">
+                                            {% with rating=product.average_rating %}
+                                                {% for i in "12345" %}
+                                                    {% if rating >= forloop.counter %}
+                                                        <i class="ri-star-fill"></i>
+                                                    {% else %}
+                                                        <i class="ri-star-line"></i>
+                                                    {% endif %}
+                                                {% endfor %}
+                                                <p>({{ rating }})</p>
+                                            {% endwith %}
+                                        </div>
+                                    </div>
+                                    
+                                    <a href="{{ product.get_absolute_url }}" class="title">{{ product.name }}</a>
+                                    
+                                    <!-- نمایش قیمت بر اساس تنوع محصول -->
+                                    {% if default_variant %}
+                                        <p class="cr-price">
+                                            <span class="new-price">{{ default_variant.final_price_display }} تومان</span>
+                                            {% if default_variant.discount > 0 %}
+                                                <span class="old-price">{{ default_variant.price_display }} تومان</span>
+                                            {% endif %}
+                                        </p>
+                                    {% else %}
+                                        <p class="cr-price">
+                                            <span class="new-price text-muted">ناموجود</span>
+                                        </p>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="slick-slide">
-                        <div class="cr-product-card">
-                            <div class="cr-product-image">
-                                <div class="cr-image-inner zoom-image-hover">
-                                    <img src="assets/img/product/10.jpg" alt="product-1">
-                                </div>
-                                <div class="cr-side-view">
-                                    <a href="javascript:void(0)" class="wishlist">
-                                        <i class="ri-heart-line"></i>
-                                    </a>
-                                    <a class="model-oraganic-product" data-bs-toggle="modal" href="#quickview"
-                                        role="button">
-                                        <i class="ri-eye-line"></i>
-                                    </a>
-                                </div>
-                                <a class="cr-shopping-bag" href="javascript:void(0)">
-                                    <i class="ri-shopping-bag-line"></i>
-                                </a>
-                            </div>
-                            <div class="cr-product-details">
-                                <div class="cr-brand">
-                                    <a href="shop-left-sidebar.html">اسنک</a>
-                                    <div class="cr-star">
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <p>(5.0)</p>
-                                    </div>
-                                </div>
-                                <a href="product-left-sidebar.html" class="title">شیرین ترین اسنک با فندق میکس 200
-                                    گرمی</a>
-                                <p class="cr-price"><span class="new-price">100 تومان</span> <span class="old-price">110
-                                        تومان</span></p>
-                            </div>
+                        {% endwith %}
+                    {% empty %}
+                        <div class="col-12 text-center py-4">
+                            <p class="text-muted">در حال حاضر محصولی برای نمایش وجود ندارد.</p>
                         </div>
-                    </div>
-                    <div class="slick-slide">
-                        <div class="cr-product-card">
-                            <div class="cr-product-image">
-                                <div class="cr-image-inner zoom-image-hover">
-                                    <img src="assets/img/product/1.jpg" alt="product-1">
-                                </div>
-                                <div class="cr-side-view">
-                                    <a href="javascript:void(0)" class="wishlist">
-                                        <i class="ri-heart-line"></i>
-                                    </a>
-                                    <a class="model-oraganic-product" data-bs-toggle="modal" href="#quickview"
-                                        role="button">
-                                        <i class="ri-eye-line"></i>
-                                    </a>
-                                </div>
-                                <a class="cr-shopping-bag" href="javascript:void(0)">
-                                    <i class="ri-shopping-bag-line"></i>
-                                </a>
-                            </div>
-                            <div class="cr-product-details">
-                                <div class="cr-brand">
-                                    <a href="shop-left-sidebar.html">اسنک</a>
-                                    <div class="cr-star">
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-line"></i>
-                                        <p>(4.5)</p>
-                                    </div>
-                                </div>
-                                <a href="product-left-sidebar.html" class="title">بهترین اسنک با فندق میکس 200 گرمی</a>
-                                <p class="cr-price"><span class="new-price">120 تومان</span> <span class="old-price">123
-                                        تومان</span></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="slick-slide">
-                        <div class="cr-product-card">
-                            <div class="cr-product-image">
-                                <div class="cr-image-inner zoom-image-hover">
-                                    <img src="assets/img/product/2.jpg" alt="product-1">
-                                </div>
-                                <div class="cr-side-view">
-                                    <a href="javascript:void(0)" class="wishlist">
-                                        <i class="ri-heart-line"></i>
-                                    </a>
-                                    <a class="model-oraganic-product" data-bs-toggle="modal" href="#quickview"
-                                        role="button">
-                                        <i class="ri-eye-line"></i>
-                                    </a>
-                                </div>
-                                <a class="cr-shopping-bag" href="javascript:void(0)">
-                                    <i class="ri-shopping-bag-line"></i>
-                                </a>
-                            </div>
-                            <div class="cr-product-details">
-                                <div class="cr-brand">
-                                    <a href="shop-left-sidebar.html">اسنک</a>
-                                    <div class="cr-star">
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <p>(5.0)</p>
-                                    </div>
-                                </div>
-                                <a href="product-left-sidebar.html" class="title">شیرین ترین اسنک با فندق میکس 200
-                                    گرمی</a>
-                                <p class="cr-price"><span class="new-price">100 تومان</span> <span class="old-price">110
-                                        تومان</span></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="slick-slide">
-                        <div class="cr-product-card">
-                            <div class="cr-product-image">
-                                <div class="cr-image-inner zoom-image-hover">
-                                    <img src="assets/img/product/3.jpg" alt="product-1">
-                                </div>
-                                <div class="cr-side-view">
-                                    <a href="javascript:void(0)" class="wishlist">
-                                        <i class="ri-heart-line"></i>
-                                    </a>
-                                    <a class="model-oraganic-product" data-bs-toggle="modal" href="#quickview"
-                                        role="button">
-                                        <i class="ri-eye-line"></i>
-                                    </a>
-                                </div>
-                                <a class="cr-shopping-bag" href="javascript:void(0)">
-                                    <i class="ri-shopping-bag-line"></i>
-                                </a>
-                            </div>
-                            <div class="cr-product-details">
-                                <div class="cr-brand">
-                                    <a href="shop-left-sidebar.html">اسنک</a>
-                                    <div class="cr-star">
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <i class="ri-star-fill"></i>
-                                        <p>(5.0)</p>
-                                    </div>
-                                </div>
-                                <a href="product-left-sidebar.html" class="title">شیرین ترین اسنک با فندق میکس 200
-                                    گرمی</a>
-                                <p class="cr-price"><span class="new-price">100 تومان</span> <span class="old-price">110
-                                        تومان</span></p>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
