@@ -8,6 +8,7 @@ from django.db.models import Avg
 class Category(models.Model):
     titel = models.CharField(max_length=30)
     created = models.DateField(auto_now_add=True)
+    image = models.ImageField(upload_to='category/',verbose_name="تصور دسته بندی",blank=True,null=True)
 
     class Meta:
         verbose_name = "دسته بندی"

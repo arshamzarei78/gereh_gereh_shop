@@ -90,7 +90,6 @@
                     <h2>دسته‌بندی‌ها</h2>
                 </div>
                 
-                <!-- استفاده از فلکس باکس برای پر کردن فضا -->
                 <div class="d-flex flex-wrap gap-4 w-100 justify-content-center">
                     
                     {% for cat in categories %}
@@ -98,7 +97,12 @@
                     <div class="category-block flex-fill" style="min-width: 180px;">
                         
                         <div class="category-icon icon-{{ forloop.counter }}">
+                            {% if cat.image %}
+                            <img src="{{ cat.image.url }}" alt="{{ cat.titel }}" class="cat-circle-img"
+                            style="width: 75px !important; height: 75px !important; max-width: 80px !important; object-fit: cover; border-radius: 50%; display: block;">
+                            {% else %}
                             <i class="ri-handbag-line"></i>
+                            {% endif %}
                         </div>
                         
                         <div class="category-title">

@@ -68,60 +68,67 @@
         <div class="container">
             <div class="cr-menu-list">
                <div class="cr-category-icon-block">
-                    <div class="cr-category-menu">
-                        <div class="cr-category-toggle">
-                            <i class="ri-menu-2-line"></i>
-                        </div>
-                    </div>
-                    <div class="cr-cat-dropdown">
-                        <div class="cr-cat-block">
-                            <div class="cr-cat-tab">
-                                
-                                <!-- سمت راست: لیست داینامیک دسته‌بندی‌ها -->
-                                <div class="cr-tab-list nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-                                    {% for cat in categories %}
-                                        <button class="nav-link {% if forloop.first %}active{% endif %}" 
-                                                id="v-pills-{{ cat.id }}-tab" data-bs-toggle="pill"
-                                                data-bs-target="#v-pills-{{ cat.id }}" type="button" role="tab"
-                                                aria-controls="v-pills-{{ cat.id }}" 
-                                                aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
-                                            {{ cat.titel }}
-                                        </button>
-                                    {% endfor %}
-                                    <!-- دکمه ثابت برای مشاهده کل فروشگاه -->
-                                    <a class="nav-link text-success fw-bold" href="{% url 'products:search' %}">
-                                        مشاهده همه محصولات
+    <div class="cr-category-menu">
+        <div class="cr-category-toggle">
+            <i class="ri-menu-2-line"></i>
+        </div>
+    </div>
+    <div class="cr-cat-dropdown">
+        <div class="cr-cat-block">
+            <div class="cr-cat-tab">
+                
+                <div class="cr-tab-list nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                    {% for cat in categories %}
+                        <button class="nav-link {% if forloop.first %}active{% endif %}" 
+                                id="v-pills-{{ cat.id }}-tab" data-bs-toggle="pill"
+                                data-bs-target="#v-pills-{{ cat.id }}" type="button" role="tab"
+                                aria-controls="v-pills-{{ cat.id }}" 
+                                aria-selected="{% if forloop.first %}true{% else %}false{% endif %}">
+                            {{ cat.titel }}
+                        </button>
+                    {% endfor %}
+                    <a class="nav-link text-success fw-bold" href="{% url 'products:search' %}">
+                        مشاهده همه محصولات
+                    </a>
+                </div>
+
+                <div class="tab-content" id="v-pills-tabContent" style="min-width: 300px;">
+                    {% for cat in categories %}
+                        <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" 
+                            id="v-pills-{{ cat.id }}" role="tabpanel" aria-labelledby="v-pills-{{ cat.id }}-tab">
+                            <div class="tab-list row h-100 align-items-center justify-content-center text-center p-4">
+                                <div class="col-12">
+
+                                    <div class="cat-image-circle mx-auto mb-3">
+                                        {% if cat.image %}
+                                            <img src="{{ cat.image.url }}" alt="{{ cat.titel }}" class="img-fluid rounded-circle object-fit-cover" style="width: 80px; height: 80px;">
+                                        {% else %}
+
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center bg-light" style="width: 80px; height: 80px; margin: 0 auto;">
+                                                <i class="ri-shopping-bag-3-line text-muted" style="font-size: 2rem;"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <h6 class="cr-col-title mb-2" style="font-size: 1.1rem;">
+                                        محصولات {{ cat.titel }}
+                                    </h6>
+                                    <p class="text-muted mb-4" style="font-size: 0.85rem;">
+                                        تنوع بی‌نظیر {{ cat.titel }} دست‌ساز با بهترین الیاف و کاموا
+                                    </p>
+                                    <a href="{% url 'products:search' %}?category={{ cat.id }}" class="cr-button cr-btn-secondary btn-sm">
+                                        مشاهده و خرید
                                     </a>
                                 </div>
-                                
-                                <!-- سمت چپ: محتوای اختصاصی هر دسته‌بندی -->
-                                <div class="tab-content" id="v-pills-tabContent" style="min-width: 300px;">
-                                    {% for cat in categories %}
-                                        <div class="tab-pane fade {% if forloop.first %}show active{% endif %}" 
-                                            id="v-pills-{{ cat.id }}" role="tabpanel" aria-labelledby="v-pills-{{ cat.id }}-tab">
-                                            <div class="tab-list row h-100 align-items-center justify-content-center text-center p-4">
-                                                <div class="col-12">
-                                                    <i class="ri-shopping-bag-3-line" style="font-size: 3rem; color: #7a7a7a; opacity: 0.3;"></i>
-                                                    <h6 class="cr-col-title mt-3 mb-2" style="font-size: 1.1rem;">
-                                                        محصولات {{ cat.titel }}
-                                                    </h6>
-                                                    <p class="text-muted mb-4" style="font-size: 0.85rem;">
-                                                        تنوع بی‌نظیر {{ cat.titel }} دست‌ساز با بهترین الیاف و کاموا
-                                                    </p>
-                                                    <!-- ارسال هوشمند کاربر به صفحه جستجو همراه با اعمال فیلتر این دسته -->
-                                                    <a href="{% url 'products:search' %}?category={{ cat.id }}" class="cr-button cr-btn-secondary btn-sm">
-                                                        مشاهده و خرید
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {% endfor %}
-                                </div>
-
                             </div>
                         </div>
-                    </div>
+                    {% endfor %}
                 </div>
+
+            </div>
+        </div>
+    </div>
+</div>
                 <nav class="navbar navbar-expand-lg">
                     <a href="javascript:void(0)" class="navbar-toggler shadow-none">
                         <i class="ri-menu-3-line"></i>
