@@ -17,7 +17,7 @@
                     <!-- لیست داینامیک دسته‌بندی‌ها -->
                     <li class="dropdown drop-list">
                         <span class="menu-toggle"></span>
-                        <a href="javascript:void(0)" class="dropdown-list">دسته‌بندی‌ها</a>
+                        <a href="#" class="dropdown-list">دسته‌بندی‌ها</a>
                         <ul class="sub-menu">
                             {% for cat in categories %}
                                 <li>
@@ -42,13 +42,12 @@
                     <!-- صفحات کاربردی سایت -->
                     <li class="dropdown drop-list">
                         <span class="menu-toggle"></span>
-                        <a href="javascript:void(0)" class="dropdown-list">صفحات</a>
+                        <a href="#" class="dropdown-list">صفحات</a>
                         <ul class="sub-menu">
-                            <li><a href="about.html">درباره ما</a></li>
-                            <li><a href="{% url 'home:contact_us' %}">تماس با ما</a></li>
-                            <li><a href="{% url 'checkout:track_order' %}">پیگیری سفارش</a></li>
-                            <li><a href="{% url 'home:faq' %}">سوالات متداول</a></li>
-                            <li><a href="{% url 'accounts:verify_otp' %}">ورود / ثبت‌نام</a></li>
+                            <li><a aria-label="راه ارتباطی" href="{% url 'home:contact_us' %}">تماس با ما</a></li>
+                            <li><a aria-label="پیگیری" href="{% url 'checkout:track_order' %}">پیگیری سفارش</a></li>
+                            <li><a aria-label="سوال و پرسش" href="{% url 'home:faq' %}">سوالات متداول</a></li>
+                            <li><a aria-label="ورود" href="{% url 'accounts:verify_otp' %}">ورود / ثبت‌نام</a></li>
                         </ul>
                     </li>
 

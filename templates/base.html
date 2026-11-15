@@ -17,18 +17,17 @@
         </title>
 
     <!-- App favicon -->
+    <link rel="preload" as="image" href="/media/banners/1.jpg" fetchpriority="high">
     <link rel="shortcut icon" href="{% static 'img/logo/favicon.png' %}">
 
     <!-- Icon CSS -->
-    <link rel="stylesheet" href="{% static 'css/vendor/materialdesignicons.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/vendor/remixicon.css' %}">
-    <link rel="stylesheet" href="{% static 'css/vendor/flaticons.css' %}">
+    <link rel="preload" href="{% static 'css/vendor/remixicon.css' %}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{% static 'css/vendor/remixicon.css' %}"></noscript>
 
     <!-- Vendor -->
-    <link rel="stylesheet" href="{% static 'css/vendor/animate.css' %}">
     <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/vendor/aos.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/vendor/range-slider.css' %}">
+    <link rel="preload" href="{% static 'css/vendor/aos.min.css' %}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{% static 'css/vendor/aos.min.css' %}"></noscript>
     <link rel="stylesheet" href="{% static 'css/vendor/swiper-bundle.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/vendor/jquery.slick.css' %}">
     <link rel="stylesheet" href="{% static 'css/vendor/slick-theme.css' %}">
@@ -36,7 +35,7 @@
     
 
     <!-- Main CSS -->
-     
+
     {% block main_css %}
     
     {% endblock %}
@@ -57,9 +56,11 @@
 
 {% include 'includes/sidebar-cart.html' %}
 
+<main id="main-content">
 {% block content %}
 
 {% endblock %}
+</main>
 
 <!-- Tab to top -->
     <a href="#Top" class="back-to-top result-placeholder">
@@ -77,15 +78,11 @@
     <script src="{% static "js/vendor/jquery-3.6.4.min.js" %}"></script>
     <script src="{% static "js/vendor/jquery.zoom.min.js" %}"></script>
     <script src="{% static "js/vendor/bootstrap.bundle.min.js" %}"></script>
-    <script src="{% static "js/vendor/mixitup.min.js" %}"></script>
-
-    <script src="{% static "js/vendor/range-slider.js" %}"></script>
     <script src="{% static "js/vendor/aos.min.js" %}"></script>
     <script src="{% static "js/vendor/swiper-bundle.min.js" %}"></script>
     <script src="{% static "js/vendor/slick.min.js" %}"></script>
-    <script src="{% static "js/vendor/owl.carousel.min.js" %}"></script>
-    <script src="{% static "js/vendor/countdownTimer.js" %}"></script>
-
+    {% block extra-js %}
+    {% endblock %}
     <!-- Main Custom -->
     <script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'js/demo-2.js' %}"></script>

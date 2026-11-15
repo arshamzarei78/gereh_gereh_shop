@@ -43,15 +43,17 @@ INSTALLED_APPS = [
     'iranian_cities',
     'accounts',
     'products',
-    'django_cleanup.apps.CleanupConfig',
     'cart',
     'checkout',
     'blog',
+    'django_cleanup.apps.CleanupConfig',
     'django.contrib.humanize'
 ]
 
 MIDDLEWARE = [
+    "django.middleware.gzip.GZipMiddleware",
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -127,23 +129,38 @@ USE_I18N = True
 
 USE_TZ = True
 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+AUTH_USER_MODEL = "accounts.User"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
-MEDIA_URL = 'media/'
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR,'static')
+    os.path.join(BASE_DIR, 'static')
 ]
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-AUTH_USER_MODEL = "accounts.User"
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+WHITENOISE_MANIFEST_STRICT = False
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
+
+# کش کردن فایل‌های استاتیک به مدت ۱ سال برای گرفتن امتیاز کامل کش در لایت‌هوس
+WHITENOISE_MAX_AGE = 31536000
 
 # تنظیمات درگاه پرداخت زرین‌پال
 SANDBOX = True  

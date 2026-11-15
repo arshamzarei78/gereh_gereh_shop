@@ -5985,4 +5985,15 @@ p.news {
   }
 }
 
+img.main-image, img.hover-image, .cr-blog-image img, img.logo {
+    object-fit: cover;
+}
+img.logo {
+    object-fit: contain;
+}
+
+footer.footer p, footer.footer .cr-footer-links a {
+    color: #555555 !important;
+}
+
 /*# sourceMappingURL=demo-2.css.map */

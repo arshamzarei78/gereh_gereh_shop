@@ -9,6 +9,7 @@ media
 # Backup files # 
 *.bak
 backup.json
+staticfiles
 
 # If you are using PyCharm # 
 # User-specific stuff

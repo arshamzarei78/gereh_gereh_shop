@@ -8,8 +8,8 @@
                 <div class="cr-footer-logo">
                     <div class="image">
                         <a href="{% url 'home:home' %}">
-                            <img src="{% static 'img/logo/logo.png' %}" alt="گره گره" class="logo">
-                            <img src="{% static 'img/logo/dark-logo.png' %}" alt="گره گره" class="dark-logo">
+                            <img width="100" height="35" loading="lazy" src="{% static 'img/logo/logo.png' %}" alt="گره گره" class="logo">
+                            <img width="100" height="35" loading="lazy" src="{% static 'img/logo/dark-logo.png' %}" alt="گره گره" class="dark-logo">
                         </a>
                     </div>
                     <p>
@@ -89,7 +89,7 @@
                         <form method="post" action="{% url 'home:newsletter_subscribe' %}" class="cr-search-footer">
                             {% csrf_token %}
                             <input class="search-input" type="text" name="contact_info" placeholder="شماره موبایل یا ایمیل..." required>
-                            <button type="submit" class="search-btn border-0" style="cursor: pointer;">
+                            <button aria-label="جستجو" type="submit" class="search-btn border-0" style="cursor: pointer;">
                                 <i class="ri-send-plane-fill"></i>
                             </button>
                         </form>

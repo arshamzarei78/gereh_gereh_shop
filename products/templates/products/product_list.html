@@ -7,7 +7,9 @@
 {% block main_css %}
 <link rel="stylesheet" href="{% static 'css/style.css' %}">
 <link rel="stylesheet" href="{% static 'css/color-2.css' %}" id='add_class'>
+<link rel="stylesheet" href="{% static 'css/vendor/range-slider.css' %}">
 {% endblock %}
+
 
 {% block content %}
 
@@ -38,13 +40,13 @@
                     <div class="col-12">
                         <div class="cr-shop-bredekamp">
                             <div class="cr-toggle">
-                                <a href="javascript:void(0)" class="shop_side_view" title="فیلترها">
+                                <a href="#" class="shop_side_view" title="فیلترها">
                                     <i class="ri-filter-line"></i>
                                 </a>
-                                <a href="javascript:void(0)" class="gridCol active-grid">
+                                <a href="#" class="gridCol active-grid">
                                     <i class="ri-grid-line"></i>
                                 </a>
-                                <a href="javascript:void(0)" class="gridRow">
+                                <a href="#" class="gridRow">
                                     <i class="ri-list-check-2"></i>
                                 </a>
                             </div>
@@ -196,7 +198,7 @@
     <div class="cr-shop-leftside-inner">
         <div class="cr-title">
             <h6>فیلتر محصولات</h6>
-            <a href="javascript:void(0)" class="close-shop-leftside">
+            <a href="#" class="close-shop-leftside">
                 <i class="ri-close-line"></i>
             </a>
         </div>
@@ -291,3 +293,6 @@ function applySort(sortValue) {
 </script>
 
 {% endblock content %}
+{% block extra-js %}
+<script src="{% static "js/vendor/range-slider.js" %}"></script>
+{% endblock %}

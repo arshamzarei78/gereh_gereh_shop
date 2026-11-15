@@ -362,7 +362,7 @@
                             </div>
                             <div class="cr-product-details">
                                 <div class="cr-brand">
-                                    <a href="javascript:void(0)">{{ rel_product.category.first.title }}</a>
+                                    <a href="#">{{ rel_product.category.first.title }}</a>
                                 </div>
                                 <a href="{{ rel_product.get_absolute_url }}" class="title">{{ rel_product.name }}</a>
                                 {% if rel_product.variant %}
@@ -443,3 +443,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 {% endblock content %}
+{% block extra-js %}
+    <script src="{% static "js/vendor/owl.carousel.min.js" %}"></script>
+    {% endblock %}
