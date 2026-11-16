@@ -25,7 +25,8 @@
     
 
     
-
+    {% load cache %}
+    {% cache 600 hero_slider %}
     <!-- Hero slider -->
     <section class="section-hero hero-2 padding-b-100 next">
         <div class="container-fluid p-0">
@@ -85,6 +86,7 @@
             </div>
         </div>
     </section>
+    {% endcache %}
 
     <!-- Category -->
     <section class="section-popular margin-b-100" data-aos="fade-up" data-aos-duration="2000">

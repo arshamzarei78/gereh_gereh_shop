@@ -53,7 +53,7 @@ class Product(models.Model):
         help_text="توضیحات مربوط به نحوه شستشو و بسته‌بندی محصول",
     )
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True,db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -141,8 +141,8 @@ class ProductVariant(models.Model):
         related_name="variant_items",
         verbose_name="تصویر اختصاصی این رنگ/تنوع",
     )
-    color = models.CharField("رنگ", max_length=50)
-    size = models.CharField("سایز", max_length=20, blank=True, null=True)
+    color = models.CharField("رنگ", max_length=50,db_index=True)
+    size = models.CharField("سایز", max_length=20, blank=True, null=True,db_index=True)
     price = models.PositiveBigIntegerField("قیمت (تومان)")
     discount = models.PositiveIntegerField(
         "درصد تخفیف",

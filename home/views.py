@@ -8,6 +8,7 @@ from django.contrib import messages
 from .models import ContactMessage,BannerAnimation,Newsletter
 from .forms import ContactForm
 from django.views.decorators.http import require_POST
+from django.core.cache import cache
 
 
 class ContactUsView(CreateView):
@@ -44,9 +45,26 @@ class HomeView(TemplateView):
     template_name = 'home/home.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['products'] = Product.objects.all()[:5]
-        context['posts'] = Post.objects.all()
-        context['banners'] = BannerAnimation.objects.all()
+
+        products = cache.get('home_products')
+        posts = cache.get('home_posts')
+        banners = cache.get('home_banners')
+
+        if not products:
+            products = Product.objects.all()[:5]
+            cache.set('home_products',products, 60 * 15)
+
+        if not posts:
+            posts = Post.objects.all()
+            cache.set('home_posts',posts, 60 * 60)
+
+        if not banners:
+            banners = BannerAnimation.objects.all()
+            cache.set('home_banners',banners, 60 * 30)
+
+        context['products'] = products
+        context['posts'] = posts
+        context['banners'] = banners
         return context
 
 class FaqView(TemplateView):

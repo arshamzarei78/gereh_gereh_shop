@@ -4,6 +4,7 @@ from django.db.models.functions import Coalesce
 from django.shortcuts import redirect
 from django.views.generic import DetailView, ListView
 from .models import Category, Product, ProductComment, ProductVariant
+from django.core.cache import cache
 
 
 class PtoductView(DetailView):
@@ -154,19 +155,30 @@ class ProductListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context["available_colors"] = (
-            ProductVariant.objects.filter(stock__gt=0)
-            .exclude(color="")
-            .values_list("color", flat=True)
-            .distinct()
-        )
-        context["available_sizes"] = (
-            ProductVariant.objects.filter(stock__gt=0)
-            .exclude(size__isnull=True)
-            .exclude(size="")
-            .values_list("size", flat=True)
-            .distinct()
-        )
+        colors_cache_key = "sidebar_available_colors"
+        available_colors = cache.get(colors_cache_key)
+        if available_colors is None:
+            available_colors = list(
+                ProductVariant.objects.filter(stock__gt=0)
+                        .exclude(color="")
+                        .values_list("color", flat=True)
+                        .distinct())
+            cache.set(colors_cache_key, available_colors, 60 * 15)
+
+        context["available_colors"] = available_colors
+
+        sizes_cache_key = "sidebar_available_sizes"
+        available_sizes = cache.get(sizes_cache_key)
+        if available_sizes is None:
+            available_sizes = list(
+                ProductVariant.objects.filter(stock__gt=0)
+                            .exclude(size__isnull=True)
+                            .exclude(size="")
+                            .values_list("size", flat=True)
+                            .distinct()
+            )
+            cache.set(sizes_cache_key,available_sizes,60 * 15)
+            context["available_sizes"] = available_sizes
 
         context["selected_categories"] = self.request.GET.getlist("category")
         context["selected_colors"] = self.request.GET.getlist("color")
