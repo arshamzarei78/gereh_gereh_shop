@@ -4,6 +4,10 @@ from django.db import models
 from django.db.models import Avg
 from django.urls import reverse
 from django.utils.text import slugify
+from django.core.cache.utils import make_template_fragment_key
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+from django.core.cache import cache
 
 
 class Category(models.Model):
@@ -182,6 +186,14 @@ class ProductVariant(models.Model):
     def display_image(self):
         return self.image or self.product.main_image
 
+    
+    # قسمت های اضافه شده برای حذف کش
+@receiver([post_save, post_delete], sender=ProductVariant)
+def clear_product_variants_cache(sender, **kwargs):
+    cache.delete_many([
+        'sidebar_available_colors',
+        'sidebar_available_sizes',
+        'home_products',])
 
 class ProductImage(models.Model):
     product = models.ForeignKey(

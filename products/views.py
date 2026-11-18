@@ -178,7 +178,7 @@ class ProductListView(ListView):
                             .distinct()
             )
             cache.set(sizes_cache_key,available_sizes,60 * 15)
-            context["available_sizes"] = available_sizes
+        context["available_sizes"] = available_sizes
 
         context["selected_categories"] = self.request.GET.getlist("category")
         context["selected_colors"] = self.request.GET.getlist("color")

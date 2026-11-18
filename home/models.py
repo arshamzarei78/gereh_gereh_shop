@@ -1,5 +1,9 @@
 from django.db import models
 from django.core.validators import RegexValidator
+from django.core.cache.utils import make_template_fragment_key
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
+from django.core.cache import cache
 
 
 class ContactMessage(models.Model):
@@ -40,6 +44,11 @@ class BannerAnimation(models.Model):
     class Meta:
         verbose_name_plural = "بخش انیمیشن بنر"
 
+@receiver([post_save, post_delete], sender=BannerAnimation)
+def clear_home_banners_cache(sender, **kwargs):
+    cache.delete('home_banners')
+    template_key = make_template_fragment_key('hero_slider')
+    cache.delete(template_key)
 
 class SiteSetting(models.Model):
     """تنظیمات کلی سایت و اطلاعات فوتر"""

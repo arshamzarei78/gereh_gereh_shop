@@ -50,16 +50,16 @@ class HomeView(TemplateView):
         posts = cache.get('home_posts')
         banners = cache.get('home_banners')
 
-        if not products:
-            products = Product.objects.all()[:5]
+        if products is None:
+            products = list(Product.objects.all()[:5])
             cache.set('home_products',products, 60 * 15)
 
-        if not posts:
-            posts = Post.objects.all()
+        if posts is None:
+            posts = list(Post.objects.all())
             cache.set('home_posts',posts, 60 * 60)
 
-        if not banners:
-            banners = BannerAnimation.objects.all()
+        if banners is None:
+            banners = list(BannerAnimation.objects.all())
             cache.set('home_banners',banners, 60 * 30)
 
         context['products'] = products
