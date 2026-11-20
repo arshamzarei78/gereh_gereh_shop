@@ -49,10 +49,17 @@
                     {{ item.variant.product.name }}
                 </a>
 
+                <!-- کد اصلاح‌شده -->
                 <span class="cart-price">
                     <span>{{ item.variant.final_price_display }} تومان</span>
-                    ({{ item.variant.color }}{% if item.variant.size %} - {{ item.variant.size }}{% endif %})
                 </span>
+                {% if item.variant.all_attributes %}
+                <small class="text-muted d-block mt-1" style="font-size: 11px; line-height: 1.6;">
+                    {% for key, val in item.variant.all_attributes.items %}
+                        {{ key }}: {{ val }}{% if not forloop.last %} | {% endif %}
+                    {% endfor %}
+                </small>
+                {% endif %}
 
                 <div class="cr-cart-qty">
                     <div class="cart-qty-plus-minus">

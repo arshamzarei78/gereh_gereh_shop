@@ -75,7 +75,7 @@ def checkout_view(request):
                         variant = item["variant"]
                         if variant.stock < item["quantity"]:
                             raise ValueError(
-                                f"موجودی محصول «{variant.product.name} ({variant.color})» کافی نیست. (موجودی فعلی: {variant.stock})"
+                                f"موجودی محصول «{variant}» کافی نیست. (موجودی فعلی: {variant.stock})"
                             )
 
                     full_address_str = (
@@ -106,8 +106,7 @@ def checkout_view(request):
                     order_items = []
                     for item in cart_items:
                         variant = item["variant"]
-                        size_str = f" - سایز: {variant.size}" if variant.size else ""
-                        product_title = f"{variant.product.name} (رنگ: {variant.color}{size_str})"
+                        product_title = str(variant)[:250]
 
                         order_items.append(
                             OrderItem(

@@ -11055,5 +11055,106 @@ iframe {
     }
 }
 
+/* ====================================================
+   طراحی دکمه‌های انتخاب تنوع (رنگ، سایز و...) در صفحه محصول
+==================================================== */
+.cr-variants-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
 
+.variant-group-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2b2b2d;
+    margin-bottom: 10px;
+}
+
+.variant-group-label .selected-value {
+    color: #64b496;
+    font-weight: 700;
+    margin-right: 4px;
+}
+
+.variant-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.variant-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-family: iransans, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: #444;
+    background-color: #ffffff;
+    border: 1.5px solid #e2e2e2;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.variant-pill:hover {
+    border-color: #64b496;
+    color: #2b2b2d;
+}
+
+.variant-pill.active {
+    border-color: #64b496;
+    background-color: rgba(100, 180, 150, 0.12);
+    color: #1f5e47;
+    font-weight: 700;
+    box-shadow: 0 0 0 1px #64b496;
+}
+
+/* گزینه‌هایی که موجودی ندارند */
+.variant-pill.out-of-stock {
+    opacity: 0.55;
+    border-style: dashed;
+    text-decoration: line-through;
+    color: #888;
+}
+
+/* گزینه‌هایی که در ترکیب فعلی نیستند اما با کلیک، ترکیب معتبرشان انتخاب می‌شود */
+.variant-pill.alt-combo {
+    border-style: dashed;
+    opacity: 0.8;
+}
+
+/* دایره نمایش رنگ */
+.color-swatch-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.18);
+    flex-shrink: 0;
+    display: inline-block;
+}
+
+/* نشان درصد تخفیف کنار قیمت */
+.variant-discount-badge {
+    background-color: #c61a1a;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 6px;
+}
+
+/* رفع مشکل مخفی شدن دکمه خرید در گوشی‌های زیر ۳۸۰ پیکسل */
+@media only screen and (max-width: 380px) {
+    .cr-size-and-weight .cr-add-card .cr-add-button {
+        display: block !important;
+        flex: 1;
+    }
+    .cr-size-and-weight .cr-add-card .cr-add-button .cr-button {
+        width: 100%;
+    }
+}
 /*# sourceMappingURL=style.css.map */

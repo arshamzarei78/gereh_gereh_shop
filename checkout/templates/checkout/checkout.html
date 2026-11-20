@@ -96,10 +96,14 @@
                                                 <a href="{{ item.variant.product.get_absolute_url }}">
                                                     {{ item.quantity }} عدد {{ item.variant.product.name }}
                                                 </a>
-                                            </h5>
+                                            </h5> 
+                                            {% if item.variant.all_attributes %}
                                             <small class="text-muted d-block mb-1">
-                                                رنگ: {{ item.variant.color }}{% if item.variant.size %} | سایز: {{ item.variant.size }}{% endif %}
+                                                {% for key, val in item.variant.all_attributes.items %}
+                                                    {{ key }}: {{ val }}{% if not forloop.last %} | {% endif %}
+                                                {% endfor %}
                                             </small>
+                                            {% endif %}
                                             <p class="cr-price">
                                                 <span class="new-price">{{ item.total_price_display }} تومان</span>
                                                 {% if item.variant.discount > 0 %}

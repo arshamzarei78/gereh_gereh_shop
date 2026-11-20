@@ -146,10 +146,13 @@
                     <!-- قیمت محصول -->
                     {% with first_variant=product.variants.first %}
                     {% if first_variant %}
-                    <div class="cr-product-price">
+                    <div class="cr-product-price d-flex align-items-center flex-wrap gap-2">
                         <span class="new-price" id="dynamic-price">{{ first_variant.final_price_display }} تومان</span>
                         <span class="old-price" id="dynamic-old-price" {% if first_variant.discount == 0 %}style="display: none;"{% endif %}>
                             {{ first_variant.price_display }} تومان
+                        </span>
+                        <span class="variant-discount-badge" id="dynamic-discount-badge" {% if first_variant.discount == 0 %}style="display: none;"{% endif %}>
+                            {{ first_variant.discount }}% تخفیف
                         </span>
                     </div>
 
@@ -157,24 +160,26 @@
                     <form id="add-to-cart-form" action="{% url 'cart:cart_add' product.id %}" method="post">
                         {% csrf_token %}
 
-                        <!-- انتخاب تنوع محصول -->
-                        <div class="mb-3 mt-4">
-                            <label for="variant-select" class="mb-2 fw-medium">انتخاب رنگ و سایز:</label>
-                            <select name="variant_id" id="variant-select" class="form-select" required>
-                                {% for variant in product.variants.all %}
-                                <option value="{{ variant.id }}" 
-                                    data-stock="{{ variant.stock }}"
-                                    data-price="{{ variant.final_price_display }}"
-                                    data-old-price="{{ variant.price_display }}" 
-                                    data-discount="{{ variant.discount }}"
-                                    {% if variant.stock == 0 %}disabled{% endif %}>
-                                    {{ variant.color }}
-                                    {% if variant.size %} - {{ variant.size }}{% endif %}
-                                    {% if variant.stock == 0 %} (ناموجود){% endif %}
-                                </option>
+                        <!-- ارسال آیدی تنوع انتخاب‌شده به بک‌اند -->
+                        <input type="hidden" name="variant_id" id="selected-variant-id" value="{{ first_variant.id }}" required>
+
+                        <!-- منبع دیتای تنوع‌ها برای خواندن توسط JS خالص -->
+                        <div id="variants-data-source" class="d-none">
+                            {% for variant in product.variants.all %}
+                            <div class="variant-source-item"
+                                data-id="{{ variant.id }}"
+                                data-stock="{{ variant.stock|default:0 }}"
+                                data-price="{{ variant.final_price_display }}"
+                                data-old-price="{{ variant.price_display }}"
+                                data-discount="{{ variant.discount|default:0 }}">
+                                {% for key, val in variant.all_attributes.items %}
+                                    <span class="variant-attr" data-key="{{ key }}" data-value="{{ val }}"></span>
                                 {% endfor %}
-                            </select>
+                            </div>
+                            {% endfor %}
                         </div>
+                        <!-- کانتینر هوشمند دکمه‌های انتخاب تنوع (توسط JS ساخته می‌شود) -->
+                        <div id="variants-container" class="cr-variants-wrapper mt-4 mb-4"></div>
 
                         <div class="cr-add-card">
                             <div class="cr-qty-main">
@@ -253,6 +258,9 @@
                                         <li><label>رنگ‌بندی<span>:</span></label>{{ product.available_colors }}</li>
                                         {% endif %}
                                         {% if product.available_sizes %}
+                                        {% for key, values in product.available_extra_attributes.items %}
+                                        <li><label>{{ key }}<span>:</span></label>{{ values }}</li>
+                                        {% endfor %}
                                         <li><label>سایزبندی<span>:</span></label>{{ product.available_sizes }}</li>
                                         {% endif %}
                                         {% if product.material %}
@@ -387,59 +395,252 @@
 <!-- اسکریپت تغییر داینامیک قیمت و موجودی بر اساس تنوع انتخابی -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-    const variantSelect = document.getElementById("variant-select");
+    // تعریف برچسب ویژگی‌ها (در آینده با اضافه کردن data-pattern در HTML، فقط pattern: "طرح" را اینجا اضافه کنید)
+    const attrLabels = {
+        color: "رنگ",
+        size: "سایز"
+    };
+
+    const sourceItems = document.querySelectorAll("#variants-data-source .variant-source-item");
+if (!sourceItems.length) return;
+
+const variantsData = Array.from(sourceItems).map(el => {
+    const attributes = {};
+    el.querySelectorAll(".variant-attr").forEach(attrEl => {
+        const key = (attrEl.dataset.key || "").trim();
+        const val = (attrEl.dataset.value || "").trim();
+        if (key && val) attributes[key] = val;
+    });
+
+    return {
+        id: el.dataset.id,
+        stock: parseInt(el.dataset.stock, 10) || 0,
+        price: el.dataset.price || "",
+        oldPrice: el.dataset.oldPrice || "",
+        discount: parseInt(el.dataset.discount, 10) || 0,
+        attributes: attributes
+    };
+});
+
+    const container = document.getElementById("variants-container");
+    const variantIdInput = document.getElementById("selected-variant-id");
     const dynamicPrice = document.getElementById("dynamic-price");
     const dynamicOldPrice = document.getElementById("dynamic-old-price");
+    const dynamicDiscountBadge = document.getElementById("dynamic-discount-badge");
     const dynamicStock = document.getElementById("dynamic-stock");
     const qtyInput = document.getElementById("qty-input");
     const addToCartBtn = document.getElementById("add-to-cart-btn");
 
-    if (variantSelect) {
-        variantSelect.addEventListener("change", function () {
-            const selectedOption = this.options[this.selectedIndex];
-            const price = selectedOption.getAttribute("data-price");
-            const oldPrice = selectedOption.getAttribute("data-old-price");
-            const discount = parseInt(selectedOption.getAttribute("data-discount")) || 0;
-            const stock = parseInt(selectedOption.getAttribute("data-stock")) || 0;
+    const persianColorMap = {
+        "سفید": "#ffffff",
+        "شیری": "#faf6ee",
+        "نباتی": "#f5ebd6",
+        "کرم": "#eee0c9",
+        "بژ": "#d8c3a5",
+        "نسکافه‌ای": "#b08968",
+        "نسکافه ای": "#b08968",
+        "کاراملی": "#c68b59",
+        "قهوه‌ای": "#6f4e37",
+        "قهوه ای": "#6f4e37",
+        "شکلاتی": "#4e342e",
+        "مشکی": "#1e1e1e",
+        "سیاه": "#1e1e1e",
+        "طوسی": "#9e9e9e",
+        "خاکستری": "#757575",
+        "سبز": "#4caf50",
+        "زیتونی": "#6b705c",
+        "یشمی": "#2e6f56",
+        "آبی": "#3b82f6",
+        "سرمه‌ای": "#1e3a8a",
+        "سرمه ای": "#1e3a8a",
+        "فیروزه‌ای": "#14b8a6",
+        "فیروزه ای": "#14b8a6",
+        "صورتی": "#f472b6",
+        "کالباسی": "#d88c9a",
+        "قرمز": "#dc2626",
+        "زرشکی": "#881337",
+        "نارنجی": "#f97316",
+        "آجری": "#b45309",
+        "خردلی": "#ca8a04",
+        "زرد": "#eab308",
+        "بنفش": "#7c3aed",
+        "یاسی": "#c084fc",
+        "طلایی": "#d4af37"
+    };
 
-            // آپدیت قیمت جدید
-            if (dynamicPrice) {
-                dynamicPrice.textContent = price + " تومان";
+    const attributeKeys = [];
+    variantsData.forEach(v => {
+        Object.keys(v.attributes).forEach(key => {
+            if (!attributeKeys.includes(key)) attributeKeys.push(key);
+        });
+    });
+
+    let activeVariant = variantsData.find(v => v.stock > 0) || variantsData[0];
+
+    function applyVariantToUI(variant) {
+        activeVariant = variant;
+
+        if (variantIdInput) variantIdInput.value = variant.id;
+        if (dynamicPrice) dynamicPrice.textContent = variant.price + " تومان";
+
+        if (dynamicOldPrice) {
+            if (variant.discount > 0) {
+                dynamicOldPrice.textContent = variant.oldPrice + " تومان";
+                dynamicOldPrice.style.display = "inline";
+            } else {
+                dynamicOldPrice.style.display = "none";
+            }
+        }
+
+        if (dynamicDiscountBadge) {
+            if (variant.discount > 0) {
+                dynamicDiscountBadge.textContent = variant.discount + "% تخفیف";
+                dynamicDiscountBadge.style.display = "inline-block";
+            } else {
+                dynamicDiscountBadge.style.display = "none";
+            }
+        }
+
+        if (dynamicStock) {
+            dynamicStock.textContent = variant.stock;
+            dynamicStock.style.color = variant.stock > 0 ? "#64b496" : "#dc3545";
+            dynamicStock.style.fontWeight = "700";
+        }
+
+        if (qtyInput) {
+            qtyInput.max = variant.stock;
+            const currentQty = parseInt(qtyInput.value, 10) || 1;
+            if (variant.stock === 0) {
+                qtyInput.value = 0;
+            } else if (currentQty > variant.stock || currentQty < 1) {
+                qtyInput.value = 1;
+            }
+        }
+
+        if (addToCartBtn) {
+            if (variant.stock === 0) {
+                addToCartBtn.disabled = true;
+                addToCartBtn.textContent = "ناموجود";
+            } else {
+                addToCartBtn.disabled = false;
+                addToCartBtn.textContent = "افزودن به سبد خرید";
+            }
+        }
+    }
+
+    function selectAttribute(clickedKey, clickedValue) {
+        const desiredAttrs = Object.assign({}, activeVariant.attributes, { [clickedKey]: clickedValue });
+
+        let matched = variantsData.find(v =>
+            attributeKeys.every(k => (v.attributes[k] || "") === (desiredAttrs[k] || ""))
+        );
+
+        if (!matched) {
+            matched = variantsData.find(v => v.attributes[clickedKey] === clickedValue && v.stock > 0)
+                   || variantsData.find(v => v.attributes[clickedKey] === clickedValue);
+        }
+
+        if (matched) {
+            applyVariantToUI(matched);
+            renderSelectors();
+        }
+    }
+
+    function renderSelectors() {
+        if (!container) return;
+        container.innerHTML = "";
+
+        if (attributeKeys.length === 0) {
+            if (variantsData.length <= 1) {
+                container.style.display = "none";
+                return;
             }
 
-            // آپدیت قیمت قبل از تخفیف
-            if (dynamicOldPrice) {
-                if (discount > 0) {
-                    dynamicOldPrice.textContent = oldPrice + " تومان";
-                    dynamicOldPrice.style.display = "inline";
-                } else {
-                    dynamicOldPrice.style.display = "none";
+            const groupDiv = document.createElement("div");
+            groupDiv.className = "variant-group";
+            groupDiv.innerHTML = '<div class="variant-group-label">انتخاب مدل:</div><div class="variant-pills"></div>';
+            const pillsBox = groupDiv.querySelector(".variant-pills");
+
+            variantsData.forEach((v, idx) => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "variant-pill" + (v.id === activeVariant.id ? " active" : "") + (v.stock === 0 ? " out-of-stock" : "");
+                btn.textContent = "مدل " + (idx + 1) + " (" + v.price + " تومان)";
+                btn.addEventListener("click", () => {
+                    applyVariantToUI(v);
+                    renderSelectors();
+                });
+                pillsBox.appendChild(btn);
+            });
+
+            container.appendChild(groupDiv);
+            return;
+        }
+
+        attributeKeys.forEach(key => {
+            const uniqueValues = [...new Set(
+                variantsData.map(v => v.attributes[key]).filter(val => val !== undefined && val !== "")
+            )];
+            if (!uniqueValues.length) return;
+
+            const currentVal = activeVariant.attributes[key] || "";
+            const groupDiv = document.createElement("div");
+            groupDiv.className = "variant-group";
+
+            const labelDiv = document.createElement("div");
+            labelDiv.className = "variant-group-label";
+            labelDiv.innerHTML = key + ': <span class="selected-value">' + (currentVal || "—") + '</span>';
+            groupDiv.appendChild(labelDiv);
+
+            const pillsBox = document.createElement("div");
+            pillsBox.className = "variant-pills";
+
+            uniqueValues.forEach(val => {
+                const btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "variant-pill";
+
+                if (currentVal === val) btn.classList.add("active");
+
+                const exactCombo = variantsData.find(v =>
+                    attributeKeys.every(k => {
+                        const target = (k === key) ? val : (activeVariant.attributes[k] || "");
+                        return (v.attributes[k] || "") === target;
+                    })
+                );
+                const anyInStock = variantsData.some(v => v.attributes[key] === val && v.stock > 0);
+
+                if ((exactCombo && exactCombo.stock === 0) || !anyInStock) {
+                    btn.classList.add("out-of-stock");
+                } else if (!exactCombo) {
+                    btn.classList.add("alt-combo");
                 }
-            }
 
-            // آپدیت موجودی و سقف انتخاب تعداد
-            if (dynamicStock) {
-                dynamicStock.textContent = stock;
-            }
-            if (qtyInput) {
-                qtyInput.max = stock;
-                if (parseInt(qtyInput.value) > stock) {
-                    qtyInput.value = stock > 0 ? 1 : 0;
+                if (key === "رنگ") {
+                    const hex = persianColorMap[val.trim()];
+                    if (hex) {
+                        const dot = document.createElement("span");
+                        dot.className = "color-swatch-dot";
+                        dot.style.backgroundColor = hex;
+                        btn.appendChild(dot);
+                    }
                 }
-            }
 
-            // فعال/غیرفعال کردن دکمه خرید
-            if (addToCartBtn) {
-                if (stock === 0) {
-                    addToCartBtn.disabled = true;
-                    addToCartBtn.textContent = "ناموجود";
-                } else {
-                    addToCartBtn.disabled = false;
-                    addToCartBtn.textContent = "افزودن به سبد خرید";
-                }
-            }
+                const textSpan = document.createElement("span");
+                textSpan.textContent = val;
+                btn.appendChild(textSpan);
+
+                btn.addEventListener("click", () => selectAttribute(key, val));
+                pillsBox.appendChild(btn);
+            });
+
+            groupDiv.appendChild(pillsBox);
+            container.appendChild(groupDiv);
         });
     }
+
+    applyVariantToUI(activeVariant);
+    renderSelectors();
 });
 </script>
 {% endblock content %}

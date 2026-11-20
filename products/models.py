@@ -1,10 +1,10 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Avg
 from django.urls import reverse
 from django.utils.text import slugify
-from django.core.cache.utils import make_template_fragment_key
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.core.cache import cache
@@ -26,7 +26,9 @@ class Category(models.Model):
 
 
 class Product(models.Model):
-    category = models.ManyToManyField(Category, related_name='products', verbose_name="دسته‌بندی‌ها")
+    category = models.ManyToManyField(
+        Category, related_name="products", verbose_name="دسته‌بندی‌ها"
+    )
     name = models.CharField("نام محصول", max_length=200)
     slug = models.SlugField(
         "اسلاگ", max_length=220, blank=True, allow_unicode=True, unique=True
@@ -34,7 +36,7 @@ class Product(models.Model):
     description = models.TextField("توضیحات", blank=True)
 
     material = models.CharField(
-        "جنس نخ / متریال",
+        "جنس / متریال",
         max_length=150,
         blank=True,
         null=True,
@@ -54,10 +56,10 @@ class Product(models.Model):
         "نحوه شستشو و نگهداری",
         blank=True,
         null=True,
-        help_text="توضیحات مربوط به نحوه شستشو و بسته‌بندی محصول",
+        help_text="توضیحات مربوط به نحوه نگهداری یا بسته‌بندی محصول",
     )
 
-    created_at = models.DateTimeField(auto_now_add=True,db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -90,11 +92,6 @@ class Product(models.Model):
 
     @property
     def main_image(self):
-        """
-        سازگار با prefetch_related:
-        استفاده از .all() به جای .filter() باعث می‌شود اگر عکس‌ها از قبل واکشی شده باشند،
-        هیچ کوئری جدیدی به دیتابیس زده نشود.
-        """
         images = list(self.images.all())
         if not images:
             return None
@@ -105,29 +102,35 @@ class Product(models.Model):
 
     @property
     def variant(self):
-        """برگرداندن اولین تنوع محصول بدون دور زدن کش prefetch_related"""
         variants = list(self.variants.all())
         return variants[0] if variants else None
 
     @property
     def available_colors(self):
-        """لیست رنگ‌های یکتای محصول با حفظ ترتیب و استفاده از کش حافظه"""
         colors = dict.fromkeys(v.color for v in self.variants.all() if v.color)
         return "، ".join(colors.keys())
 
     @property
     def available_sizes(self):
-        """لیست سایزهای یکتای محصول"""
         sizes = dict.fromkeys(v.size for v in self.variants.all() if v.size)
         return "، ".join(sizes.keys())
 
     @property
     def average_rating(self):
-        # اگر در کوئری ویو از قبل calculated_rating را annotate کرده باشیم، از همان استفاده می‌کنیم
         if hasattr(self, "calculated_rating"):
             return round(self.calculated_rating, 1)
         avg = self.comments.filter(is_approved=True).aggregate(Avg("rating"))["rating__avg"]
         return round(avg, 1) if avg else 5.0
+
+    @property
+    def available_extra_attributes(self):
+        """استخراج یکتای سایر ویژگی‌های تنوع‌ها برای نمایش در جدول مشخصات"""
+        grouped = {}
+        for v in self.variants.all():
+            if isinstance(v.extra_attributes, dict):
+                for k, val in v.extra_attributes.items():
+                    grouped.setdefault(k, {})[val] = None
+        return {k: "، ".join(vals.keys()) for k, vals in grouped.items()}
 
 
 class ProductVariant(models.Model):
@@ -143,10 +146,20 @@ class ProductVariant(models.Model):
         null=True,
         blank=True,
         related_name="variant_items",
-        verbose_name="تصویر اختصاصی این رنگ/تنوع",
+        verbose_name="تصویر اختصاصی این تنوع",
     )
-    color = models.CharField("رنگ", max_length=50,db_index=True)
-    size = models.CharField("سایز", max_length=20, blank=True, null=True,db_index=True)
+    color = models.CharField(
+        "رنگ", max_length=50, blank=True, null=True, db_index=True
+    )
+    size = models.CharField(
+        "سایز", max_length=20, blank=True, null=True, db_index=True
+    )
+    extra_attributes = models.JSONField(
+        "سایر ویژگی‌ها",
+        default=dict,
+        blank=True,
+        help_text='به فرمت JSON وارد کنید. مثال: {"حجم": "100 میل", "گارانتی": "۱۸ ماهه"}',
+    )
     price = models.PositiveBigIntegerField("قیمت (تومان)")
     discount = models.PositiveIntegerField(
         "درصد تخفیف",
@@ -158,15 +171,61 @@ class ProductVariant(models.Model):
     class Meta:
         verbose_name = "تنوع محصول"
         verbose_name_plural = "تنوع محصولات"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["product", "color", "size"],
-                name="unique_product_variant",
+
+    def clean(self):
+        super().clean()
+
+        # یکسان‌سازی مقادیر خالی به None
+        self.color = self.color.strip() if self.color and self.color.strip() else None
+        self.size = self.size.strip() if self.size and self.size.strip() else None
+
+        # اطمینان از ساختار دیکشنری برای extra_attributes
+        if self.extra_attributes in (None, ""):
+            self.extra_attributes = {}
+        elif not isinstance(self.extra_attributes, dict):
+            raise ValidationError(
+                {
+                    "extra_attributes": 'مقدار باید به صورت کلید و مقدار (JSON Object) باشد؛ مثلاً {"حجم": "100 میل"}'
+                }
             )
-        ]
+        else:
+            cleaned_attrs = {}
+            for k, v in self.extra_attributes.items():
+                key = str(k).strip()
+                val = str(v).strip()
+                if key and val:
+                    cleaned_attrs[key] = val
+            self.extra_attributes = cleaned_attrs
+
+        # جلوگیری از ثبت تنوع کاملاً تکراری برای یک محصول
+        if self.product_id:
+            same_base = ProductVariant.objects.filter(
+                product_id=self.product_id,
+                color=self.color,
+                size=self.size,
+            ).exclude(pk=self.pk)
+
+            for variant in same_base:
+                if (variant.extra_attributes or {}) == self.extra_attributes:
+                    raise ValidationError(
+                        "تنوعی با دقیقاً همین مشخصات (رنگ، سایز و سایر ویژگی‌ها) قبلاً برای این محصول ثبت شده است."
+                    )
+
+    @property
+    def all_attributes(self):
+        """ترکیب یکپارچه رنگ، سایز و سایر ویژگی‌های دلخواه"""
+        attrs = {}
+        if self.color:
+            attrs["رنگ"] = self.color
+        if self.size:
+            attrs["سایز"] = self.size
+        if isinstance(self.extra_attributes, dict):
+            attrs.update(self.extra_attributes)
+        return attrs
 
     def __str__(self):
-        return f"{self.product.name} | {self.color} | {self.size or 'بدون سایز'}"
+        attrs_text = " | ".join(f"{k}: {v}" for k, v in self.all_attributes.items())
+        return f"{self.product.name} ({attrs_text})" if attrs_text else self.product.name
 
     @property
     def final_price(self):
@@ -186,14 +245,18 @@ class ProductVariant(models.Model):
     def display_image(self):
         return self.image or self.product.main_image
 
-    
-    # قسمت های اضافه شده برای حذف کش
+
 @receiver([post_save, post_delete], sender=ProductVariant)
 def clear_product_variants_cache(sender, **kwargs):
-    cache.delete_many([
-        'sidebar_available_colors',
-        'sidebar_available_sizes',
-        'home_products',])
+    cache.delete_many(
+        [
+            "sidebar_available_colors",
+            "sidebar_available_sizes",
+            "home_products",
+            "home_discounted_products",
+        ]
+    )
+
 
 class ProductImage(models.Model):
     product = models.ForeignKey(
@@ -228,13 +291,13 @@ class ProductComment(models.Model):
         Product,
         on_delete=models.CASCADE,
         related_name="comments",
-        verbose_name="محصول"
+        verbose_name="محصول",
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="product_comments",
-        verbose_name="کاربر"
+        verbose_name="کاربر",
     )
     rating = models.PositiveSmallIntegerField(
         "امتیاز (۱ تا ۵)",
