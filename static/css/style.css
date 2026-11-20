@@ -95,7 +95,7 @@ p {
   margin-bottom: 0px;
   font-size: 14px;
   font-family: iransans, " sans-serif";
-  color: #7a7a7a;
+  color: #595959;
   line-height: 1.75;
 }
 
@@ -598,7 +598,7 @@ p {
   font-size: 14px;
   line-height: 1.3;
   font-weight: 500;
-  color: #7a7a7a;
+  color: #595959;
   text-transform: capitalize;
 }
 
@@ -1135,31 +1135,31 @@ a.back-to-top .back-to-top-wrap svg path {
 .cr-search-footer input::-webkit-input-placeholder {
   font-family: iransans, " sans-serif";
   font-size: 14px;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-search-footer input::-moz-placeholder {
   font-family: iransans, " sans-serif";
   font-size: 14px;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-search-footer input:-ms-input-placeholder {
   font-family: iransans, " sans-serif";
   font-size: 14px;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-search-footer input::-ms-input-placeholder {
   font-family: iransans, " sans-serif";
   font-size: 14px;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-search-footer input::placeholder {
   font-family: iransans, " sans-serif";
   font-size: 14px;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-search-footer .search-btn {
@@ -1563,31 +1563,31 @@ header {
 .top-header .cr-search input::-webkit-input-placeholder {
   font-family: iransans, " sans-serif";
   font-size: 13px;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .top-header .cr-search input::-moz-placeholder {
   font-family: iransans, " sans-serif";
   font-size: 13px;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .top-header .cr-search input:-ms-input-placeholder {
   font-family: iransans, " sans-serif";
   font-size: 13px;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .top-header .cr-search input::-ms-input-placeholder {
   font-family: iransans, " sans-serif";
   font-size: 13px;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .top-header .cr-search input::placeholder {
   font-family: iransans, " sans-serif";
   font-size: 13px;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .top-header .cr-search .search-btn {
@@ -2660,7 +2660,7 @@ ul.navbar-nav .dropdown:hover .dropdown-menu {
   font-size: 16px;
   font-weight: bold;
   margin-bottom: 0px;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-left-side-contain .cr-last-buttons h4 span {
@@ -3499,7 +3499,7 @@ ul.navbar-nav .dropdown:hover .dropdown-menu {
   font-size: 14px;
   line-height: 1.2;
   font-weight: 400;
-  color: #7a7a7a;
+  color: #595959;
   text-align: center;
 }
 
@@ -3518,7 +3518,7 @@ ul.navbar-nav .dropdown:hover .dropdown-menu {
 .cr-counter .cr-counter-inner h4:not(:first-child)::after {
   content: ":";
   font-size: 25px;
-  color: #7a7a7a;
+  color: #595959;
   position: absolute;
   left: 50px;
   top: 5px;
@@ -3705,7 +3705,7 @@ ul.navbar-nav .dropdown:hover .dropdown-menu {
   font-family: iransans, " sans-serif";
   font-size: 14px;
   line-height: 2.357;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-testimonial .cr-testimonial-inner h4.title {
@@ -4192,7 +4192,7 @@ ul.navbar-nav .dropdown:hover .dropdown-menu {
   font-family: iransans, " sans-serif";
   font-size: 20px;
   line-height: 1.2;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-popular-product, .cr-twocolumns-product {
@@ -4762,7 +4762,7 @@ ul.navbar-nav .dropdown:hover .dropdown-menu {
 .center-categories-inner span {
   font-size: 12px;
   font-weight: 400;
-  color: #7a7a7a;
+  color: #595959;
   vertical-align: text-top;
 }
 
@@ -5172,7 +5172,7 @@ ul.navbar-nav .dropdown:hover .dropdown-menu {
   font-size: 14px;
   font-weight: 400;
   line-height: 2;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-blog .cr-blog-content span code {
@@ -5733,7 +5733,7 @@ ul.navbar-nav .dropdown:hover .dropdown-menu {
   transition: all 0.3s ease-in-out;
   margin-bottom: 5px;
   font-size: 13px;
-  color: #777;
+  color: #282725;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -5761,7 +5761,7 @@ ul.navbar-nav .dropdown:hover .dropdown-menu {
 
 .cr-product-details .cr-star p {
   margin-right: 5px;
-  color: #999;
+  color: #212120;
   font-size: 11px;
   line-height: 10px;
 }
@@ -5952,7 +5952,7 @@ ul.navbar-nav .dropdown:hover .dropdown-menu {
   font-size: 16px;
   text-decoration: line-through;
   line-height: 1.75;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-size-and-weight .cr-size-weight {
@@ -6347,7 +6347,7 @@ ul.navbar-nav .dropdown:hover .dropdown-menu {
 .cr-tab-content-from .cr-ratting-star span {
   font-family: iransans, " sans-serif";
   font-size: 14px;
-  color: #7a7a7a;
+  color: #595959;
   line-height: 1.75;
   margin-left: 10px;
 }
@@ -6516,9 +6516,6 @@ ul.navbar-nav .dropdown:hover .dropdown-menu {
     left: 12px;
   }
 
-  .cr-product-card .cr-product-image .cr-image-inner {
-    pointer-events: none;
-  }
 
   .product-tabs {
     margin-bottom: 24px;
@@ -6608,7 +6605,6 @@ ul.navbar-nav .dropdown:hover .dropdown-menu {
 
 @media only screen and (max-width: 480px) {
 
-  .cr-product-box,
   .cr-product-card {
     width: 100%;
   }
@@ -6738,7 +6734,7 @@ ul.navbar-nav .dropdown:hover .dropdown-menu {
   font-family: iransans, " sans-serif";
   font-size: 14px;
   line-height: 1.875;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-shop-bredekamp .cr-select {
@@ -6757,7 +6753,7 @@ ul.navbar-nav .dropdown:hover .dropdown-menu {
   font-family: iransans, " sans-serif";
   font-size: 15px;
   line-height: 1.7;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-shop-bredekamp .cr-select select {
@@ -6766,7 +6762,7 @@ ul.navbar-nav .dropdown:hover .dropdown-menu {
   font-size: 15px;
   background-size: 10px;
   line-height: 1.2;
-  color: #7a7a7a;
+  color: #595959;
   width: auto;
   border: none;
   cursor: pointer;
@@ -6841,7 +6837,7 @@ h4.cr-shop-sub-title {
   position: relative;
   font-family: iransans, " sans-serif";
   font-size: 14px;
-  color: #7a7a7a;
+  color: #595959;
   cursor: pointer;
   text-transform: capitalize;
 }
@@ -6864,7 +6860,7 @@ h4.cr-shop-sub-title {
 .cr-checkbox .checkbox-group span {
   font-family: iransans, " sans-serif";
   font-size: 12px;
-  color: #7a7a7a;
+  color: #595959;
   position: absolute;
   left: 0;
 }
@@ -6901,7 +6897,7 @@ h4.cr-shop-sub-title {
   font-size: 15px;
   font-weight: bold;
   line-height: 1.2;
-  color: #7a7a7a;
+  color: #595959;
   -webkit-box-shadow: none;
   box-shadow: none;
   border: none;
@@ -6994,7 +6990,7 @@ ul.cr-tags li a {
   font-family: iransans, " sans-serif";
   font-size: 14px;
   background-color: #fff;
-  color: #7a7a7a;
+  color: #595959;
   border: 1px solid #e9e9e9;
   line-height: 30px;
   display: inline-block;
@@ -7383,7 +7379,7 @@ ul.cr-tags li a:hover {
 .cr-blog-classic .cr-blog-classic-content .cr-comment span code {
   font-family: iransans, " sans-serif";
   font-size: 12px;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-blog-classic .cr-blog-classic-content h4 {
@@ -7473,31 +7469,31 @@ ul.cr-tags li a:hover {
 .cr-blog-sideview .cr-serch-box .cr-search input::-webkit-input-placeholder {
   font-family: iransans, " sans-serif";
   font-size: 14px;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-blog-sideview .cr-serch-box .cr-search input::-moz-placeholder {
   font-family: iransans, " sans-serif";
   font-size: 14px;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-blog-sideview .cr-serch-box .cr-search input:-ms-input-placeholder {
   font-family: iransans, " sans-serif";
   font-size: 14px;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-blog-sideview .cr-serch-box .cr-search input::-ms-input-placeholder {
   font-family: iransans, " sans-serif";
   font-size: 14px;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-blog-sideview .cr-serch-box .cr-search input::placeholder {
   font-family: iransans, " sans-serif";
   font-size: 14px;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-blog-sideview .cr-serch-box .cr-search input:focus-visible {
@@ -7558,7 +7554,7 @@ ul.cr-tags li a:hover {
   font-family: iransans, " sans-serif";
   font-size: 14px;
   line-height: 1;
-  color: #7a7a7a;
+  color: #595959;
   border: 1px solid #e9e9e9;
   border-radius: 5px;
   display: -webkit-box;
@@ -7578,7 +7574,7 @@ ul.cr-tags li a:hover {
   left: 12px;
   font-size: 11px;
   font-family: iransans, " sans-serif";
-  color: #7a7a7a;
+  color: #595959;
   line-height: 1;
 }
 
@@ -7718,7 +7714,7 @@ ul.cr-tags li a:hover {
   font-size: 15px;
   font-weight: 600;
   line-height: 2;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-blog-details .cr-blog-details-content .cr-admin-date span code {
@@ -7824,7 +7820,7 @@ ul.cr-tags li a:hover {
 .cr-blog-details-paragrap p {
   font-family: iransans, " sans-serif";
   font-size: 14px;
-  color: #7a7a7a;
+  color: #595959;
   line-height: 1.867;
 }
 
@@ -8074,7 +8070,7 @@ ul.cr-tags li a:hover {
   font-size: 60px;
   font-weight: 700;
   line-height: 1;
-  color: #7a7a7a;
+  color: #595959;
   text-align: center;
   letter-spacing: 0px;
 }
@@ -9871,7 +9867,7 @@ iframe {
   cursor: pointer;
   line-height: 16px;
   display: inline-block;
-  color: #7a7a7a;
+  color: #595959;
   letter-spacing: 0;
 }
 
@@ -9916,7 +9912,7 @@ iframe {
   cursor: pointer;
   line-height: 16px;
   display: inline-block;
-  color: #7a7a7a;
+  color: #595959;
   letter-spacing: 0;
 }
 
@@ -10063,7 +10059,7 @@ iframe {
 .cr-new-desc {
   position: relative;
   line-height: 24px;
-  color: #7a7a7a;
+  color: #595959;
   letter-spacing: 0;
   max-width: 64%;
 }
@@ -10233,7 +10229,7 @@ iframe {
   -ms-flex: 1;
   flex: 1;
   padding: 0 10px;
-  color: #7a7a7a;
+  color: #595959;
   cursor: pointer;
   border-radius: 5px;
 }
@@ -10259,7 +10255,7 @@ iframe {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  color: #7a7a7a;
+  color: #595959;
 }
 
 .cr-checkout-content .cr-check-order-btn {
@@ -10311,7 +10307,7 @@ iframe {
 }
 
 .cr-checkout-summary .text-left {
-  color: #7a7a7a;
+  color: #595959;
   font-size: 14px;
   line-height: 24px;
   letter-spacing: 0;
@@ -10366,7 +10362,7 @@ iframe {
 .cr-sidebar-wrap .cr-sidebar-block .cr-sb-block-content .cr-checkout-pro li a {
   margin: 0 auto;
   display: block;
-  color: #7a7a7a;
+  color: #595959;
   font-size: 12px;
   margin-top: 0;
   line-height: 18px;
@@ -10382,7 +10378,7 @@ iframe {
   height: 18px;
   cursor: pointer;
   background-color: #e9e9e9;
-  color: #7a7a7a;
+  color: #595959;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -10498,7 +10494,7 @@ iframe {
 }
 
 .cr-sidebar-wrap .cr-sidebar-block .cr-sb-block-content .cr-del-desc {
-  color: #7a7a7a;
+  color: #595959;
   font-size: 14px;
   font-weight: 400;
   line-height: 24px;
@@ -10518,7 +10514,7 @@ iframe {
 }
 
 .cr-sidebar-wrap .cr-sidebar-block .cr-sb-block-content .cr-pay-desc {
-  color: #7a7a7a;
+  color: #595959;
   font-size: 14px;
   font-weight: 300;
   line-height: 24px;
@@ -10610,7 +10606,7 @@ iframe {
 .cr-sidebar-wrap.cr-checkout-pay-wrap .cr-pay-agree a {
   margin-right: 27px;
   display: block;
-  color: #7a7a7a;
+  color: #595959;
   font-size: 14px;
   margin-top: 0;
   line-height: 18px;
@@ -10898,11 +10894,166 @@ iframe {
     z-index: 2;
 }
 .cr-product-image .flags .sale {
-    background-color: #64b496;
+    background-color: #2e7d5e;
     color: #fff;
     padding: 2px 8px;
     border-radius: 4px;
     font-size: 12px;
 }
+
+
+/* ====================================================
+   بهینه‌سازی ۲ ستونه کارت محصولات و دسته‌بندی‌ها در موبایل
+==================================================== */
+@media only screen and (max-width: 575.98px) {
+
+    /* فاصله و عرض دقیق ۲ ستونه در صفحه محصولات (بدون خراب کردن نمای لیستی) */
+    .row.col-50:not(.col-size) {
+        --bs-gutter-x: 10px;
+        --bs-gutter-y: 10px;
+    }
+
+    .row.col-50:not(.col-size) > .cr-product-box {
+        width: 50% !important;
+        margin-bottom: 12px !important;
+    }
+
+    /* مربعی و یکدست کردن نسبت تصویر محصولات */
+    .cr-product-card .cr-product-image .cr-image-inner a.image,
+    .product-card-2 .cr-pro-image a.image {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        overflow: hidden;
+        border-radius: 8px;
+    }
+
+    .cr-product-card .cr-product-image .cr-image-inner img,
+    .product-card-2 .cr-pro-image img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
+    }
+
+    /* فشرده‌سازی پدینگ کارت و هم‌تراز کردن ارتفاع کارت‌های کنار هم */
+    .cr-product-card,
+    .product-card-2 .cr-product-inner {
+        padding: 8px !important;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border-radius: 10px;
+    }
+
+    .cr-product-details,
+    .product-card-2 .cr-pro-content {
+        padding: 14px 2px 4px !important;
+        text-align: right;
+    }
+
+    /* کوچک کردن آیکون سبد و بج درصد تخفیف */
+    .cr-product-card .cr-product-image .cr-shopping-bag {
+        width: 30px;
+        height: 30px;
+        bottom: -14px;
+    }
+
+    .cr-product-card .cr-product-image .cr-shopping-bag i {
+        font-size: 14px;
+    }
+
+    .cr-product-image .flags,
+    .product-card-2 .cr-pro-image .flags {
+        top: 6px;
+        right: 6px;
+    }
+
+    .cr-product-image .flags .sale,
+    .product-card-2 .cr-pro-image .flags .sale {
+        font-size: 10px !important;
+        padding: 2px 6px !important;
+    }
+
+    /* دسته‌بندی و ستاره‌ها در ابعاد مناسب موبایل */
+    .cr-product-details .cr-brand,
+    .product-card-2 .cr-info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+        margin-bottom: 4px;
+    }
+
+    .cr-product-details .cr-brand a,
+    .product-card-2 .cr-info a {
+        justify-content: flex-start;
+        font-size: 11px !important;
+        margin-bottom: 0;
+    }
+
+    .cr-product-details .cr-star,
+    .product-card-2 .cr-pro-rating {
+        justify-content: flex-start;
+        margin-bottom: 4px;
+    }
+
+    .cr-product-details .cr-star i,
+    .product-card-2 .cr-pro-rating i {
+        font-size: 11px !important;
+    }
+
+    .cr-product-details .cr-star p {
+        font-size: 10px !important;
+    }
+
+    /* محدود کردن عنوان محصول به ۲ خط برای تراز ماندن کارت‌ها */
+    .cr-product-details a.title,
+    .product-card-2 .cr-pro-title a {
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-align: right;
+        font-size: 13px !important;
+        line-height: 1.5 !important;
+        min-height: 39px;
+        margin-bottom: 6px !important;
+    }
+
+    /* نمایش دوخطی و مرتب قیمت جدید و قدیم */
+    .cr-product-details p.cr-price,
+    .product-card-2 .cr-price {
+        display: flex !important;
+        flex-direction: column-reverse;
+        align-items: flex-start;
+        gap: 2px;
+        line-height: 1.4 !important;
+        margin-top: 4px;
+    }
+
+    .cr-product-details p.cr-price .new-price,
+    .product-card-2 .cr-price .new-price {
+        font-size: 13px !important;
+        font-weight: 700;
+    }
+
+    .cr-product-details p.cr-price .old-price,
+    .product-card-2 .cr-price .old-price {
+        font-size: 11px !important;
+        margin-right: 0 !important;
+    }
+
+    /* دو ستونه شدن باکس‌های دسته‌بندی صفحه خانه در موبایل */
+    .section-popular .d-flex.flex-wrap {
+        gap: 12px !important;
+    }
+
+    .section-popular .category-block {
+        min-width: calc(50% - 6px) !important;
+        flex: 0 0 calc(50% - 6px) !important;
+    }
+}
+
 
 /*# sourceMappingURL=style.css.map */

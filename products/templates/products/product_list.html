@@ -78,17 +78,17 @@
                                     <a href="{{ product.get_absolute_url }}" class="image d-block">
                                         <!-- تصویر اول (اصلی) -->
                                         {% if product.main_image %}
-                                            <img class="main-image" src="{{ product.main_image.image.url }}" alt="{{ product.name }}">
+                                            <img class="main-image" width="310" height="413" src="{{ product.main_image.image.url }}" alt="{{ product.name }}">
                                         {% elif product.images.first %}
-                                            <img class="main-image" src="{{ product.images.first.image.url }}" alt="{{ product.name }}">
+                                            <img class="main-image" width="310" height="413" src="{{ product.images.first.image.url }}" alt="{{ product.name }}">
                                         {% else %}
-                                            <img class="main-image" src="{% static 'img/product/placeholder.jpg' %}" alt="{{ product.name }}">
+                                            <img class="main-image" width="310" height="413" src="{% static 'img/product/placeholder.jpg' %}" alt="{{ product.name }}">
                                         {% endif %}
 
                                         <!-- تصویر دوم (نمایش در حالت هاور در صورت وجود عکس دوم) -->
                                         {% with second_img=product.images.all.1 %}
                                             {% if second_img %}
-                                                <img class="hover-image" src="{{ second_img.image.url }}" alt="{{ product.name }}">
+                                                <img class="hover-image" loading="lazy" decoding="async" src="{{ second_img.image.url }}" alt="{{ product.name }}">
                                             {% endif %}
                                         {% endwith %}
                                     </a>
@@ -232,7 +232,7 @@
                 <div class="price-range-slider mt-4">
                     <div id="slider-range" class="range-bar"></div>
                     <p class="range-value mt-3">
-                        <label class="text-muted small">محدوده:</label>
+                        <label for="amount" class="text-muted small">محدوده:</label>
                         <input type="text" id="amount" readonly style="border:0; font-weight:bold; background: transparent; width: 100%; text-align: left; direction: ltr;">
                     </p>
                     <input type="hidden" name="min_price" id="min_price" value="{{ request.GET.min_price|default:'0' }}">

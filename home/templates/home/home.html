@@ -100,7 +100,7 @@
                     
                     {% for cat in categories %}
                     <!-- حذف استایل‌های دستی؛ فقط کلاس flex-fill اضافه شده است -->
-                    <div class="category-block flex-fill" style="min-width: 180px;">
+                    <div class="category-block flex-fill" style="min-width: 145px;">
                         
                         <div class="category-icon icon-{{ forloop.counter }}">
                             {% if cat.image %}
@@ -259,18 +259,59 @@
         </div>
     </section>
 
-    <!-- Deal -->
-    <section class="section-deal padding-b-100">
-        <div class="bg-banner-deal">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                       
-                    </div>
-                </div>
+   <!-- Amazing Offers (پیشنهاد شگفت‌انگیز) -->
+{% if discounted_products %}
+<section class="section-amazing-offer padding-b-100" data-aos="fade-up" data-aos-duration="2000">
+    <div class="container">
+        <div class="amazing-offer-box">
+
+            <!-- ستون راست: عنوان عمودی و لینک مشاهده همه -->
+            <div class="amazing-offer-header">
+                <h2 class="amazing-title">
+                    <span>پیشنهاد</span>
+                    <span>شگفت</span>
+                    <span>انگیز</span>
+                </h2>
             </div>
+
+            <!-- لیست ۵ محصول پرتخفیف -->
+            <div class="amazing-offer-cards">
+                {% for product in discounted_products %}
+                <a href="{{ product.get_absolute_url }}" class="amazing-card">
+                    <div class="amazing-card-img">
+                        {% if product.main_image %}
+                            <img src="{{ product.main_image.image.url }}" alt="{{ product.name }}" loading="lazy">
+                        {% elif product.images.first %}
+                            <img src="{{ product.images.first.image.url }}" alt="{{ product.name }}" loading="lazy">
+                        {% else %}
+                            <img src="{% static 'img/product/placeholder.jpg' %}" alt="{{ product.name }}" loading="lazy">
+                        {% endif %}
+                    </div>
+
+                    <div class="amazing-card-body">
+                        <h3 class="amazing-card-title">{{ product.name }}</h3>
+
+                        <div class="amazing-card-price">
+                            {% if product.variant.discount > 0 %}
+                            <div class="amazing-price-top">
+                                <span class="amazing-old-price">{{ product.variant.price_display }}</span>
+                                <span class="amazing-discount-badge">{{ product.variant.discount }}%</span>
+                            </div>
+                            {% endif %}
+                            <div class="amazing-price-bottom">
+                                <span class="amazing-new-price">{{ product.variant.final_price_display }}</span>
+                                <span class="amazing-currency">تومان</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+
         </div>
-    </section>
+    </div>
+</section>
+{% endif %}
 
     <!-- Blog -->
     <section class="section-blog padding-b-100">
@@ -321,5 +362,6 @@
 
 {% endblock %}
 {% block extra-js %}
-    <script src="{% static "js/vendor/owl.carousel.min.js" %}"></script>
+    <script src="{% static 'js/vendor/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'js/demo-2.js' %}"></script>
     {% endblock %}

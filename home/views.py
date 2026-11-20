@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 from django.views.generic import TemplateView
 from products.models import Product
+from django.db.models import Max
 from blog.models import Post
 from django.views.generic import CreateView
 from django.urls import reverse_lazy
@@ -49,9 +50,11 @@ class HomeView(TemplateView):
         products = cache.get('home_products')
         posts = cache.get('home_posts')
         banners = cache.get('home_banners')
+        discounted_products = cache.get('home_discounted_products')
 
         if products is None:
-            products = list(Product.objects.all()[:5])
+            products = list(Product.objects.prefetch_related
+                            ('category', 'variants', 'images').order_by('-id')[:8])
             cache.set('home_products',products, 60 * 15)
 
         if posts is None:
@@ -62,9 +65,20 @@ class HomeView(TemplateView):
             banners = list(BannerAnimation.objects.all())
             cache.set('home_banners',banners, 60 * 30)
 
-        context['products'] = products
-        context['posts'] = posts
-        context['banners'] = banners
+        if discounted_products is None:
+            discounted_products = list(
+                Product.objects.annotate(max_discount=Max('variants__discount'))
+                .filter(max_discount__gt=0)
+                .prefetch_related('variants', 'images')
+                .order_by('-max_discount', '-id')[:5]
+            )
+            if discounted_products:
+                cache.set('home_discounted_products', discounted_products, 60 * 15)
+
+        context['products'] = products or []
+        context['posts'] = posts or []
+        context['banners'] = banners or []
+        context['discounted_products'] = discounted_products or []
         return context
 
 class FaqView(TemplateView):

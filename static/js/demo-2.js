@@ -5,7 +5,7 @@
     $('.new-product-slider').owlCarousel({
         rtl:true,
         loop: false,
-        margin: 24,
+        margin: 12,
         responsiveClass: true,
         dots: false,
         nav: true,
@@ -13,7 +13,7 @@
         pagination: false,
         responsive: {
             0: {
-                items: 1,
+                items: 2,
             },
             576: {
                 items: 2,

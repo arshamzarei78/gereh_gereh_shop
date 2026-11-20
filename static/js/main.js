@@ -6,10 +6,10 @@
     });
 
     $(document).ready(function () {
-    var $themeToggleBtn = $('#theme-toggle-btn');
+    var $themeToggleBtn = $('.theme-toggle-btn');
     var $darkModeLink = $('#add_dark_mode');
-    var $themeIcon = $('#theme-icon');
-    var $themeText = $('#theme-text');
+    var $themeIcon = $('.theme-icon');
+    var $themeText = $('.theme-text');
 
     // ۱. بررسی وضعیت تم هنگام لود شدن صفحه (آیا کاربر قبلاً تم تاریک را انتخاب کرده؟)
     if (localStorage.getItem('theme') === 'dark') {
@@ -18,13 +18,13 @@
         disableDarkMode();
     }
 
-    // ۲. عملیات هنگام کلیک روی دکمه
-    $themeToggleBtn.on('click', function (e) {
+    // ۲. عملیات هنگام کلیک روی دکمه (هم در دسکتاپ و هم در موبایل)
+    $(document).on('click', '.theme-toggle-btn', function (e) {
         e.preventDefault(); // جلوگیری از پرش صفحه
-        
+
         // اگر تگ لینک غیرفعال بود، یعنی الان روشنیم و باید تاریک شویم
         var isCurrentlyLight = $darkModeLink.prop('disabled');
-        
+
         if (isCurrentlyLight) {
             enableDarkMode();
             localStorage.setItem('theme', 'dark'); // ذخیره در حافظه مرورگر
@@ -34,7 +34,7 @@
         }
     });
 
-    // ۳. توابع کمکی برای تغییر ظاهر دکمه و فعال‌سازی فایل CSS
+    // ۳. توابع کمکی برای تغییر ظاهر دکمه‌ها و فعال‌سازی فایل CSS
     function enableDarkMode() {
         $darkModeLink.prop('disabled', false); // فعال کردن فایل dark.css
         $themeIcon.removeClass('ri-moon-line').addClass('ri-sun-line'); // تغییر آیکون به خورشید
@@ -46,45 +46,39 @@
         $themeIcon.removeClass('ri-sun-line').addClass('ri-moon-line'); // تغییر آیکون به ماه
         $themeText.text('تم تاریک');
     }
-});
 
-    $(document).ready(function () {
-        
-        
-        // وقتی کاربر گزینه‌ای را از لیست انتخاب می‌کند
-    $('#variant-select').on('change', function() {
+    // وقتی کاربر گزینه‌ای را از لیست تنوع محصول انتخاب می‌کند
+    $('#variant-select').on('change', function () {
         // گرفتن گزینه‌ی انتخاب شده
         var selectedOption = $(this).find('option:selected');
-        
+
         // خواندن موجودی و قیمت از data-attributes
-        var newStock = selectedOption.attr('data-stock');
+        var newStock = parseInt(selectedOption.attr('data-stock'), 10) || 0;
         var newPrice = selectedOption.attr('data-price');
 
         // دریافت اطلاعات مربوط به تخفیف
         var oldPrice = selectedOption.attr('data-old-price');
-        var discount = parseInt(selectedOption.attr('data-discount'));
-        
+        var discount = parseInt(selectedOption.attr('data-discount'), 10) || 0;
+
         // ۱. به‌روزرسانی متن موجودی در لیست
         $('#dynamic-stock').text(newStock);
-        
+
         // ۲. به‌روزرسانی متن قیمت
         $('#dynamic-price').text(newPrice + ' تومان');
 
         // ۳. بررسی و آپدیت قیمت خط‌خورده (قدیمی)
         if (discount > 0) {
-            // اگر تخفیف داشت، قیمت قدیمی را قرار بده و تگ را نمایان کن
             $('#dynamic-old-price').text(oldPrice).show();
         } else {
-            // اگر تخفیف نداشت (تخفیف 0 بود)، تگ قیمت قدیمی را مخفی کن
             $('#dynamic-old-price').hide();
         }
-        
-        // ۳. به‌روزرسانی سقف انتخاب تعداد (max) برای دکمه‌های + و -
+
+        // ۴. به‌روزرسانی سقف انتخاب تعداد (max) برای دکمه‌های + و -
         var $qtyInput = $('#qty-input');
         $qtyInput.attr('max', newStock);
-        
-        // ۴. اگر تعدادی که کاربر قبلا انتخاب کرده بود، بیشتر از موجودی تنوع جدید بود، تعداد را روی 1 تنظیم کن
-        var currentQty = parseInt($qtyInput.val());
+
+        // ۵. اگر تعدادی که کاربر قبلاً انتخاب کرده بود بیشتر از موجودی تنوع جدید بود، تعداد را اصلاح کن
+        var currentQty = parseInt($qtyInput.val(), 10) || 1;
         if (currentQty > newStock) {
             $qtyInput.val(newStock > 0 ? 1 : 0);
         }
